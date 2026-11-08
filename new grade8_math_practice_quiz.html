@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 8 Math Practice Quiz</title>
+    <!-- Tailwind CSS Styling Framework CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX Mathematical Typography Notation Engine Setup CDN -->                  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+ <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });">
+        </script>
+
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0284c7; --primary-hover: #0369a1; --bg-main: #f8fafc;
+            --bg-surface: #ffffff; --border-color: #cbd5e1; --text-main: #0f172a;
+            --text-muted: #475569; --success: #16a34a; --error: #dc2626;
+        }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, sans-serif; }
+        .hidden { display: none !important; }
+        .opt-btn {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-size: 1.05rem;
+        }
+        .opt-btn:hover { border-color: var(--primary); background-color: #f0f9ff; }
+        .opt-btn.active { border-color: var(--primary); background-color: #e0f2fe; font-weight: 600; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15); }
+        .report-item { background: var(--bg-surface); border-radius: 10px; padding: 14px; margin-bottom: 12px; border-left: 5px solid #cbd5e1; }
+        .report-item.pass { border-left-color: var(--success); }
+        .report-item.fail { border-left-color: var(--error); }
+            .katex { font-size: 1.12em; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Credentials Authentication Entry Stage -->
+    <div id="stage-auth" class="max-w-md mx-auto my-auto p-8 bg-white rounded-2xl shadow-xl mt-12 border border-slate-200">
+        <h2 class="text-3xl font-extrabold text-slate-800 text-center tracking-tight mb-2">Grade 8 Math Practice Quiz</h2>
+        <p class="text-sm text-slate-500 text-center mb-3">Term 1 &middot; Integers, Sequences, Decimals, Measures &amp; Geometry</p>
+        <p class="text-xs text-slate-500 text-center mb-8 leading-relaxed"><b>20 questions</b> &middot; <b>20 minutes</b><br>Integers, factors and primes, powers and roots, sequences and nth term, functions, expressions and formulae, decimals, rounding and estimating, units, symmetry, quadrilaterals, nets and scale drawings.</p>
+
+        <div class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Student Full Name</label>
+                <input type="text" id="student-name" placeholder="John Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Assigned Class Section</label>
+                <input type="text" id="student-section" placeholder="Grade 8-A" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition">
+            </div>
+            <button id="action-start" class="w-full bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm tracking-wider uppercase mt-4">Start Quiz</button>
+        </div>
+    </div>
+
+    <!-- FIXED: Active Test Core Engine Integrated Inside One Single Unified Main Box Header Layout -->
+    <div id="stage-engine" class="hidden max-w-4xl mx-auto w-full px-4 py-6 flex-grow">
+        <div class="w-full bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col justify-between min-h-[550px]">
+
+            <!-- HEADER INFO BAR: Time tracking and Question counts grouped inside the single main container block -->
+            <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-5 flex-wrap gap-4">
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-sky-600 uppercase tracking-widest">Question Tracker &middot; <span id="idx-current">0</span> / <span id="idx-total">0</span></span>
+                    <span id="txt-tier-badge" class="px-2.5 py-1 rounded-md text-xs font-extrabold uppercase bg-slate-100 text-slate-600">Tier</span>
+                </div>
+
+                <!-- TIMER COMPONENT: Grouped tightly inside the primary top header control area -->
+                <div id="meter-container" class="hidden flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl text-white shadow-inner">
+                    <span class="text-[10px] uppercase font-black tracking-wider text-slate-400">Remaining:</span>
+                    <span id="clock-countdown" class="text-lg font-black tracking-tight font-mono text-sky-400">20:00</span>
+                    <div class="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden hidden sm:block">
+                        <div id="meter-progress" class="bg-sky-400 h-full transition-all duration-1000" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Central Content Presentation Window -->
+            <div class="flex-grow flex flex-col justify-center">
+                <div id="math-prompt-container" class="mb-6"></div>
+
+                <div id="interactive-zone" class="w-full flex flex-col items-center justify-center mb-6">
+                    <div id="box-mcq" class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"></div>
+                    <div id="box-tf" class="hidden flex gap-4 w-full justify-center">
+                        <button class="flag-tf opt-btn px-8 py-3.5 text-center font-bold text-lg min-w-[140px]" data-core="TRUE">TRUE</button>
+                        <button class="flag-tf opt-btn px-8 py-3.5 text-center font-bold text-lg min-w-[140px]" data-core="FALSE">FALSE</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lower Layout Shortcut Matrix Navigation Row -->
+            <div class="border-t border-slate-100 pt-4 mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <!-- Grid Shortcuts inline at the bottom left -->
+                <div class="flex flex-wrap gap-1.5 items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden md:block">Overview:</span>
+                    <div id="navigation-shortcut-grid" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- Navigation Action Buttons -->
+                <div class="flex gap-3 justify-end w-full sm:w-auto">
+                    <button id="action-back" class="px-5 py-2 border border-slate-300 rounded-xl font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-40 text-sm transition cursor-pointer">&larr; Back</button>
+                    <button id="action-forward" class="px-6 py-2 bg-sky-600 text-white rounded-xl font-bold hover:bg-sky-700 text-sm shadow transition cursor-pointer">Next &rarr;</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Final Diagnostic Summary Sheet Layout -->
+    <div id="stage-summary" class="hidden max-w-3xl mx-auto w-full px-4 py-8">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight">Performance Summary Report</h1>
+                    <p class="text-sky-100 text-xs mt-1">Grade 8 Math &middot; Term 1 Practice Quiz</p>
+                </div>
+                <button onclick="triggerDirectPdfDownload()" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 transition cursor-pointer shadow-sm border border-white/10 text-white">Download as PDF</button>
+            </div>
+
+            <div class="grid grid-cols-3 text-center border-b border-slate-100 bg-slate-50 py-4">
+                <div>
+                    <div id="m-correct" class="text-2xl font-extrabold text-emerald-600">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Correct</div>
+                </div>
+                <div class="border-x border-slate-200">
+                    <div id="m-incorrect" class="text-2xl font-extrabold text-rose-600">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Incorrect</div>
+                </div>
+                <div>
+                    <div id="m-percent" class="text-2xl font-extrabold text-sky-600">0%</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Score Rate</div>
+                </div>
+            </div>
+
+                    <!-- Dynamic Question Injections -->
+                        <div id="report-injection-zone" class="p-6 space-y-4 bg-slate-50/50"></div>
+                </div>
+
+                <!-- FIXED: Repositioned standalone PDF action handler bar to the absolute bottom of the page structure -->
+                <div class="flex flex-col sm:flex-row gap-3 w-full mt-4">
+                        <button id="action-pdf-bottom" onclick="triggerDirectPdfDownload()" class="flex-grow bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm text-center uppercase tracking-wider">Save as PDF</button>
+                        <button id="action-retry" class="w-full sm:w-1/3 bg-slate-800 text-white font-bold py-3 px-4 rounded-xl shadow hover:bg-slate-900 transition cursor-pointer text-sm text-center uppercase tracking-wider">Retake Quiz</button>
+                </div>
+        </div>
+
+    <footer class="w-full py-4 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 bg-white">
+        &copy; 2026 Grade 8 Math Practice Quiz &bull; Cambridge Term 1
+    </footer>
+
+<script>
+    // =====================================================================
+    //  GRADE 8 MATH PRACTICE QUIZ  ·  Term 1 (Cambridge Grade 8)
+    //  Units: integers, powers and roots · sequences, expressions and formulae ·
+    //         place value, ordering and rounding · length, mass and capacity ·
+    //         shapes and geometric reasoning
+    // =====================================================================
+    const APP_LIMITS = {
+        totalItems: 20,
+        allocatedDurationSeconds: 1200,   // 20 minutes exactly
+        quizTitle: "Grade 8 Math Practice Quiz"
+    };
+
+    let generatedSuite = [];
+    let traversalIndex = 0;
+    let storedResponses = {};
+    let timeTrackingRemaining = APP_LIMITS.allocatedDurationSeconds;
+    let schedulerHandle = null;
+    let formattedQuizStartTimeStamp = "";
+
+/*GEN-START*/
+    // ---------- tiny helpers ----------
+    // LaTeX is written with @ instead of a backslash (BS is a backslash), so JS never eats a backslash
+    const BS = String.fromCharCode(92);
+    function tx(s) { return s.split('@').join(BS); }
+    function M(latex) { return BS + "(" + tx(latex) + BS + ")"; }
+    const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+    const pick = arr => arr[rnd(0, arr.length - 1)];
+    function shuffleArray(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+    function commas(intStr) { return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function fmt(n) { return commas(String(n)); }
+    const MINUS = "\u2212";
+    function sg(n) { return n < 0 ? MINUS + Math.abs(n) : String(n); }          // plain text with a proper minus sign
+    function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { const t = a % b; a = b; b = t; } return a; }
+    function lcm(a, b) { return a / gcd(a, b) * b; }
+    // integer n scaled by 10^dec -> text. keep=true keeps trailing zeros.
+    function dstr(n, dec, keep) {
+        const neg = n < 0;
+        let s = String(Math.abs(n));
+        if (dec > 0) {
+            s = s.padStart(dec + 1, "0");
+            const ip = s.slice(0, s.length - dec);
+            let fp = s.slice(s.length - dec);
+            if (!keep) fp = fp.replace(/0+$/, "");
+            s = commas(ip) + (fp ? "." + fp : "");
+        } else {
+            s = commas(s);
+        }
+        return (neg ? MINUS : "") + s;
+    }
+    function makeChoices(correct, fakes, n) {
+        n = n || 4;
+        const out = [correct];
+        shuffleArray(fakes).forEach(f => {
+            if (out.length < n && f !== undefined && f !== null && f !== "" && !out.includes(f)) out.push(f);
+        });
+        return shuffleArray(out);
+    }
+    function bigNum(html, size) {
+        return '<div style="text-align:center; font-size:' + (size || 1.7) + 'rem; font-weight:800; letter-spacing:0.02em; margin:12px 0; color:#0f172a;">' + html + '</div>';
+    }
+    function perturbInt(n) {
+        const s = String(Math.abs(n));
+        const i = rnd(0, s.length - 1);
+        let nd = (+s[i] + rnd(1, 9)) % 10;
+        if (i === 0 && nd === 0) nd = 1;
+        if (nd === +s[i]) nd = (nd + 1) % 10 || 1;
+        return (n < 0 ? -1 : 1) * Number(s.slice(0, i) + nd + s.slice(i + 1));
+    }
+    function diagramBox(svg) { return '<div style="display:flex; justify-content:center; margin:12px 0;">' + svg + '</div>'; }
+    // linear expression text (LaTeX): a v + b
+    function lin(a, b, v) {
+        v = v || "n";
+        let s = (a === 1 ? "" : a === -1 ? "-" : String(a)) + v;
+        if (b > 0) s += " + " + b; else if (b < 0) s += " - " + Math.abs(b);
+        return s;
+    }
+
+    // =====================================================================
+    //  UNIT 1 · INTEGERS, POWERS AND ROOTS
+    // =====================================================================
+    function genIntArith(tier) {
+        const op = pick(["+", "-", "*", "/"]);
+        let a, b, ans, eqn, expl;
+        const texN = (n, paren) => n < 0 ? (paren ? "(-" + Math.abs(n) + ")" : "-" + Math.abs(n)) : String(n);
+        if (op === "+" || op === "-") {
+            do { a = rnd(-20, 20); b = rnd(-20, 20); } while (a === 0 || b === 0 || (a > 0 && b > 0 && op === "+") || (a > 0 && b < 0 && op === "-" && false));
+            ans = op === "+" ? a + b : a - b;
+            eqn = texN(a, false) + (op === "+" ? " + " : " - ") + texN(b, true);
+            expl = op === "+" ? "Adding " + sg(b) + " to " + sg(a) + " gives " + sg(ans) + "." : "Subtracting " + sg(b) + " is the same as adding " + sg(-b) + ": " + sg(a) + " + " + sg(-b) + " = " + sg(ans) + ".";
+        } else if (op === "*") {
+            do { a = rnd(-9, 9); b = rnd(-9, 9); } while (a === 0 || b === 0 || (a > 0 && b > 0));
+            ans = a * b;
+            eqn = texN(a, false) + " @times " + texN(b, true);
+            expl = "Different signs give a negative answer, the same signs give a positive answer: " + sg(a) + " × " + sg(b) + " = " + sg(ans) + ".";
+        } else {
+            do { b = rnd(-9, 9); } while (b === 0 || b === 1 || b === -1);
+            let q;
+            do { q = rnd(-12, 12); } while (q === 0 || (q > 0 && b > 0));
+            a = b * q; ans = q;
+            eqn = texN(a, false) + " @div " + texN(b, true);
+            expl = "Check by multiplying: " + sg(q) + " × " + sg(b) + " = " + sg(a) + ". So " + sg(a) + " ÷ " + sg(b) + " = " + sg(q) + ".";
+        }
+        const fakes = [-ans, Math.abs(a) + Math.abs(b), Math.abs(a) - Math.abs(b), ans + 2, ans - 2, perturbInt(ans)].filter(x => x !== ans && Number.isFinite(x));
+        if (op === "*") fakes.push(Math.abs(a) + Math.abs(b), a + b);
+        if (op === "/") fakes.push(a * b === 0 ? 1 : -a * b);
+        return { prompt: "Work out:", equation: eqn, type: "MCQ", solution: sg(ans), pool: makeChoices(sg(ans), fakes.map(sg)), explain: expl };
+    }
+
+    function genFactors(tier) {
+        const v = pick([0, 1, 2]);
+        if (v === 0) {                                   // HCF
+            const g = rnd(2, 12);
+            let x, y;
+            do { x = rnd(2, 9); y = rnd(2, 9); } while (x === y || gcd(x, y) !== 1);
+            const a = g * x, b = g * y, l = lcm(a, b);
+            return { prompt: "Find the <b>highest common factor (HCF)</b> of " + a + " and " + b + ".", equation: "", type: "MCQ", solution: String(g),
+                pool: makeChoices(String(g), [l, a, b, g + 1, g * 2, 1, Math.abs(a - b)].filter(x => x !== g && x > 0).map(String)),
+                explain: "List the factors of " + a + " and " + b + ". The largest number that divides both is " + g + "." };
+        }
+        if (v === 1) {                                   // LCM
+            let a, b, l;
+            do { a = rnd(4, 20); b = rnd(4, 20); l = lcm(a, b); } while (a === b || l > 120 || l === a * b && Math.random() < 0.5 || l === a || l === b);
+            return { prompt: "Find the <b>lowest common multiple (LCM)</b> of " + a + " and " + b + ".", equation: "", type: "MCQ", solution: String(l),
+                pool: makeChoices(String(l), [a * b, gcd(a, b), a + b, l * 2, Math.max(a, b) * 2, l + a].filter(x => x !== l && x > 0).map(String)),
+                explain: "List the multiples of each number. The first one they share is " + l + "." };
+        }
+        let N;                                           // number of factors
+        do { N = pick([12, 16, 18, 20, 24, 28, 30, 32, 36, 40, 42, 45, 48, 60]); } while (false);
+        let cnt = 0; for (let i = 1; i <= N; i++) if (N % i === 0) cnt++;
+        return { prompt: "How many <b>factors</b> does " + N + " have?", equation: "", type: "MCQ", solution: String(cnt),
+            pool: makeChoices(String(cnt), [cnt + 1, cnt - 1, cnt + 2, cnt - 2, Math.floor(cnt / 2)].filter(x => x !== cnt && x > 0).map(String)),
+            explain: "Factors come in pairs: " + Array.from({ length: N }, (_, i) => i + 1).filter(i => N % i === 0).join(", ") + ". That is " + cnt + " factors." };
+    }
+
+    function genPrimes(tier) {
+        if (Math.random() < 0.7) {                       // prime factorisation using indices
+            let f, N, g = 0;
+            do {
+                f = [[2, rnd(1, 4)], [3, rnd(0, 3)], [5, rnd(0, 2)], [7, rnd(0, 1)]].filter(x => x[1] > 0);
+                N = f.reduce((a, x) => a * Math.pow(x[0], x[1]), 1);
+            } while ((f.length < 2 || N < 40 || N > 1000 || f.reduce((a, x) => a + x[1], 0) < 3) && g++ < 500);
+            const render = ff => ff.map(x => x[1] === 1 ? String(x[0]) : x[0] + "^{" + x[1] + "}").join(" @times ");
+            const correct = M(render(f));
+            const cands = new Set();
+            for (let r = 0; r < 14; r++) {
+                const c = f.map(x => [x[0], x[1]]), i = rnd(0, c.length - 1), m = rnd(0, 3);
+                if (m === 0) c[i][1] = Math.max(1, c[i][1] + (Math.random() < 0.5 ? 1 : -1));
+                else if (m === 1) c[i][0] = pick([2, 3, 5, 7, 11].filter(p => p !== c[i][0] && !c.some(y => y[0] === p)));
+                else if (m === 2) c.push([pick([2, 3, 5, 7, 11].filter(p => !c.some(y => y[0] === p))), 1]);
+                else c[i][1] += 1;
+                const value = c.reduce((a, x) => a * Math.pow(x[0], x[1]), 1);
+                if (value !== N) cands.add(M(render(c)));
+            }
+            // not fully factorised: two primes multiplied together
+            if (f.some(x => x[1] >= 2)) {
+                const p = f.find(x => x[1] >= 2);
+                const rest = f.map(x => x === p ? [x[0], x[1] - 2] : x).filter(x => x[1] > 0);
+                cands.add(M([String(p[0] * p[0])].concat(rest.map(x => x[1] === 1 ? String(x[0]) : x[0] + "^{" + x[1] + "}")).join(" @times ")));
+            }
+            cands.delete(correct);
+            return { prompt: "Write <b>" + fmt(N) + "</b> as a product of its <b>prime factors</b> using indices:", equation: "", type: "MCQ", solution: correct,
+                pool: makeChoices(correct, Array.from(cands)),
+                explain: "Divide by prime numbers again and again: " + fmt(N) + " = " + M(render(f)) + "." };
+        }
+        let N, g = 0;
+        do { N = pick([30, 42, 60, 66, 70, 78, 84, 90, 105, 110, 126, 130, 154, 180, 210]); } while (false);
+        const ps = [2, 3, 5, 7, 11, 13].filter(p => N % p === 0);
+        return { prompt: "How many <b>different prime factors</b> does " + N + " have?", equation: "", type: "MCQ", solution: String(ps.length),
+            pool: makeChoices(String(ps.length), [ps.length + 1, ps.length - 1, ps.length + 2, 2, 3, 4].filter(x => x !== ps.length && x > 0).map(String)),
+            explain: "The prime factors of " + N + " are " + ps.join(", ") + ". That is " + ps.length + " different primes." };
+    }
+
+    function genPowersRoots(tier) {
+        const v = pick([0, 1, 2, 3]);
+        if (v === 0) {
+            const k = pick(["sq", "cu", "two", "three", "ten"]);
+            let n, e, val, eq;
+            if (k === "sq") { n = rnd(11, 25); e = 2; }
+            else if (k === "cu") { n = rnd(3, 10); e = 3; }
+            else if (k === "two") { n = 2; e = rnd(6, 10); }
+            else if (k === "three") { n = 3; e = rnd(4, 6); }
+            else { n = 10; e = rnd(3, 6); }
+            val = Math.pow(n, e);
+            return { prompt: "Calculate the value of:", equation: n + "^{" + e + "}", type: "MCQ", solution: fmt(val),
+                pool: makeChoices(fmt(val), [n * e, Math.pow(n, e - 1), Math.pow(n, e + 1), Math.pow(e, n > 30 ? 2 : n), (n + 1) * (n + 1) * (e === 2 ? 1 : n), val + n].filter(x => x !== val && x > 0).map(fmt)),
+                explain: n + "^" + e + " means " + Array(e).fill(n).join(" × ") + " = " + fmt(val) + "." };
+        }
+        if (v === 1) {
+            const sq = Math.random() < 0.6;
+            if (sq) {
+                const r = rnd(11, 30), n = r * r;
+                return { prompt: "Calculate the value of:", equation: "@sqrt{" + n + "}", type: "MCQ", solution: String(r),
+                    pool: makeChoices(String(r), [r + 1, r - 1, n / 2, Math.round(n / 3), r * 2, r + 10].filter(x => x !== r && x > 0).map(String)),
+                    explain: r + " × " + r + " = " + n + ", so the square root of " + n + " is " + r + "." };
+            }
+            const r = rnd(3, 12), n = r * r * r;
+            return { prompt: "Calculate the value of:", equation: "@sqrt[3]{" + n + "}", type: "MCQ", solution: String(r),
+                pool: makeChoices(String(r), [r + 1, r - 1, Math.round(n / 3), r * r, r * 3, r + 2].filter(x => x !== r && x > 0).map(String)),
+                explain: r + " × " + r + " × " + r + " = " + fmt(n) + ", so the cube root of " + fmt(n) + " is " + r + "." };
+        }
+        if (v === 2) {                                   // between two consecutive integers
+            let n;
+            do { n = rnd(10, 150); } while (Number.isInteger(Math.sqrt(n)));
+            const lo = Math.floor(Math.sqrt(n));
+            const sol = lo + " and " + (lo + 1);
+            return { prompt: "Between which two consecutive whole numbers does the square root of " + n + " lie?", equation: "@sqrt{" + n + "}", type: "MCQ", solution: sol,
+                pool: makeChoices(sol, [(lo - 1) + " and " + lo, (lo + 1) + " and " + (lo + 2), (lo - 2) + " and " + (lo - 1), Math.floor(n / 2) + " and " + (Math.floor(n / 2) + 1)].filter(x => x !== sol)),
+                explain: lo + "² = " + lo * lo + " and " + (lo + 1) + "² = " + (lo + 1) * (lo + 1) + ". " + n + " is between them, so its square root is between " + lo + " and " + (lo + 1) + "." };
+        }
+        const r = pick([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.1, 1.2, 1.3, 1.5]);     // square root of a decimal
+        const n = Math.round(r * r * 100) / 100;
+        const txt = String(r);
+        return { prompt: "Calculate the value of:", equation: "@sqrt{" + n + "}", type: "MCQ", solution: txt,
+            pool: makeChoices(txt, [String(Math.round(r * 10) / 100), String(Math.round(r * 100) / 10), String(Math.round(n / 2 * 100) / 100), String(Math.round((r + 0.1) * 10) / 10), String(Math.round((r - 0.1) * 10) / 10)].filter(x => x !== txt && Number(x) > 0)),
+            explain: txt + " × " + txt + " = " + n + ", so the square root of " + n + " is " + txt + "." };
+    }
+
+    // =====================================================================
+    //  UNIT 2 · SEQUENCES, EXPRESSIONS AND FORMULAE
+    // =====================================================================
+    function genSequences(tier) {
+        const v = pick([0, 1, 2, 3]);
+        if (v === 0) {                                   // term-to-term rule: find a later term
+            const a = rnd(-5, 20), d = pick([3, 4, 5, 6, 7, 8, -2, -3, -4, -5]), k = rnd(5, 8);
+            const ans = a + (k - 1) * d;
+            const sq = [a, a + d, a + 2 * d].map(sg).join(", ");
+            return { prompt: "The first term of a sequence is " + sg(a) + ". The rule is: <b>" + (d > 0 ? "add " + d : "subtract " + Math.abs(d)) + "</b>. What is term number " + k + "?",
+                equation: "", type: "MCQ", solution: sg(ans),
+                pool: makeChoices(sg(ans), [a + k * d, a + (k - 2) * d, ans + d, ans - d, a + d * k + d].filter(x => x !== ans).map(sg)),
+                explain: "The terms are " + sq + ", ... Each term " + (d > 0 ? "adds " : "subtracts ") + Math.abs(d) + ". Term " + k + " = " + sg(a) + " " + (d > 0 ? "+" : MINUS) + " " + (k - 1) + " × " + Math.abs(d) + " = " + sg(ans) + "." };
+        }
+        if (v === 1) {                                   // next term
+            const a = rnd(2, 30), d = pick([3, 4, 6, 7, 9, 11, -3, -4, -6]);
+            const seq = [0, 1, 2, 3].map(i => a + i * d), ans = a + 4 * d;
+            return { prompt: "Find the <b>next term</b> in this sequence:" + bigNum(seq.map(sg).join(", &nbsp;") + ", &nbsp;…", 1.4),
+                equation: "", type: "MCQ", solution: sg(ans), pool: makeChoices(sg(ans), [ans + 1, ans - 1, ans + d, ans - d, seq[3] + 2 * d].filter(x => x !== ans).map(sg)),
+                explain: "The terms " + (d > 0 ? "increase" : "decrease") + " by " + Math.abs(d) + " each time, so the next term is " + sg(seq[3]) + " " + (d > 0 ? "+" : MINUS) + " " + Math.abs(d) + " = " + sg(ans) + "." };
+        }
+        if (v === 2) {                                   // find the rule
+            const a = rnd(2, 12);
+            const type = pick(["add", "sub", "mul"]);
+            let seq, rule, wrong;
+            if (type === "add") { const d = rnd(3, 9); seq = [a, a + d, a + 2 * d, a + 3 * d]; rule = "add " + d; wrong = ["add " + (d + 1), "add " + (d - 1), "multiply by " + d, "subtract " + d]; }
+            else if (type === "sub") { const d = rnd(3, 8); seq = [a + 30, a + 30 - d, a + 30 - 2 * d, a + 30 - 3 * d]; rule = "subtract " + d; wrong = ["subtract " + (d + 1), "subtract " + (d - 1), "divide by " + d, "add " + d]; }
+            else { const m = pick([2, 3]); seq = [a, a * m, a * m * m, a * m * m * m]; rule = "multiply by " + m; wrong = ["add " + (a * m - a), "multiply by " + (m + 1), "add " + m, "multiply by " + (m - 1 === 1 ? 4 : m - 1)]; }
+            return { prompt: "What is the <b>term-to-term rule</b> for this sequence?" + bigNum(seq.join(", &nbsp;") + ", &nbsp;…", 1.4),
+                equation: "", type: "MCQ", solution: rule, pool: makeChoices(rule, wrong.filter(x => x !== rule)),
+                explain: "Compare each term with the one before it. The rule is: " + rule + "." };
+        }
+        const a = rnd(1, 4), m = pick([2, 3]);           // 'multiply by' next term
+        const seq = [a, a * m, a * m * m, a * m * m * m], ans = a * m * m * m * m;
+        return { prompt: "Find the <b>next term</b> in this sequence:" + bigNum(seq.join(", &nbsp;") + ", &nbsp;…", 1.4),
+            equation: "", type: "MCQ", solution: String(ans), pool: makeChoices(String(ans), [ans + a, seq[3] + (seq[3] - seq[2]), seq[3] * (m + 1), ans - m, seq[3] + m].filter(x => x !== ans).map(String)),
+            explain: "Each term is " + m + " times the one before it, so the next term is " + seq[3] + " × " + m + " = " + ans + "." };
+    }
+
+    function genNthTerm(tier) {
+        const v = pick([0, 1, 2]);
+        const p = rnd(2, 9), q = pick([-7, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 8]);
+        if (v === 0) {                                   // find the nth term
+            const seq = [1, 2, 3, 4].map(n => p * n + q);
+            const correct = M(lin(p, q));
+            const fakes = [lin(p, seq[0]), lin(q > 0 ? q : p + 1, p), lin(p + 1, q), lin(p, -q), lin(1, p + q)].filter(x => M(x) !== correct).map(M);
+            return { prompt: "Find the <b>nth term</b> of this sequence:" + bigNum(seq.map(sg).join(", &nbsp;") + ", &nbsp;…", 1.4),
+                equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, fakes),
+                explain: "The terms go up by " + p + ", so start with " + p + "n. When n = 1, " + p + "n = " + p + " but the first term is " + sg(seq[0]) + ", so add " + sg(q) + ". The nth term is " + correct + "." };
+        }
+        if (v === 1) {                                   // use the nth term
+            const n = rnd(9, 25), ans = p * n + q;
+            return { prompt: "The nth term of a sequence is given. Find the term when <b>n = " + n + "</b>.", equation: lin(p, q), type: "MCQ", solution: sg(ans),
+                pool: makeChoices(sg(ans), [p * n, p + q + n, (p + q) * n, ans + p, ans - p, p * n - q].filter(x => x !== ans).map(sg)),
+                explain: "Substitute n = " + n + ": " + p + " × " + n + " " + (q >= 0 ? "+ " + q : MINUS + " " + Math.abs(q)) + " = " + sg(ans) + "." };
+        }
+        const n = rnd(6, 20), val = p * n + q;              // which term has this value?
+        return { prompt: "Which term of the sequence with this nth term has the value <b>" + sg(val) + "</b>?", equation: lin(p, q), type: "MCQ", solution: String(n),
+            pool: makeChoices(String(n), [n + 1, n - 1, Math.round(val / p), val - q, n + 2, n * 2].filter(x => x !== n && x > 0).map(String)),
+            explain: "Solve " + lin(p, q).replace(/ - /g, " " + MINUS + " ") + " = " + sg(val) + ": " + p + "n = " + sg(val - q) + ", so n = " + n + "." };
+    }
+
+    function genFunctions(tier) {
+        const v = pick([0, 1, 2]);
+        if (v === 0) {                                   // forward two-step function machine
+            const a = rnd(2, 9), b = rnd(1, 9), minus = Math.random() < 0.5, x = rnd(2, 12);
+            const ans = a * x + (minus ? -b : b);
+            return { prompt: "A function machine multiplies the input by " + a + " and then " + (minus ? "subtracts " : "adds ") + b + ". What is the output when the input is <b>" + x + "</b>?",
+                equation: "x @mapsto " + lin(a, minus ? -b : b, "x"), type: "MCQ", solution: sg(ans),
+                pool: makeChoices(sg(ans), [a * (x + (minus ? -b : b)), a * x, x + a + b, ans + a, ans - a, a * x + (minus ? b : -b)].filter(y => y !== ans).map(sg)),
+                explain: "Multiply first: " + a + " × " + x + " = " + a * x + ". Then " + (minus ? "subtract " : "add ") + b + ": " + ans + "." };
+        }
+        if (v === 1) {                                   // work backwards
+            const a = rnd(2, 9), b = rnd(2, 15), minus = Math.random() < 0.5, x = rnd(2, 12);
+            const out = a * x + (minus ? -b : b);
+            return { prompt: "The function machine multiplies the input by " + a + " and then " + (minus ? "subtracts " : "adds ") + b + ". The output is <b>" + sg(out) + "</b>. What was the input?",
+                equation: "x @mapsto " + lin(a, minus ? -b : b, "x"), type: "MCQ", solution: String(x),
+                pool: makeChoices(String(x), [Math.round((out + (minus ? -b : b)) / a * 10) / 10, out / a, out - b, out + b, x + 1, x - 1].filter(y => y !== x && Number.isFinite(y) && y > 0 && Number.isInteger(y)).map(String)),
+                explain: "Work backwards. Undo the " + (minus ? "subtraction: " + out + " + " + b : "addition: " + out + " − " + b) + " = " + a * x + ". Then divide by " + a + ": " + x + "." };
+        }
+        const a = rnd(2, 7), b = pick([-3, -2, -1, 1, 2, 3, 4, 5]);     // which function fits the table?
+        const xs = [1, 2, 3, 4], ys = xs.map(x => a * x + b);
+        const correct = M("x @mapsto " + lin(a, b, "x"));
+        const fakes = [lin(a, ys[0], "x"), lin(a + 1, b, "x"), lin(a, -b, "x"), lin(b > 0 ? b : a + 2, a, "x"), lin(1, a + b, "x")].filter(e => M("x @mapsto " + e) !== correct).map(e => M("x @mapsto " + e));
+        return { prompt: "Which function gives these pairs? &nbsp; <b>" + xs.map((x, i) => x + " → " + sg(ys[i])).join(",&nbsp; ") + "</b>", equation: "", type: "MCQ", solution: correct,
+            pool: makeChoices(correct, fakes),
+            explain: "The outputs go up by " + a + " each time, so the rule starts with " + a + "x. For x = 1 you get " + a + " but the output is " + sg(ys[0]) + ", so " + (b >= 0 ? "add " : "subtract ") + Math.abs(b) + "." };
+    }
+
+    function genExpressions(tier) {
+        const v = pick([0, 1, 2, 3]);
+        if (v === 0) {                                   // construct an expression
+            const a = rnd(2, 6), b = rnd(2, 6), item = pick([["pencil", "rubber"], ["pen", "notebook"], ["apple", "orange"]]);
+            const correct = M(a + "p + " + b + "q");
+            return { prompt: "A " + item[0] + " costs <b>p</b> cents and a " + item[1] + " costs <b>q</b> cents. Write an expression for the cost of " + a + " " + item[0] + "s and " + b + " " + item[1] + "s.",
+                equation: "", type: "MCQ", solution: correct,
+                pool: makeChoices(correct, [a * b + "pq", (a + b) + "pq", a + "p + " + b, a + "q + " + b + "p", (a + b) + "(p + q)"].map(e => M(e)).filter(x => x !== correct)),
+                explain: a + " " + item[0] + "s cost " + a + "p and " + b + " " + item[1] + "s cost " + b + "q, so the total is " + correct + "." };
+        }
+        if (v === 1) {                                   // use a formula
+            const a = rnd(3, 9), b = rnd(10, 40), n = rnd(4, 15), ans = a * n + b;
+            return { prompt: "The cost <b>C</b> dollars of hiring a bike for <b>n</b> hours is given by this formula. Find <b>C</b> when <b>n = " + n + "</b>.", equation: "C = " + a + "n + " + b, type: "MCQ", solution: String(ans),
+                pool: makeChoices(String(ans), [a * (n + b), (a + b) * n, a + b + n, ans + a, ans - b, a * n].filter(x => x !== ans).map(String)),
+                explain: "Substitute n = " + n + ": C = " + a + " × " + n + " + " + b + " = " + ans + "." };
+        }
+        if (v === 2) {                                   // derive a formula
+            const a = rnd(3, 12), b = rnd(2, 9);
+            const correct = M("C = " + b + "h + " + a);
+            return { prompt: "A plumber charges a call-out fee of <b>$" + a + "</b> plus <b>$" + b + "</b> for each hour of work. Write a formula for the total cost <b>C</b> dollars for <b>h</b> hours.", equation: "", type: "MCQ", solution: correct,
+                pool: makeChoices(correct, ["C = " + a + "h + " + b, "C = " + (a + b) + "h", "C = " + a * b + "h", "C = " + b + "(h + " + a + ")", "C = " + a + "(h + " + b + ")"].map(e => M(e)).filter(x => x !== correct)),
+                explain: "The fee " + a + " is paid once. The " + b + " is paid for every hour, so it is multiplied by h: " + correct + "." };
+        }
+        if (Math.random() < 0.5) {                       // simplify
+            const a = rnd(2, 7), b = rnd(2, 6), c = rnd(2, 9), d = rnd(1, 8);
+            const eqn = a + "x + " + c + " + " + b + "x - " + d;
+            const correct = (c - d) === 0 ? M((a + b) + "x") : M(lin(a + b, c - d, "x"));
+            return { prompt: "Simplify this expression:", equation: eqn, type: "MCQ", solution: correct,
+                pool: makeChoices(correct, [lin(a + b, c + d, "x"), lin(a * b, c - d, "x"), lin(a + b, d - c, "x"), (a + b + c - d) + "x", lin(a + b, c - d, "x") + "x"].map(e => M(e)).filter(x => x !== correct)),
+                explain: "Collect the x terms (" + a + "x + " + b + "x = " + (a + b) + "x) and the numbers (" + c + " − " + d + " = " + (c - d) + "): " + correct + "." };
+        }
+        const k = rnd(2, 9), x = rnd(2, 8), s = rnd(2, 9);     // expand brackets
+        const correct = M(lin(k, k * s, "x"));
+        return { prompt: "Expand the brackets:", equation: k + "(x + " + s + ")", type: "MCQ", solution: correct,
+            pool: makeChoices(correct, [lin(k, s, "x"), lin(k + s, 0, "x"), lin(k, k + s, "x"), (k * s) + "x"].map(e => M(e)).filter(x => x !== correct)),
+            explain: "Multiply both terms in the bracket by " + k + ": " + k + " × x = " + k + "x and " + k + " × " + s + " = " + k * s + ". So " + correct + "." };
+    }
+
+    // =====================================================================
+    //  UNIT 3 · PLACE VALUE, ORDERING AND ROUNDING
+    // =====================================================================
+    function genMulDiv01(tier) {
+        const dec = rnd(0, 2);
+        let n;
+        do { n = rnd(2, Math.pow(10, dec + 2) - 1); } while (n % 10 === 0);
+        const op = pick(["x0.1", "x0.01", "/0.1", "/0.01"]);
+        const startTxt = dstr(n, dec, true).replace(MINUS, "-");
+        let ans, fakes;
+        if (op === "x0.1") { ans = dstr(n, dec + 1); fakes = [dstr(n * 10, dec), dstr(n, dec + 2), dstr(n, Math.max(dec, 0)), dstr(n * 100, dec)]; }
+        else if (op === "x0.01") { ans = dstr(n, dec + 2); fakes = [dstr(n * 100, dec), dstr(n, dec + 1), dstr(n, dec + 3), dstr(n * 10, dec)]; }
+        else if (op === "/0.1") { ans = dstr(n * 10, dec); fakes = [dstr(n, dec + 1), dstr(n * 100, dec), dstr(n, dec + 2), dstr(n * 1000, dec)]; }
+        else { ans = dstr(n * 100, dec); fakes = [dstr(n, dec + 2), dstr(n * 10, dec), dstr(n * 1000, dec), dstr(n, dec + 1)]; }
+        fakes = fakes.filter(x => x !== ans);
+        const eq = startTxt + (op[0] === "x" ? " @times " : " @div ") + op.slice(1);
+        const why = {
+            "x0.1": "Multiplying by 0.1 is the same as dividing by 10. Every digit moves 1 place to the right.",
+            "x0.01": "Multiplying by 0.01 is the same as dividing by 100. Every digit moves 2 places to the right.",
+            "/0.1": "Dividing by 0.1 is the same as multiplying by 10. Every digit moves 1 place to the left.",
+            "/0.01": "Dividing by 0.01 is the same as multiplying by 100. Every digit moves 2 places to the left."
+        };
+        return { prompt: "Work out:", equation: eq, type: "MCQ", solution: ans, pool: makeChoices(ans, fakes), explain: why[op] + " The answer is " + ans + "." };
+    }
+
+    function genOrderDecimals(tier) {
+        const asc = Math.random() < 0.5, withNeg = Math.random() < 0.4;
+        const sep = asc ? " &lt; " : " &gt; ";
+        const used = new Set(), items = [];
+        let g = 0;
+        while (items.length < 4 && g++ < 300) {
+            const dec = rnd(1, 3);
+            let n = rnd(1, Math.pow(10, dec) * 6 - 1);
+            if (n % 10 === 0) n += 1;
+            let v = n * Math.pow(10, 3 - dec);
+            let neg = withNeg && Math.random() < 0.5;
+            if (neg) { v = -v; n = -n; }
+            if (!used.has(v)) { used.add(v); items.push({ v: v, txt: dstr(n, dec) }); }
+        }
+        const sorted = items.slice().sort((a, b) => asc ? a.v - b.v : b.v - a.v);
+        const render = arr => arr.map(x => x.txt).join(sep);
+        const correct = render(sorted);
+        const fakes = [render(sorted.slice().reverse())];
+        for (let i = 0; i < 3; i++) { const c = sorted.slice(); [c[i], c[i + 1]] = [c[i + 1], c[i]]; fakes.push(render(c)); }
+        fakes.push(render(shuffleArray(sorted)));
+        return { prompt: "Put these numbers in order, <b>" + (asc ? "smallest to largest" : "largest to smallest") + "</b>:" +
+                 bigNum(shuffleArray(items).map(x => x.txt).join(" &nbsp;&nbsp; "), 1.35),
+            equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, fakes.filter(f => f !== correct)),
+            explain: "Compare place by place from the left" + (withNeg ? ". Remember that a negative number with a bigger digit part is smaller" : "") + ". Correct order: " + correct + "." };
+    }
+
+    function genRounding(tier) {
+        if (Math.random() < 0.5) {                       // decimal places
+            const dec = rnd(3, 4), p = rnd(1, 2);
+            let n;
+            do { n = rnd(Math.pow(10, dec) + 100, Math.pow(10, dec + 1) * 4); } while (n % 10 === 0 || (n % Math.pow(10, dec - p) === Math.pow(10, dec - p) / 2));
+            const unit = Math.pow(10, dec - p), r = Math.round(n / unit);
+            const ans = dstr(r, p, true);
+            const fakes = [dstr(Math.floor(n / unit), p, true), dstr(Math.ceil(n / unit), p, true), dstr(Math.round(n / (unit * 10)), Math.max(p - 1, 0), true),
+                           dstr(Math.round(n / (unit / 10)), p + 1, true), dstr(Math.round(n / Math.pow(10, dec)), 0, true)].filter(x => x !== ans);
+            const nextDigit = Math.floor((n % unit) / (unit / 10));
+            return { prompt: "Round <b>" + dstr(n, dec, true) + "</b> to <b>" + p + " decimal place" + (p > 1 ? "s" : "") + "</b>.", equation: "", type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+                explain: "Look at the digit after decimal place " + p + ", which is " + nextDigit + ". " + (nextDigit >= 5 ? "It is 5 or more, so round up" : "It is less than 5, so round down") + ": " + ans + "." };
+        }
+        // significant figures (rounding done exactly on the digit string)
+        let x, dec, s, L, drop, rStr, g = 0;
+        do {
+            L = rnd(4, 6); dec = rnd(0, Math.min(L + 1, 5)); s = rnd(1, 3);
+            x = rnd(Math.pow(10, L - 1), Math.pow(10, L) - 1);
+            const str = String(x);
+            const keep = str.slice(0, s), next = +str[s];
+            let k = Number(keep) + (next >= 5 ? 1 : 0);
+            rStr = String(k).padEnd(s, "0");
+            if (String(k).length > s) continue;
+            rStr = String(k) + "0".repeat(L - s);
+            drop = L - s;
+            if (!(x % Math.pow(10, drop) === 5 * Math.pow(10, drop - 1) && false)) break;
+        } while (g++ < 200);
+        const r = Number(rStr);
+        function text(rr, d, sfc) {                      // show rounded value with exactly sfc significant figures
+            const len = String(x).length, dr = len - sfc;
+            if (d >= dr) return dstr(rr / Math.pow(10, dr), d - dr, true);
+            return fmt(rr / Math.pow(10, d));
+        }
+        const ans = text(r, dec, s);
+        const orig = dstr(x, dec, true);
+        const truncated = (() => { const t = Number(String(x).slice(0, s) + "0".repeat(L - s)); return text(t, dec, s); })();
+        const fakes = [truncated, s < L - 1 ? (function () { const s2 = s + 1; const k2 = Number(String(x).slice(0, s2)) + (+String(x)[s2] >= 5 ? 1 : 0); return String(k2).length > s2 ? null : text(Number(String(k2) + "0".repeat(L - s2)), dec, s2); })() : null,
+                       s > 1 ? (function () { const s2 = s - 1; const k2 = Number(String(x).slice(0, s2)) + (+String(x)[s2] >= 5 ? 1 : 0); return String(k2).length > s2 ? null : text(Number(String(k2) + "0".repeat(L - s2)), dec, s2); })() : null,
+                       dec > 0 ? dstr(Math.round(x / Math.pow(10, Math.max(dec - s, 0))), Math.min(s, dec), true) : null]
+            .filter(y => y && y !== ans);
+        const sf = s === 1 ? "1 significant figure" : s + " significant figures";
+        return { prompt: "Round <b>" + orig + "</b> to <b>" + sf + "</b>.", equation: "", type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+            explain: "Count " + s + " significant figure" + (s > 1 ? "s" : "") + " from the first non-zero digit, then look at the next digit: " + (+String(x)[s] >= 5 ? "it is 5 or more, so round up" : "it is less than 5, so round down") + ". The answer is " + ans + "." };
+    }
+
+    function genDecAddSub(tier) {
+        const plus = Math.random() < 0.5;
+        const mk = d => { let n; do { n = rnd(Math.pow(10, d), Math.pow(10, d + 2) - 1); } while (n % 10 === 0); return { n: n, d: d }; };
+        let x = mk(1), y = mk(2);
+        if (Math.random() < 0.5) { const t = x; x = y; y = t; }
+        const dm = 2;
+        let X = x.n * Math.pow(10, dm - x.d), Y = y.n * Math.pow(10, dm - y.d);
+        if (!plus && X < Y) { const t = x; x = y; y = t; const t2 = X; X = Y; Y = t2; }
+        const ansInt = plus ? X + Y : X - Y;
+        const ans = dstr(ansInt, dm, false);
+        const fakes = [dstr(ansInt + 10, dm), dstr(ansInt - 10, dm), dstr(ansInt + 100, dm), dstr(perturbInt(ansInt), dm), dstr(plus ? x.n + y.n : Math.abs(x.n - y.n), Math.max(x.d, y.d))]
+            .filter(v => v !== ans && v.indexOf(MINUS) < 0);
+        const xT = dstr(x.n, x.d, true), yT = dstr(y.n, y.d, true);
+        return { prompt: "Work out:", equation: xT + (plus ? " + " : " - ") + yT, type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+            explain: "Line up the decimal points (" + dstr(X, dm, true) + (plus ? " + " : " − ") + dstr(Y, dm, true) + "). The answer is " + ans + "." };
+    }
+
+    function genDecMulDiv(tier) {
+        const v = pick([0, 1, 2]);
+        if (v === 0) {                                   // multiply by a decimal
+            const d1 = rnd(1, 2), d2 = rnd(1, 2);
+            let x, y;
+            do { x = rnd(2, Math.pow(10, d1 + 1) - 1); y = rnd(2, Math.pow(10, d2 + 1) - 1); } while (x % 10 === 0 || y % 10 === 0);
+            const p = x * y, dd = d1 + d2;
+            const ans = dstr(p, dd);
+            const fakes = [dstr(p, dd + 1), dstr(p, dd - 1 < 0 ? 0 : dd - 1), dstr(p, Math.max(d1, d2)), dstr(perturbInt(p), dd), dstr(p * 10, dd)].filter(f => f !== ans);
+            return { prompt: "Work out:", equation: dstr(x, d1, true) + " @times " + dstr(y, d2, true), type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+                explain: "Multiply the numbers without the decimal points: " + x + " × " + y + " = " + p + ". The two numbers have " + dd + " decimal places altogether, so the answer is " + ans + "." };
+        }
+        if (v === 1) {                                   // divide a decimal by a whole number
+            const w = rnd(2, 9), dq = rnd(1, 2);
+            let q;
+            do { q = rnd(12, Math.pow(10, dq + 1) * 3); } while (q % 10 === 0);
+            const dividend = q * w;
+            const ans = dstr(q, dq);
+            const fakes = [dstr(q, dq + 1), dstr(q * 10, dq), dstr(q, Math.max(dq - 1, 0)), dstr(perturbInt(q), dq), dstr(q + 1, dq)].filter(f => f !== ans);
+            return { prompt: "Work out:", equation: dstr(dividend, dq, true) + " @div " + w, type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+                explain: "Check by multiplying: " + ans + " × " + w + " = " + dstr(dividend, dq) + ". So " + dstr(dividend, dq) + " ÷ " + w + " = " + ans + "." };
+        }
+        const db = rnd(1, 2);                             // divide by a decimal
+        let bn;
+        do { bn = rnd(2, Math.pow(10, db + 1) - 1); } while (bn % 10 === 0);
+        const q = rnd(3, 45);
+        const dividend = bn * q;
+        const ans = String(q);
+        const fakes = [q * 10, q / 10, q * 100, perturbInt(q), q + 1, q - 1].filter(f => f !== q && f > 0).map(f => dstr(Math.round(f * 10), 1));
+        return { prompt: "Work out:", equation: dstr(dividend, db, true) + " @div " + dstr(bn, db, true), type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+            explain: "Multiply both numbers by " + Math.pow(10, db) + " so that the divisor is a whole number: " + fmt(dividend) + " ÷ " + bn + " = " + q + "." };
+    }
+
+    function numFmt(z) {
+        const r = Math.round(z * 1e6) / 1e6, parts = String(r).split(".");
+        return commas(parts[0]) + (parts[1] ? "." + parts[1] : "");
+    }
+    function genEstimating(tier) {
+        const v = pick([0, 1, 2]);
+        const noisy = (a, s) => {                         // number that rounds to a x 10^(s) with 1 s.f.
+            let delta;
+            do { delta = rnd(-4, 4); } while (delta === 0);
+            const n = 10 * a + delta, sh = s - 1;           // value = n x 10^(s-1)
+            return { n: n, sh: sh, txt: sh >= 0 ? fmt(n * Math.pow(10, sh)) : dstr(n, -sh), val: n * Math.pow(10, sh) };
+        };
+        if (v === 0) {                                    // estimate a product
+            const a = rnd(2, 9), b = rnd(2, 9), sa = rnd(0, 2), sb = rnd(-1, 1);
+            const A = noisy(a, sa), B = noisy(b, sb);
+            const est = a * b * Math.pow(10, sa + sb);
+            const fx = numFmt, estTxt = numFmt(est);
+            const fakes = [est * 10, est / 10, (a + 1) * (b + 1) * Math.pow(10, sa + sb), (a - 1) * (b - 1) * Math.pow(10, sa + sb), (a * b + a + b) * Math.pow(10, sa + sb)].filter(x => x !== est && x > 0).map(fx);
+            return { prompt: "Estimate the value of this calculation by rounding each number to <b>1 significant figure</b>:", equation: A.txt + " @times " + B.txt, type: "MCQ", solution: estTxt, pool: makeChoices(estTxt, fakes),
+                explain: "Round " + A.txt + " to " + fx(a * Math.pow(10, sa)) + " and " + B.txt + " to " + fx(b * Math.pow(10, sb)) + ". Then " + fx(a * Math.pow(10, sa)) + " × " + fx(b * Math.pow(10, sb)) + " = " + estTxt + "." };
+        }
+        if (v === 1) {                                    // estimate a division
+            const B = pick([2, 3, 4]), q = pick(B === 2 ? [3, 4] : B === 3 ? [2, 3] : [2]), a = B * q;
+            const sa = rnd(1, 3), sb = rnd(0, 1);
+            const A = noisy(a, sa), D = noisy(B, sb);
+            const est = q * Math.pow(10, sa - sb);
+            const fx = numFmt;
+            const fakes = [est * 10, est / 10, (a + 1) / B * Math.pow(10, sa - sb), q * Math.pow(10, sa - sb) + B, est * 2].filter(x => x !== est && x > 0).map(fx);
+            return { prompt: "Estimate the value of this calculation by rounding each number to <b>1 significant figure</b>:", equation: A.txt + " @div " + D.txt, type: "MCQ", solution: fx(est), pool: makeChoices(fx(est), fakes),
+                explain: "Round " + A.txt + " to " + fx(a * Math.pow(10, sa)) + " and " + D.txt + " to " + fx(B * Math.pow(10, sb)) + ". Then " + fx(a * Math.pow(10, sa)) + " ÷ " + fx(B * Math.pow(10, sb)) + " = " + fx(est) + "." };
+        }
+        const a = rnd(2, 9), b = rnd(2, 9), s = rnd(0, 1);        // which calculation gives the best estimate?
+        const A = noisy(a, s), B = noisy(b, s);
+        const good = fmt(a * Math.pow(10, s)) + " × " + fmt(b * Math.pow(10, s));
+        const bad = [fmt((a - 1) * Math.pow(10, s)) + " × " + fmt((b - 1) * Math.pow(10, s)), fmt((a + 1) * Math.pow(10, s)) + " × " + fmt((b + 1) * Math.pow(10, s)),
+                     fmt(a * Math.pow(10, s + 1)) + " × " + fmt(b * Math.pow(10, s)), fmt(a * Math.pow(10, s)) + " × " + fmt((b + 1) * Math.pow(10, s))].filter(x => x !== good);
+        return { prompt: "Which calculation gives the <b>best estimate</b> of this product?" + bigNum(A.txt + " × " + B.txt, 1.5), equation: "", type: "MCQ", solution: good, pool: makeChoices(good, bad),
+            explain: "Round each number to 1 significant figure: " + A.txt + " rounds to " + fmt(a * Math.pow(10, s)) + " and " + B.txt + " rounds to " + fmt(b * Math.pow(10, s)) + "." };
+    }
+
+    // =====================================================================
+    //  UNIT 4 · LENGTH, MASS AND CAPACITY
+    // =====================================================================
+    const UNIT_ITEMS = [
+        ["the distance from Beirut to Tripoli", "kilometres (km)", ["metres (m)", "centimetres (cm)", "millimetres (mm)"]],
+        ["the thickness of a coin", "millimetres (mm)", ["kilometres (km)", "metres (m)", "litres (l)"]],
+        ["the length of a football pitch", "metres (m)", ["millimetres (mm)", "kilometres (km)", "centimetres (cm)"]],
+        ["the mass of an elephant", "tonnes (t)", ["grams (g)", "milligrams (mg)", "millilitres (ml)"]],
+        ["the mass of an apple", "grams (g)", ["tonnes (t)", "kilograms (kg)", "milligrams (mg)"]],
+        ["the mass of a bag of rice", "kilograms (kg)", ["tonnes (t)", "milligrams (mg)", "millilitres (ml)"]],
+        ["the mass of a grain of salt", "milligrams (mg)", ["kilograms (kg)", "tonnes (t)", "metres (m)"]],
+        ["the amount of water in a cup of tea", "millilitres (ml)", ["litres (l)", "kilolitres", "grams (g)"]],
+        ["the amount of water in a swimming pool", "litres (l)", ["millilitres (ml)", "centimetres (cm)", "grams (g)"]],
+        ["the amount of medicine in a spoon", "millilitres (ml)", ["litres (l)", "kilograms (kg)", "metres (m)"]],
+        ["the length of a pencil", "centimetres (cm)", ["kilometres (km)", "litres (l)", "tonnes (t)"]],
+        ["the height of a tall building", "metres (m)", ["millimetres (mm)", "milligrams (mg)", "millilitres (ml)"]],
+        ["the capacity of a car fuel tank", "litres (l)", ["millilitres (ml)", "kilometres (km)", "milligrams (mg)"]],
+        ["the length of an ant", "millimetres (mm)", ["metres (m)", "kilometres (km)", "litres (l)"]]
+    ];
+    function genUnits(tier) {
+        const it = pick(UNIT_ITEMS);
+        return { prompt: "Which is the <b>most suitable unit</b> for measuring " + it[0] + "?", equation: "", type: "MCQ", solution: it[1], pool: makeChoices(it[1], it[2].slice()),
+            explain: "Choose a unit of a sensible size for the object. " + it[1].split(" (")[0].replace(/^./, c => c.toUpperCase()) + " is the best choice for " + it[0] + "." };
+    }
+    function genKmMiles(tier) {
+        const v = pick([0, 1, 2]);
+        if (v === 0) {
+            const mi = 5 * rnd(2, 24), km = mi * 8 / 5;
+            return { prompt: "Use the fact that <b>5 miles is about 8 kilometres</b>. Convert " + mi + " miles to kilometres.", equation: "", type: "MCQ", solution: km + " km",
+                pool: makeChoices(km + " km", [mi * 5 / 8, mi * 8, mi + 3, km + 8, km - 8, mi * 5].filter(x => x !== km && x > 0).map(x => (Math.round(x * 10) / 10) + " km")),
+                explain: "5 miles = 8 km, so " + mi + " miles = " + mi / 5 + " × 8 = " + km + " km." };
+        }
+        if (v === 1) {
+            const km = 8 * rnd(2, 20), mi = km * 5 / 8;
+            return { prompt: "Use the fact that <b>5 miles is about 8 kilometres</b>. Convert " + km + " kilometres to miles.", equation: "", type: "MCQ", solution: mi + " miles",
+                pool: makeChoices(mi + " miles", [km * 8 / 5, km * 5, km - 3, mi + 5, mi - 5, km / 5].filter(x => x !== mi && x > 0).map(x => (Math.round(x * 10) / 10) + " miles")),
+                explain: "8 km = 5 miles, so " + km + " km = " + km / 8 + " × 5 = " + mi + " miles." };
+        }
+        const mi = 5 * rnd(4, 14), km = mi * 8 / 5 + pick([-8, -6, 6, 8, 10, -10]);
+        const miInKm = mi * 8 / 5;
+        const longer = miInKm > km ? mi + " miles" : km + " km";
+        return { prompt: "Which is the <b>longer</b> distance: " + mi + " miles or " + km + " kilometres? (5 miles is about 8 km)", equation: "", type: "MCQ", solution: longer,
+            pool: [mi + " miles", km + " km", "They are the same distance"],
+            explain: mi + " miles = " + mi / 5 + " × 8 = " + miInKm + " km. Compare " + miInKm + " km with " + km + " km: " + (miInKm > km ? mi + " miles is longer." : km + " km is longer.") };
+    }
+
+    // =====================================================================
+    //  UNIT 8 · SHAPES AND GEOMETRIC REASONING
+    // =====================================================================
+    const SYM = [
+        ["an equilateral triangle", 3, 3, 3], ["an isosceles triangle", 1, 1, 0], ["a scalene triangle", 0, 1, 0], ["a square", 4, 4, 4], ["a rectangle", 2, 2, 0],
+        ["a rhombus", 2, 2, 0], ["a parallelogram", 0, 2, 0], ["a kite", 1, 1, 0], ["an isosceles trapezium", 1, 1, 0], ["a regular pentagon", 5, 5, 5], ["a regular hexagon", 6, 6, 6], ["a regular octagon", 8, 8, 8]
+    ];
+    function polySVG(n) {
+        const cx = 80, cy = 70, r = 56;
+        const pts = Array.from({ length: n }, (_, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / n; return (cx + r * Math.cos(a)).toFixed(1) + "," + (cy + r * Math.sin(a)).toFixed(1); }).join(" ");
+        return '<svg viewBox="0 0 160 140" width="150" height="131" role="img" aria-label="regular polygon"><polygon points="' + pts + '" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/></svg>';
+    }
+    function genSymmetry(tier) {
+        const v = pick([0, 1, 2]);
+        if (v === 2) {                                    // congruent triangles
+            const a = rnd(4, 9), b = rnd(a + 1, 12), c = rnd(b + 1, 15);
+            const names = pick([["ABC", "PQR"], ["DEF", "XYZ"]]);
+            const L = names[0], R = names[1];
+            const pairs = [[0, 1], [1, 2], [0, 2]], sides = [a, b, c];
+            const k = rnd(0, 2), val = sides[k], ask = pairs[k];
+            const sideL = p => L[p[0]] + L[p[1]], sideR = p => R[p[0]] + R[p[1]];
+            return { prompt: "Triangle " + L + " is <b>congruent</b> to triangle " + R + ". In triangle " + L + ", &nbsp;" + pairs.map((p, i) => sideL(p) + " = " + sides[i] + " cm").join(", &nbsp;") + ". How long is side <b>" + sideR(ask) + "</b>?", equation: "",
+                type: "MCQ", solution: val + " cm", pool: makeChoices(val + " cm", sides.filter(x => x !== val).map(x => x + " cm").concat([(val + 1) + " cm", (val - 1) + " cm"])),
+                explain: "Congruent shapes have the same size and shape, so matching sides are equal. Side " + sideL(ask) + " matches side " + sideR(ask) + ", so " + sideR(ask) + " = " + val + " cm." };
+        }
+        const it = pick(SYM);
+        const regular = it[0].indexOf("regular") >= 0 || it[0] === "an equilateral triangle" || it[0] === "a square";
+        const n = it[0] === "an equilateral triangle" ? 3 : it[0] === "a square" ? 4 : it[0].indexOf("pentagon") >= 0 ? 5 : it[0].indexOf("hexagon") >= 0 ? 6 : it[0].indexOf("octagon") >= 0 ? 8 : 0;
+        const pic = n ? diagramBox(polySVG(n)) : "";
+        const ans = v === 0 ? it[1] : it[2];
+        const pool = [0, 1, 2, 3, 4, 5, 6, 8].filter(x => x !== ans);
+        const near = [ans + 1, ans - 1, ans * 2, ans + 2].filter(x => x >= 0 && x !== ans && pool.includes(x));
+        return { prompt: v === 0 ? "How many <b>lines of symmetry</b> does " + it[0] + " have?" + pic : "What is the <b>order of rotational symmetry</b> of " + it[0] + "?" + pic,
+            equation: "", type: "MCQ", solution: String(ans), pool: makeChoices(String(ans), near.concat(shuffleArray(pool)).map(String)),
+            explain: v === 0 ? (ans === 0 ? "You cannot fold " + it[0] + " so that the two halves match, so it has no lines of symmetry." : "Imagine folding " + it[0] + " so the two halves match exactly. There are " + ans + " ways.")
+                             : "Turn " + it[0] + " through a full turn. It looks the same " + ans + " time" + (ans === 1 ? "" : "s") + " (order " + ans + ")." };
+    }
+
+    const QUAD_NAMES = ["square", "rectangle", "rhombus", "parallelogram", "trapezium", "kite"];
+    const QUAD_FACTS = [
+        ["has <b>exactly one pair</b> of parallel sides", "trapezium"],
+        ["has <b>four equal sides</b> but its angles are <b>not right angles</b>", "rhombus"],
+        ["has <b>four equal sides</b> and <b>four right angles</b>", "square"],
+        ["has <b>four right angles</b> but its adjacent sides are <b>not equal</b>", "rectangle"],
+        ["has opposite sides <b>equal and parallel</b>, but <b>no right angles</b> and adjacent sides not equal", "parallelogram"],
+        ["has <b>two pairs of equal adjacent sides</b>, but its opposite sides are <b>not equal</b>", "kite"],
+        ["has <b>diagonals that bisect each other at right angles</b> and are <b>not equal</b> in length", "rhombus"],
+        ["has <b>diagonals that are equal</b> in length and bisect each other, but <b>not all sides are equal</b>", "rectangle"],
+        ["has <b>exactly two lines of symmetry</b> and <b>no right angles</b>", "rhombus"],
+        ["has <b>one line of symmetry</b> and <b>no parallel sides</b>", "kite"],
+        ["has <b>four lines of symmetry</b>", "square"],
+        ["has <b>no lines of symmetry</b> but <b>opposite sides are parallel</b>", "parallelogram"]
+    ];
+    function genQuads(tier) {
+        const f = pick(QUAD_FACTS);
+        const others = shuffleArray(QUAD_NAMES.filter(x => x !== f[1])).slice(0, 3);
+        const why = {
+            trapezium: "A trapezium has exactly one pair of parallel sides.", rhombus: "A rhombus has four equal sides and opposite angles equal; its diagonals cross at right angles.",
+            square: "A square has four equal sides and four right angles.", rectangle: "A rectangle has four right angles and opposite sides equal.",
+            parallelogram: "A parallelogram has opposite sides equal and parallel.", kite: "A kite has two pairs of equal adjacent sides."
+        };
+        return { prompt: "Which quadrilateral " + f[0] + "?", equation: "", type: "MCQ", solution: cap2(f[1]), pool: makeChoices(cap2(f[1]), others.map(cap2)), explain: why[f[1]] };
+    }
+    function cap2(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    // ---- cube nets (checked by rolling a cube over the net) ----
+    function normCells(cells) {
+        let minx = Math.min(...cells.map(c => c[0])), miny = Math.min(...cells.map(c => c[1]));
+        return cells.map(c => [c[0] - minx, c[1] - miny]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    }
+    function canonKey(cells) {
+        const forms = [];
+        let cur = cells.map(c => [c[0], c[1]]);
+        for (let f = 0; f < 2; f++) {
+            for (let r = 0; r < 4; r++) {
+                cur = cur.map(c => [-c[1], c[0]]);
+                forms.push(JSON.stringify(normCells(cur)));
+            }
+            cur = cur.map(c => [-c[0], c[1]]);
+        }
+        return forms.sort()[0];
+    }
+    function isCubeNet(cells) {
+        const key = c => c[0] + "," + c[1];
+        const set = new Set(cells.map(key));
+        const seen = new Map();
+        // orientation: [top, bottom, north, south, east, west]
+        const start = cells[0];
+        const queue = [[start, [0, 1, 2, 3, 4, 5]]];
+        seen.set(key(start), 1);
+        const bottoms = new Set([1]);
+        while (queue.length) {
+            const [c, o] = queue.shift();
+            const moves = [[1, 0, "E"], [-1, 0, "W"], [0, -1, "N"], [0, 1, "S"]];
+            for (const [dx, dy, d] of moves) {
+                const n = [c[0] + dx, c[1] + dy];
+                if (!set.has(key(n)) || seen.has(key(n))) continue;
+                let [t, b, no, so, e, w] = o, no2;
+                if (d === "E") no2 = [w, e, no, so, t, b];
+                else if (d === "W") no2 = [e, w, no, so, b, t];
+                else if (d === "N") no2 = [so, no, t, b, e, w];
+                else no2 = [no, so, b, t, e, w];
+                seen.set(key(n), 1);
+                bottoms.add(no2[1]);
+                queue.push([n, no2]);
+            }
+        }
+        return seen.size === 6 && bottoms.size === 6;
+    }
+    function randomHexomino() {
+        const cells = [[0, 0]];
+        const has = c => cells.some(x => x[0] === c[0] && x[1] === c[1]);
+        while (cells.length < 6) {
+            const base = pick(cells), d = pick([[1, 0], [-1, 0], [0, 1], [0, -1]]);
+            const n = [base[0] + d[0], base[1] + d[1]];
+            if (!has(n)) cells.push(n);
+        }
+        return normCells(cells);
+    }
+    function netSVG(cells) {
+        const w = Math.max(...cells.map(c => c[0])) + 1, h = Math.max(...cells.map(c => c[1])) + 1, s = 26;
+        let svg = '<svg viewBox="0 0 ' + (w * s + 4) + ' ' + (h * s + 4) + '" width="' + (w * s + 4) * 1.0 + '" height="' + (h * s + 4) * 1.0 + '" role="img" aria-label="net">';
+        cells.forEach(c => { svg += '<rect x="' + (c[0] * s + 2) + '" y="' + (c[1] * s + 2) + '" width="' + s + '" height="' + s + '" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2"/>'; });
+        return svg + '</svg>';
+    }
+    const SOLIDS = [
+        ["<b>2 triangles</b> and <b>3 rectangles</b>", "Triangular prism", "A triangular prism has 2 triangular ends and 3 rectangular faces."],
+        ["<b>1 square</b> and <b>4 triangles</b>", "Square-based pyramid", "A square-based pyramid has a square base and 4 triangular faces."],
+        ["<b>6 rectangles</b> (not all squares)", "Cuboid", "A cuboid has 6 rectangular faces."],
+        ["<b>6 identical squares</b>", "Cube", "A cube has 6 identical square faces."],
+        ["<b>2 circles</b> and <b>1 curved rectangle</b>", "Cylinder", "A cylinder has 2 circular ends and a curved surface that opens out into a rectangle."],
+        ["<b>4 triangles</b> (all the same size)", "Triangular-based pyramid", "A triangular-based pyramid (tetrahedron) has 4 triangular faces."]
+    ];
+    function genNets(tier) {
+        if (Math.random() < 0.55) {                       // which picture is a net of a cube?
+            const valid = [], invalid = [], keys = new Set();
+            let g = 0;
+            while ((valid.length < 1 || invalid.length < 3) && g++ < 3000) {
+                const h = randomHexomino(), k = canonKey(h);
+                if (keys.has(k)) continue;
+                keys.add(k);
+                if (isCubeNet(h)) { if (valid.length < 1) valid.push(h); }
+                else if (invalid.length < 3) invalid.push(h);
+            }
+            const correct = netSVG(valid[0]);
+            return { prompt: "Which of these is a <b>net of a cube</b>?", equation: "", type: "MCQ", solution: correct,
+                pool: makeChoices(correct, invalid.map(netSVG)),
+                explain: "A net of a cube is made of 6 squares that fold up to make a cube with no overlaps. The other shapes would overlap or leave gaps when folded." };
+        }
+        const s = pick(SOLIDS);
+        const others = shuffleArray(SOLIDS.filter(x => x[1] !== s[1])).slice(0, 3).map(x => x[1]);
+        return { prompt: "A net is made of " + s[0] + ". Which solid does it fold up to make?", equation: "", type: "MCQ", solution: s[1], pool: makeChoices(s[1], others), explain: s[2] };
+    }
+
+    function genScale(tier) {
+        const v = pick([0, 1, 2, 3]);
+        if (v === 0) {                                    // map scale 1 : n, find real distance in km
+            const n = pick([25000, 50000, 100000, 200000]), cm = rnd(2, 12);
+            const km = cm * n / 100000;
+            const ans = (Math.round(km * 100) / 100) + " km";
+            return { prompt: "A map has a scale of <b>1 : " + fmt(n) + "</b>. Two towns are " + cm + " cm apart on the map. What is the real distance between them?", equation: "", type: "MCQ", solution: ans,
+                pool: makeChoices(ans, [km * 10, km / 10, cm * n / 1000, cm * n / 10000, km * 100].filter(x => x !== km && x > 0).map(x => (Math.round(x * 100) / 100) + " km")),
+                explain: cm + " cm × " + fmt(n) + " = " + fmt(cm * n) + " cm = " + fmt(cm * n / 100) + " m = " + ans + "." };
+        }
+        if (v === 1) {                                    // scale 1 cm : k m, find real length
+            const k = pick([2, 5, 10, 20, 50]), d = pick([2.5, 3, 4, 4.5, 6, 7.5, 8]);
+            const real = d * k;
+            const ans = (Math.round(real * 10) / 10) + " m";
+            return { prompt: "A scale drawing uses <b>1 cm to represent " + k + " m</b>. A wall is " + d + " cm long on the drawing. What is the real length of the wall?", equation: "", type: "MCQ", solution: ans,
+                pool: makeChoices(ans, [d + k, real * 10, real / 10, d / k, real * 2].filter(x => x !== real && x > 0).map(x => (Math.round(x * 10) / 10) + " m")),
+                explain: d + " × " + k + " = " + ans + "." };
+        }
+        if (v === 2) {                                    // model car: find model length
+            const n = pick([10, 20, 25, 50]), real = pick([200, 400, 500, 600, 1000]);
+            const model = real / n;
+            const ans = (Math.round(model * 10) / 10) + " cm";
+            return { prompt: "A model car is made to a scale of <b>1 : " + n + "</b>. The real car is " + fmt(real) + " cm long. How long is the model?", equation: "", type: "MCQ", solution: ans,
+                pool: makeChoices(ans, [real * n, model * 10, model / 10, real - n, n / real * 100].filter(x => x !== model && x > 0).map(x => (Math.round(x * 10) / 10) + " cm")),
+                explain: "Divide the real length by " + n + ": " + fmt(real) + " ÷ " + n + " = " + ans + "." };
+        }
+        const n = pick([20, 50, 100, 200]), room = pick([4, 5, 6, 8, 10]);      // room drawing
+        const cm = room * 100 / n;
+        const ans = (Math.round(cm * 10) / 10) + " cm";
+        return { prompt: "A plan of a room uses a scale of <b>1 : " + n + "</b>. The room is " + room + " m wide. How wide is the room on the plan?", equation: "", type: "MCQ", solution: ans,
+            pool: makeChoices(ans, [room * n, cm * 10, cm / 10, room / n * 1, room * 100].filter(x => x !== cm && x > 0).map(x => (Math.round(x * 10) / 10) + " cm")),
+            explain: room + " m = " + room * 100 + " cm. Divide by " + n + ": " + room * 100 + " ÷ " + n + " = " + ans + "." };
+    }
+
+    // =====================================================================
+    //  THE QUIZ BLUEPRINT: 20 questions covering the Term 1 units
+    // =====================================================================
+    const TOPICS = {
+        int_arith:    { label: "Arithmetic with Integers",            gen: genIntArith },
+        factors:      { label: "Multiples and Factors (HCF / LCM)",   gen: genFactors },
+        primes:       { label: "Prime Numbers and Prime Factors",     gen: genPrimes },
+        powers_roots: { label: "Powers and Roots",                    gen: genPowersRoots },
+        sequences:    { label: "Generating Sequences and Rules",      gen: genSequences },
+        nth_term:     { label: "Using the nth Term",                  gen: genNthTerm },
+        functions:    { label: "Functions and Mappings",              gen: genFunctions },
+        expressions:  { label: "Linear Expressions and Formulae",     gen: genExpressions },
+        mul_div_01:   { label: "Multiplying / Dividing by 0.1 and 0.01", gen: genMulDiv01 },
+        order:        { label: "Ordering Decimals",                   gen: genOrderDecimals },
+        rounding:     { label: "Rounding",                            gen: genRounding },
+        dec_add_sub:  { label: "Adding and Subtracting Decimals",     gen: genDecAddSub },
+        dec_mul_div:  { label: "Multiplying and Dividing Decimals",   gen: genDecMulDiv },
+        estimating:   { label: "Estimating and Approximating",        gen: genEstimating },
+        units:        { label: "Choosing Suitable Units",             gen: genUnits },
+        km_miles:     { label: "Kilometres and Miles",                gen: genKmMiles },
+        symmetry:     { label: "Symmetry and Congruent Shapes",       gen: genSymmetry },
+        quads:        { label: "Classifying Quadrilaterals",          gen: genQuads },
+        nets:         { label: "Nets of Solids",                      gen: genNets },
+        scale:        { label: "Scale Drawings",                      gen: genScale }
+    };
+    const BLUEPRINT = [
+        ["easy", "int_arith"], ["easy", "sequences"], ["easy", "mul_div_01"], ["easy", "dec_add_sub"], ["easy", "units"], ["easy", "symmetry"],
+        ["medium", "factors"], ["medium", "powers_roots"], ["medium", "nth_term"], ["medium", "expressions"], ["medium", "order"], ["medium", "rounding"],
+        ["medium", "km_miles"], ["medium", "quads"],
+        ["hard", "primes"], ["hard", "functions"], ["hard", "dec_mul_div"], ["hard", "estimating"], ["hard", "nets"], ["hard", "scale"]
+    ];
+
+    function constructProblem(tier, topic) {
+        const t = TOPICS[topic], q = t.gen(tier);
+        q.tier = tier; q.topic = topic; q.categoryType = t.label;
+        return q;
+    }
+    function validProblem(q) {
+        return Array.isArray(q.pool) && q.pool.length >= 3 && q.pool.includes(q.solution) && new Set(q.pool).size === q.pool.length;
+    }
+
+    function generateEntireQuizSuite() {
+        generatedSuite = [];
+        const seen = new Set();
+        const byTier = { easy: [], medium: [], hard: [] };
+        BLUEPRINT.forEach(slot => {
+            let cand = null, guard = 0;
+            while (guard++ < 300) {
+                let c;
+                try { c = constructProblem(slot[0], slot[1]); } catch (e) { continue; }
+                const fp = (c.prompt + "||" + c.equation + "||" + c.solution).replace(/\s+/g, "");
+                if (validProblem(c) && !seen.has(fp)) { cand = c; seen.add(fp); break; }
+            }
+            if (!cand) { do { cand = constructProblem(slot[0], slot[1]); } while (!validProblem(cand)); }
+            byTier[slot[0]].push(cand);
+        });
+        generatedSuite = [...shuffleArray(byTier.easy), ...shuffleArray(byTier.medium), ...shuffleArray(byTier.hard)];
+    }
+/*GEN-END*/
+
+
+    // ========================================== -->
+    // INTERFACE VIEW SYNCHRONIZER                 -->
+    // ========================================== -->
+
+    function synchroniseQuestionIndex() {
+        const activeProblem = generatedSuite[traversalIndex];
+
+        document.getElementById('idx-current').innerText = traversalIndex + 1;
+        document.getElementById('idx-total').innerText = APP_LIMITS.totalItems;
+        document.getElementById('txt-tier-badge').innerText = activeProblem.tier + " level";
+
+        let equationBlock = activeProblem.equation ? `
+            <div style="font-size:1.45rem; font-weight:bold; color: var(--primary); margin-top: 8px; text-align:center;">
+                $$${tx(activeProblem.equation)}$$
+            </div>
+        ` : "";
+
+        document.getElementById('math-prompt-container').innerHTML = `
+            <div style="font-size:1.1rem; line-height:1.5; color: var(--text-main);">
+                ${activeProblem.prompt}
+                ${equationBlock}
+            </div>
+        `;
+
+        document.getElementById('box-mcq').classList.add('hidden');
+        document.getElementById('box-tf').classList.add('hidden');
+
+        if (activeProblem.type === 'MCQ') {
+            const mcqContainer = document.getElementById('box-mcq');
+            mcqContainer.innerHTML = "";
+            mcqContainer.classList.remove('hidden');
+
+            activeProblem.pool.forEach(choice => {
+                const buttonElement = document.createElement('button');
+                buttonElement.className = `opt-btn p-3 text-center transition flex justify-center items-center ${storedResponses[traversalIndex] === choice ? 'active' : ''}`;
+                buttonElement.style.minHeight = "48px";
+                buttonElement.style.fontSize = "1.2rem";
+                buttonElement.innerHTML = choice;                // choices may contain inline maths
+                buttonElement.onclick = () => {
+                    document.querySelectorAll('#box-mcq .opt-btn').forEach(el => el.classList.remove('active'));
+                    buttonElement.classList.add('active');
+                    recordInput(choice);
+                };
+                mcqContainer.appendChild(buttonElement);
+            });
+            if (window.katex && typeof window.renderMathInElement === 'function') {
+                window.renderMathInElement(mcqContainer);
+            }
+        } else if (activeProblem.type === 'TF') {
+            document.getElementById('box-tf').classList.remove('hidden');
+            document.querySelectorAll('#box-tf .flag-tf').forEach(btn => {
+                btn.classList.remove('active');
+                if (storedResponses[traversalIndex] === btn.getAttribute('data-core')) btn.classList.add('active');
+                btn.onclick = () => {
+                    document.querySelectorAll('#box-tf .flag-tf').forEach(el => el.classList.remove('active'));
+                    btn.classList.add('active');
+                    recordInput(btn.getAttribute('data-core'));
+                };
+            });
+        }
+
+        buildShortcutsGridMatrix();
+        document.getElementById('action-back').disabled = traversalIndex === 0;
+        document.getElementById('action-forward').innerText = traversalIndex === APP_LIMITS.totalItems - 1 ? "Finish Quiz" : "Next →";
+
+        if (window.katex && typeof window.renderMathInElement === 'function') {
+            window.renderMathInElement(document.getElementById('math-prompt-container'));
+        }
+    }
+
+    function recordInput(value) { storedResponses[traversalIndex] = value; buildShortcutsGridMatrix(); }
+
+    function buildShortcutsGridMatrix() {
+        const grid = document.getElementById('navigation-shortcut-grid');
+        grid.innerHTML = "";
+        for (let i = 0; i < APP_LIMITS.totalItems; i++) {
+            const b = document.createElement('button');
+            b.innerText = i + 1;
+            let bgStyle = "bg-slate-100 text-slate-600 border border-slate-300";
+            if (traversalIndex === i) bgStyle = "bg-sky-600 text-white font-bold ring-2 ring-sky-300";
+            else if (storedResponses[i]) bgStyle = "bg-emerald-100 text-emerald-700 border border-emerald-400 font-semibold";
+
+            b.className = `p-2 text-xs text-center rounded-lg transition cursor-pointer min-w-[32px] ${bgStyle}`;
+            b.onclick = () => { traversalIndex = i; synchroniseQuestionIndex(); };
+            grid.appendChild(b);
+        }
+    }
+
+    // ========================================== -->
+    // TIMERS, REPORT, PDF EXPORT & EVENT LISTENERS-->
+    // ========================================== -->
+
+    function beginTimelineScheduler() {
+        document.getElementById('meter-container').classList.remove('hidden');
+        function pulse() {
+            let m = Math.floor(timeTrackingRemaining / 60);
+            let s = timeTrackingRemaining % 60;
+            document.getElementById('clock-countdown').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            let dynamicPercentage = (timeTrackingRemaining / APP_LIMITS.allocatedDurationSeconds) * 100;
+            const progress = document.getElementById('meter-progress');
+            progress.style.width = `${dynamicPercentage}%`;
+
+            if (dynamicPercentage < 25) progress.style.backgroundColor = 'var(--error)';
+            else if (dynamicPercentage < 50) progress.style.backgroundColor = '#d97706';
+        }
+        pulse();
+        schedulerHandle = setInterval(() => {
+            timeTrackingRemaining--;
+            pulse();
+            if (timeTrackingRemaining <= 0) {
+                clearInterval(schedulerHandle);
+                compileFinalPerformanceReport(true);
+            }
+        }, 1000);
+    }
+
+    function sendGradesToTeacher(name, classroom, score, duration, quizTitle) {
+        // Google Web App link that stores the results in the teacher's sheet
+        const url = "https://script.google.com/macros/s/AKfycbzpYkVVYTJ0VvPNVVCj9pIBrzXznUdB9XTPEMJPAQ8AF8qu-x_T-PhrYA7x_wCaZyWs/exec";
+        fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: name,
+                classroom: classroom,
+                score: score,
+                duration: duration,       // the start time string is logged into Column E of the sheet
+                quizTitle: quizTitle,
+                date: new Date().toLocaleString()
+            })
+        }).catch(err => console.log("Network trace: Client sync fallback triggered."));
+    }
+
+    function compileFinalPerformanceReport(isTimeout = false) {
+        clearInterval(schedulerHandle);
+        document.getElementById('stage-engine').classList.add('hidden');
+        document.getElementById('meter-container').classList.add('hidden');
+        document.getElementById('stage-summary').classList.remove('hidden');
+
+        if (isTimeout) alert("Time limit reached. Compiling final performance report now.");
+
+        let tallyCorrect = 0;
+        let compilationHtml = "";
+
+        generatedSuite.forEach((problem, index) => {
+            const userRaw = storedResponses[index];
+            const userAns = (userRaw || "").toString().trim().toUpperCase();
+            const correctAns = problem.solution.toString().trim().toUpperCase();
+            const outcomeState = userAns === correctAns;
+            if (outcomeState) tallyCorrect++;
+
+            const answerColor = outcomeState ? 'var(--success)' : 'var(--error)';
+            const answerBlock =
+                '<p style="margin:0;"><strong>Your Submitted Answer:</strong> <span style="font-weight:600; color:' + answerColor + '; font-size:1.05rem;">' + (userRaw ? userRaw : 'Unanswered') + '</span></p>' +
+                '<p style="margin:0; color: var(--text-muted);"><strong>Correct Answer:</strong> <span style="font-weight:600; color: var(--text-main); font-size:1.05rem;">' + problem.solution + '</span></p>' +
+                (problem.explain ? '<p style="margin:6px 0 0 0; color: var(--text-muted); font-size:0.85rem;"><strong>Explanation:</strong> ' + problem.explain + '</p>' : '');
+
+            const itemScoreBadge = outcomeState ?
+                `<span style="float: right; font-weight: 700; color: var(--success); background: #f0fdf4; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 0.85rem;">Score: 1 / 1</span>` :
+                `<span style="float: right; font-weight: 700; color: var(--error); background: #fef2f2; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--error); font-size: 0.85rem;">Score: 0 / 1</span>`;
+
+            compilationHtml += `
+            <div class="report-item" style="position: relative; overflow: auto; background:#ffffff; padding:16px; margin-bottom:12px; border-radius:12px; border-left: 5px solid ${outcomeState ? 'var(--success)' : 'var(--error)'};">
+                ${itemScoreBadge}
+                <div style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+                    Question ${index + 1} &middot; Topic: <span style="color: var(--primary);">${problem.categoryType}</span>
+                </div>
+                <div style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px;">
+                    <strong>Question:</strong>
+                    <div style="margin-top: 4px; font-family: system-ui, sans-serif;">${problem.prompt}</div>
+                    <div style="margin: 10px 0 0 0; text-align: center; font-size: 1.3rem; font-weight: bold; color: var(--text-main);">
+                        ${problem.equation ? '$$' + tx(problem.equation) + '$$' : ''}
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; padding-left: 4px;">
+                    ${answerBlock}
+                </div>
+            </div>
+            `;
+        });
+
+        document.getElementById('m-correct').innerText = tallyCorrect;
+        document.getElementById('m-incorrect').innerText = APP_LIMITS.totalItems - tallyCorrect;
+        document.getElementById('m-percent').innerText = `${Math.round((tallyCorrect / APP_LIMITS.totalItems) * 100)}%`;
+
+        const userTitle = document.getElementById('student-name').value.trim();
+        const sectionTitle = document.getElementById('student-section').value.trim();
+
+        const headerMetaHtml = `
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 0.95rem; line-height:1.4;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                <div><strong>Student Name:</strong> <span style="color: var(--primary); font-weight: 600;">${userTitle}</span></div>
+                <div><strong>Class Section:</strong> <span style="color: var(--primary); font-weight: 600;">${sectionTitle}</span></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem;">
+                <div><strong>Quiz Assessment:</strong> <span style="color: #475569; font-weight: 700;">${APP_LIMITS.quizTitle}</span></div>
+                <div><strong>Quiz Start Timestamp:</strong> <span style="font-family: monospace; font-weight: 600;">${formattedQuizStartTimeStamp}</span></div>
+            </div>
+        </div>
+        `;
+
+        document.getElementById('report-injection-zone').innerHTML = headerMetaHtml + compilationHtml;
+        if (window.katex && typeof window.renderMathInElement === 'function') {
+            window.renderMathInElement(document.getElementById('report-injection-zone'));
+        }
+
+        sendGradesToTeacher(
+            userTitle,
+            sectionTitle,
+            `${tallyCorrect} / ${APP_LIMITS.totalItems}`,
+            formattedQuizStartTimeStamp,
+            APP_LIMITS.quizTitle
+        );
+    }
+
+    function triggerDirectPdfDownload() {
+        const targetElement = document.getElementById('stage-summary');
+        const config = {
+            margin:       10,
+            filename:     'Grade8_Math_Practice_Quiz_Report.pdf',
+            image:        { type: 'jpeg', quality: 0.99 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(config).from(targetElement).save();
+    }
+
+    document.getElementById('action-start').onclick = () => {
+        if (!document.getElementById('student-name').value.trim() || !document.getElementById('student-section').value.trim()) {
+            alert("Please enter your name and class section to start.");
+            return;
+        }
+        const now = new Date();
+        formattedQuizStartTimeStamp = now.toLocaleDateString() + " @ " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        document.getElementById('stage-auth').classList.add('hidden');
+        document.getElementById('stage-engine').classList.remove('hidden');
+        generateEntireQuizSuite();
+        beginTimelineScheduler();
+        synchroniseQuestionIndex();
+    };
+
+    document.getElementById('action-forward').onclick = () => {
+        if (traversalIndex < APP_LIMITS.totalItems - 1) {
+            traversalIndex++;
+            synchroniseQuestionIndex();
+        } else {
+            if (confirm("Finalize and compile report sheets?")) compileFinalPerformanceReport();
+        }
+    };
+
+    document.getElementById('action-back').onclick = () => {
+        if (traversalIndex > 0) {
+            traversalIndex--;
+            synchroniseQuestionIndex();
+        }
+    };
+
+    document.getElementById('action-retry').onclick = () => {
+        storedResponses = {}; traversalIndex = 0;
+        timeTrackingRemaining = APP_LIMITS.allocatedDurationSeconds;
+        document.getElementById('clock-countdown').innerText = "20:00";
+        const progress = document.getElementById('meter-progress');
+        progress.style.width = "100%";
+        progress.style.backgroundColor = "";
+        document.getElementById('stage-summary').classList.add('hidden');
+        document.getElementById('stage-auth').classList.remove('hidden');
+    };
+
+    // Print-optimized styles (fixes the page-clipping bug when saving the report as PDF)
+    if (!document.getElementById('print-fix-styles')) {
+        const style = document.createElement('style');
+        style.id = 'print-fix-styles';
+        style.innerHTML = `
+            @media print {
+                html, body {
+                    display: block !important;
+                    height: auto !important;
+                    overflow: visible !important;
+                    background: white !important;
+                }
+                #stage-summary {
+                    display: block !important;
+                    max-width: 100% !important;
+                    width: 100% !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                }
+                footer, #stage-auth, #stage-engine, button, .bg-gradient-to-r button {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // The two PDF buttons open the browser's print / save-as-PDF dialog
+    document.querySelectorAll('button').forEach(button => {
+        if (button.textContent.includes('Save as PDF') || button.textContent.includes('Download as PDF')) {
+            button.removeAttribute('onclick');
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.print();
+            });
+        }
+    });
+</script>
+</body>
+</html>

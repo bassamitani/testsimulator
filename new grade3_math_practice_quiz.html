@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 3 Math Practice Quiz</title>
+    <!-- Tailwind CSS Styling Framework CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0284c7; --primary-hover: #0369a1; --bg-main: #f8fafc;
+            --bg-surface: #ffffff; --border-color: #cbd5e1; --text-main: #0f172a;
+            --text-muted: #475569; --success: #16a34a; --error: #dc2626;
+        }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, sans-serif; }
+        .hidden { display: none !important; }
+        .opt-btn {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-size: 1.05rem;
+        }
+        .opt-btn:hover { border-color: var(--primary); background-color: #f0f9ff; }
+        .opt-btn.active { border-color: var(--primary); background-color: #e0f2fe; font-weight: 600; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15); }
+        .report-item { background: var(--bg-surface); border-radius: 10px; padding: 14px; margin-bottom: 12px; border-left: 5px solid #cbd5e1; }
+        .report-item.pass { border-left-color: var(--success); }
+        .report-item.fail { border-left-color: var(--error); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Credentials Authentication Entry Stage -->
+    <div id="stage-auth" class="max-w-md mx-auto my-auto p-8 bg-white rounded-2xl shadow-xl mt-12 border border-slate-200">
+        <h2 class="text-3xl font-extrabold text-slate-800 text-center tracking-tight mb-2">Grade 3 Math Practice Quiz</h2>
+        <p class="text-sm text-slate-500 text-center mb-3">Term 1 &middot; Numbers to 10,000, Shapes, Addition &amp; Subtraction</p>
+        <p class="text-xs text-slate-500 text-center mb-8 leading-relaxed"><b>20 questions</b> &middot; <b>20 minutes</b><br>Place value, word and expanded form, comparing, rounding, odd and even numbers, tally charts, points, lines and rays, adding and subtracting, and money.</p>
+
+        <div class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Student Full Name</label>
+                <input type="text" id="student-name" placeholder="John Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Assigned Class Section</label>
+                <input type="text" id="student-section" placeholder="Grade 3-A" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition">
+            </div>
+            <button id="action-start" class="w-full bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm tracking-wider uppercase mt-4">Start Quiz</button>
+        </div>
+    </div>
+
+    <!-- FIXED: Active Test Core Engine Integrated Inside One Single Unified Main Box Header Layout -->
+    <div id="stage-engine" class="hidden max-w-4xl mx-auto w-full px-4 py-6 flex-grow">
+        <div class="w-full bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col justify-between min-h-[550px]">
+
+            <!-- HEADER INFO BAR: Time tracking and Question counts grouped inside the single main container block -->
+            <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-5 flex-wrap gap-4">
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-sky-600 uppercase tracking-widest">Question Tracker &middot; <span id="idx-current">0</span> / <span id="idx-total">0</span></span>
+                    <span id="txt-tier-badge" class="px-2.5 py-1 rounded-md text-xs font-extrabold uppercase bg-slate-100 text-slate-600">Tier</span>
+                </div>
+
+                <!-- TIMER COMPONENT: Grouped tightly inside the primary top header control area -->
+                <div id="meter-container" class="hidden flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl text-white shadow-inner">
+                    <span class="text-[10px] uppercase font-black tracking-wider text-slate-400">Remaining:</span>
+                    <span id="clock-countdown" class="text-lg font-black tracking-tight font-mono text-sky-400">20:00</span>
+                    <div class="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden hidden sm:block">
+                        <div id="meter-progress" class="bg-sky-400 h-full transition-all duration-1000" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Central Content Presentation Window -->
+            <div class="flex-grow flex flex-col justify-center">
+                <div id="math-prompt-container" class="mb-6"></div>
+
+                <div id="interactive-zone" class="w-full flex flex-col items-center justify-center mb-6">
+                    <div id="box-mcq" class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"></div>
+                    <div id="box-tf" class="hidden flex gap-4 w-full justify-center">
+                        <button class="flag-tf opt-btn px-8 py-3.5 text-center font-bold text-lg min-w-[140px]" data-core="TRUE">TRUE</button>
+                        <button class="flag-tf opt-btn px-8 py-3.5 text-center font-bold text-lg min-w-[140px]" data-core="FALSE">FALSE</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lower Layout Shortcut Matrix Navigation Row -->
+            <div class="border-t border-slate-100 pt-4 mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <!-- Grid Shortcuts inline at the bottom left -->
+                <div class="flex flex-wrap gap-1.5 items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden md:block">Overview:</span>
+                    <div id="navigation-shortcut-grid" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- Navigation Action Buttons -->
+                <div class="flex gap-3 justify-end w-full sm:w-auto">
+                    <button id="action-back" class="px-5 py-2 border border-slate-300 rounded-xl font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-40 text-sm transition cursor-pointer">&larr; Back</button>
+                    <button id="action-forward" class="px-6 py-2 bg-sky-600 text-white rounded-xl font-bold hover:bg-sky-700 text-sm shadow transition cursor-pointer">Next &rarr;</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Final Diagnostic Summary Sheet Layout -->
+    <div id="stage-summary" class="hidden max-w-3xl mx-auto w-full px-4 py-8">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight">Performance Summary Report</h1>
+                    <p class="text-sky-100 text-xs mt-1">Grade 3 Math &middot; Term 1 Practice Quiz</p>
+                </div>
+                <button onclick="triggerDirectPdfDownload()" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 transition cursor-pointer shadow-sm border border-white/10 text-white">Download as PDF</button>
+            </div>
+
+            <div class="grid grid-cols-3 text-center border-b border-slate-100 bg-slate-50 py-4">
+                <div>
+                    <div id="m-correct" class="text-2xl font-extrabold text-emerald-600">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Correct</div>
+                </div>
+                <div class="border-x border-slate-200">
+                    <div id="m-incorrect" class="text-2xl font-extrabold text-rose-600">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Incorrect</div>
+                </div>
+                <div>
+                    <div id="m-percent" class="text-2xl font-extrabold text-sky-600">0%</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Score Rate</div>
+                </div>
+            </div>
+
+                    <!-- Dynamic Question Injections -->
+                        <div id="report-injection-zone" class="p-6 space-y-4 bg-slate-50/50"></div>
+                </div>
+
+                <!-- FIXED: Repositioned standalone PDF action handler bar to the absolute bottom of the page structure -->
+                <div class="flex flex-col sm:flex-row gap-3 w-full mt-4">
+                        <button id="action-pdf-bottom" onclick="triggerDirectPdfDownload()" class="flex-grow bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm text-center uppercase tracking-wider">Save as PDF</button>
+                        <button id="action-retry" class="w-full sm:w-1/3 bg-slate-800 text-white font-bold py-3 px-4 rounded-xl shadow hover:bg-slate-900 transition cursor-pointer text-sm text-center uppercase tracking-wider">Retake Quiz</button>
+                </div>
+        </div>
+
+    <footer class="w-full py-4 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 bg-white">
+        &copy; 2026 Grade 3 Math Practice Quiz &bull; Cambridge Term 1
+    </footer>
+
+<script>
+    // =====================================================================
+    //  GRADE 3 MATH PRACTICE QUIZ  ·  Term 1 (Cambridge Grade 3)
+    //  Topics: numbers to 10,000, rounding, odd/even, tally charts,
+    //          plane shapes, addition and subtraction, money
+    // =====================================================================
+    const APP_LIMITS = {
+        totalItems: 20,
+        allocatedDurationSeconds: 1200,   // 20 minutes exactly
+        quizTitle: "Grade 3 Math Practice Quiz"
+    };
+
+    let generatedSuite = [];
+    let traversalIndex = 0;
+    let storedResponses = {};
+    let timeTrackingRemaining = APP_LIMITS.allocatedDurationSeconds;
+    let schedulerHandle = null;
+    let formattedQuizStartTimeStamp = "";
+
+/*GEN-START*/
+    // ---------- tiny helpers ----------
+    const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+    const pick = arr => arr[rnd(0, arr.length - 1)];
+    function shuffleArray(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+    function commas(intStr) { return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function fmt(n) { return commas(String(n)); }
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function unit(n, name) { return n + " " + name + (n === 1 ? "" : "s"); }
+    const PLACE_NAMES = ["ones", "tens", "hundreds", "thousands"];
+    const NAMES = ["Sam", "Mia", "Omar", "Lina", "Ben", "Aya", "Leo", "Nora", "Zain", "Rita", "Adam", "Maya"];
+
+    // Options: correct answer + distinct wrong ones
+    function makeChoices(correct, fakes, n) {
+        n = n || 4;
+        const out = [correct];
+        shuffleArray(fakes).forEach(f => {
+            if (out.length < n && f !== undefined && f !== null && f !== "" && !out.includes(f)) out.push(f);
+        });
+        return shuffleArray(out);
+    }
+    function bigNum(html, size) {
+        return '<div style="text-align:center; font-size:' + (size || 2) + 'rem; font-weight:800; letter-spacing:0.03em; margin:14px 0; color:#0f172a;">' + html + '</div>';
+    }
+    function emptyBox() {
+        return '<span style="display:inline-block; min-width:58px; height:46px; vertical-align:middle; border:3px dashed #94a3b8; border-radius:10px; background:#f8fafc;"></span>';
+    }
+    function perturbInt(n) {
+        const s = String(n);
+        const i = rnd(0, s.length - 1);
+        let nd = (+s[i] + rnd(1, 9)) % 10;
+        if (i === 0 && nd === 0) nd = 1;
+        if (nd === +s[i]) nd = (nd + 1) % 10 || 1;
+        return Number(s.slice(0, i) + nd + s.slice(i + 1));
+    }
+    function varNums(n) {                                   // numbers that look like n but are different
+        const s = String(n), out = new Set();
+        for (let i = 0; i < s.length - 1; i++) {
+            if (s[i] !== s[i + 1]) {
+                const t = s.slice(0, i) + s[i + 1] + s[i] + s.slice(i + 2);
+                if (t[0] !== "0") out.add(Number(t));
+            }
+        }
+        for (let k = 0; k < 4; k++) out.add(perturbInt(n));
+        if (n >= 9000) [1000, 9000, 9999, 9990, 10100, 1100, 9100].forEach(x => out.add(x));
+        out.delete(n);
+        return shuffleArray(Array.from(out)).filter(x => x > 0 && x <= 10100);
+    }
+    function slipNums(ans, extras) {                        // typical regrouping slips and one wrong digit
+        const out = new Set((extras || []).filter(x => Number.isFinite(x)));
+        const len = String(ans).length;
+        for (let k = 1; k < len && k <= 3; k++) { out.add(ans + Math.pow(10, k)); out.add(ans - Math.pow(10, k)); }
+        for (let k = 0; k < 4; k++) out.add(perturbInt(ans));
+        out.delete(ans);
+        return shuffleArray(Array.from(out)).filter(x => x > 0);
+    }
+    const ONES_W = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+                    "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+    const TENS_W = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+    function words3(n) {
+        const s = [];
+        if (n >= 100) { s.push(ONES_W[Math.floor(n / 100)] + " hundred"); n %= 100; }
+        if (n >= 20) { s.push(TENS_W[Math.floor(n / 10)] + (n % 10 ? "-" + ONES_W[n % 10] : "")); }
+        else if (n > 0) { s.push(ONES_W[n]); }
+        return s.join(" ");
+    }
+    function numToWords(n) {
+        if (n === 10000) return "ten thousand";
+        const parts = [];
+        const th = Math.floor(n / 1000), rest = n % 1000;
+        if (th > 0) parts.push(ONES_W[th] + " thousand");
+        if (rest > 0) parts.push(words3(rest));
+        return parts.join(" ");
+    }
+
+    // ---------- pictures ----------
+    function tallySVG(n, small) {
+        const g = Math.floor(n / 5), r = n % 5, cols = g + (r ? 1 : 0);
+        const W = Math.max(1, cols) * 58 + 10, H = 52, sc = small ? 0.72 : 0.9;
+        let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + Math.round(W * sc) + '" height="' + Math.round(H * sc) +
+                '" stroke="#1e293b" stroke-width="4" stroke-linecap="round" fill="none" role="img" aria-label="tally marks">';
+        for (let i = 0; i < g; i++) {
+            const x = 10 + i * 58;
+            s += '<path d="M' + x + ' 8v34M' + (x + 10) + ' 8v34M' + (x + 20) + ' 8v34M' + (x + 30) + ' 8v34M' + (x - 5) + ' 34L' + (x + 35) + ' 14"/>';
+        }
+        for (let k = 0; k < r; k++) s += '<path d="M' + (10 + g * 58 + k * 10) + ' 8v34"/>';
+        return s + '</svg>';
+    }
+    const ANGLES = [-45, -30, -15, 0, 15, 30, 45, 135, 150, 165, 180, 195, 210, 225];
+    // kind: point | segment | ray | line.  labels: a, b (ray: a = start point, b = a point it passes through)
+    function shapeSVG(kind, angle, a, b, scale) {
+        const cx = 110, cy = 80, L = 72, th = angle * Math.PI / 180, ux = Math.cos(th), uy = Math.sin(th), nx = -uy, ny = ux;
+        const P = t => [cx + ux * t, cy + uy * t];
+        const f = v => v.toFixed(1);
+        const col = "#1d4ed8";
+        let s = '<svg viewBox="0 0 220 160" width="' + (scale || 190) + '" height="' + Math.round((scale || 190) * 160 / 220) + '" role="img" aria-label="' + kind + '">';
+        const dot = (p, label, side) => {
+            let d = '<circle cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="6" fill="' + col + '"/>';
+            if (label) d += '<text x="' + f(p[0] + nx * side * 20) + '" y="' + f(p[1] + ny * side * 20 + 6) + '" font-size="19" font-weight="700" text-anchor="middle" font-family="system-ui, sans-serif" fill="#0f172a">' + label + '</text>';
+            return d;
+        };
+        const arrow = (t, dir) => {
+            const tip = P(t), bx = tip[0] - ux * dir * 16, by = tip[1] - uy * dir * 16;
+            return '<polygon points="' + f(tip[0]) + ',' + f(tip[1]) + ' ' + f(bx + nx * 8) + ',' + f(by + ny * 8) + ' ' + f(bx - nx * 8) + ',' + f(by - ny * 8) + '" fill="' + col + '"/>';
+        };
+        const seg = (t1, t2) => { const p = P(t1), q = P(t2); return '<line x1="' + f(p[0]) + '" y1="' + f(p[1]) + '" x2="' + f(q[0]) + '" y2="' + f(q[1]) + '" stroke="' + col + '" stroke-width="4" stroke-linecap="round"/>'; };
+        if (kind === "point") {
+            s += dot([cx, cy], a || "P", -1);
+        } else if (kind === "segment") {
+            s += seg(-L + 8, L - 8) + dot(P(-L + 8), a, -1) + dot(P(L - 8), b, -1);
+        } else if (kind === "ray") {
+            s += seg(-L + 8, L - 14) + arrow(L, 1) + dot(P(-L + 8), a, -1) + dot(P(8), b, -1);
+        } else {
+            s += seg(-L + 14, L - 14) + arrow(-L, -1) + arrow(L, 1) + dot(P(-28), a, -1) + dot(P(28), b, -1);
+        }
+        return s + '</svg>';
+    }
+    function barModelSVG(partA, partB, total, unknown) {
+        const W = 340, x0 = 10, w = 320;
+        let ra = partA / total;
+        ra = Math.max(0.28, Math.min(0.72, ra));
+        const wa = w * ra, wb = w - wa;
+        const txt = (x, y, t) => '<text x="' + x + '" y="' + y + '" font-size="20" font-weight="800" text-anchor="middle" font-family="system-ui, sans-serif" fill="#0f172a">' + t + '</text>';
+        let s = '<svg viewBox="0 0 ' + W + ' 128" width="' + W + '" height="128" style="max-width:100%;" role="img" aria-label="bar model">';
+        s += '<rect x="' + x0 + '" y="10" width="' + w + '" height="40" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>';
+        s += txt(x0 + w / 2, 37, unknown === "total" ? "?" : fmt(total));
+        s += '<rect x="' + x0 + '" y="74" width="' + wa + '" height="40" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2"/>';
+        s += '<rect x="' + (x0 + wa) + '" y="74" width="' + wb + '" height="40" rx="6" fill="#fde68a" stroke="#d97706" stroke-width="2"/>';
+        s += txt(x0 + wa / 2, 101, fmt(partA)) + txt(x0 + wa + wb / 2, 101, unknown === "partB" ? "?" : fmt(partB));
+        s += '<text x="' + (x0 + w / 2) + '" y="66" font-size="12" text-anchor="middle" font-family="system-ui, sans-serif" fill="#64748b">whole</text>';
+        return s + '</svg>';
+    }
+    function diagramBox(svg) { return '<div style="display:flex; justify-content:center; margin:12px 0;">' + svg + '</div>'; }
+
+    // =====================================================================
+    //  TOPIC 1: REPRESENT NUMBERS (hundreds, tens and ones)
+    // =====================================================================
+    function combo(h, t, o) { return unit(h, "hundred") + " + " + unit(t, "ten") + " + " + unit(o, "one"); }
+    function genRepresent(tier) {
+        const hard = tier === "hard";
+        let N;
+        do { N = hard ? rnd(1100, 9990) : rnd(120, 989); } while (N % 10 === 0);
+        const H = Math.floor(N / 100), T = Math.floor((N % 100) / 10), O = N % 10;
+        const val = (h, t, o) => h * 100 + t * 10 + o;
+        if (Math.random() < 0.6) {                          // which one shows N?
+            const good = [];
+            if (H >= 1) good.push([H - 1, T + 10, O]);
+            if (T >= 1) good.push([H, T - 1, O + 10]);
+            if (H >= 1 && T >= 1) good.push([H - 1, T + 9, O + 10]);
+            if (H >= 2) good.push([H - 2, T + 20, O]);
+            if (!hard || Math.random() < 0.3) good.push([H, T, O]);
+            const g = pick(good);
+            const correct = combo(g[0], g[1], g[2]);
+            const bad = [[H, O, T], [H + 1, T, O], [H, T + 10, O], [T, H, O], [H - 1, T, O], [H, T, O + 10], [H, T + 1, O + 1]]
+                .filter(c => c.every(x => x >= 0) && val(c[0], c[1], c[2]) !== N).map(c => combo(c[0], c[1], c[2]));
+            return {
+                prompt: "Which one shows the number <b>" + fmt(N) + "</b>?",
+                equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, bad),
+                explain: "Work out the value: " + g[0] + " × 100 + " + g[1] + " × 10 + " + g[2] + " = " + fmt(N) + "."
+            };
+        }
+        const k = hard ? rnd(1, 2) : 1;                     // fill the missing number of tens
+        const tens = T + 10 * k;
+        const shown = unit(H - k, "hundred") + " + " + emptyBox() + " tens + " + unit(O, "one");
+        const wrong = [T, T + 1, tens + 1, tens - 1, tens + 10, O].filter(x => x !== tens && x >= 0);
+        if (H - k < 0) return genRepresent(tier);
+        return {
+            prompt: "Fill in the missing number:" + bigNum(fmt(N) + " = " + shown, 1.2),
+            equation: "", type: "MCQ", solution: String(tens), pool: makeChoices(String(tens), wrong.map(String)),
+            explain: "Each hundred you take away is worth 10 more tens. " + fmt(N) + " = " + unit(H - k, "hundred") + " + " + unit(tens, "ten") + " + " + unit(O, "one") + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPICS 2 AND 3: WORD FORM AND STANDARD FORM
+    // =====================================================================
+    function genWordStandard(tier, dir) {
+        let n;
+        if (tier === "easy") n = rnd(101, 999);
+        else n = Math.random() < 0.08 ? 10000 : rnd(1001, 9999);
+        if (tier !== "easy" && n % 10 === 0 && Math.random() < 0.5) n += rnd(1, 9);
+        const fakes = varNums(n);
+        if (dir === "toWords") {
+            const correct = cap(numToWords(n));
+            const wrongWords = Array.from(new Set(fakes.map(x => cap(numToWords(x))))).filter(w => w !== correct);
+            return {
+                prompt: "Write this number in <b>words</b>:" + bigNum(fmt(n)),
+                equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, wrongWords),
+                explain: fmt(n) + " is read " + numToWords(n) + "."
+            };
+        }
+        const w = cap(numToWords(n));
+        return {
+            prompt: "Write this number in <b>standard form</b> (using digits):" + bigNum(w, 1.4),
+            equation: "", type: "MCQ", solution: fmt(n), pool: makeChoices(fmt(n), fakes.map(fmt)),
+            explain: w + " is written " + fmt(n) + "."
+        };
+    }
+    function genStandardForm(tier) { return genWordStandard(tier, "toDigits"); }
+    function genWordForm(tier) { return genWordStandard(tier, "toWords"); }
+
+    // =====================================================================
+    //  TOPIC 4: EXPANDED FORM
+    // =====================================================================
+    function termsOf(n) {
+        const s = String(n), L = s.length, t = [];
+        for (let i = 0; i < L; i++) if (s[i] !== "0") t.push(+s[i] * Math.pow(10, L - 1 - i));
+        return t;
+    }
+    function renderExp(t) { return t.slice().sort((a, b) => b - a).map(fmt).join(" + "); }
+    function genExpanded(tier) {
+        let n;
+        do { n = rnd(1010, 9999); } while (termsOf(n).length < 3 || n % 10 === 0 && Math.random() < 0.5);
+        const t = termsOf(n);
+        const correct = renderExp(t);
+        const cands = [];
+        for (let r = 0; r < 12; r++) {                      // a term with the wrong place value
+            const c = t.slice(), i = rnd(0, c.length - 1);
+            c[i] = Math.random() < 0.5 ? c[i] * 10 : c[i] / 10;
+            if (c[i] >= 1) cands.push(c);
+        }
+        const s = String(n);
+        const swapped = s[0] + s[2] + s[1] + s.slice(3);
+        cands.push(termsOf(Number(swapped)));
+        cands.push(t.slice(0, t.length - 1));
+        const sum = a => a.reduce((x, y) => x + y, 0);
+        const bad = Array.from(new Set(cands.filter(c => c.length && sum(c) !== n).map(renderExp))).filter(x => x !== correct);
+        if (Math.random() < 0.5) {
+            return {
+                prompt: "Write <b>" + fmt(n) + "</b> in <b>expanded form</b>:",
+                equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, bad),
+                explain: "Write the value of each digit: " + correct + "."
+            };
+        }
+        const total = n;
+        const wrongNums = varNums(n).concat(bad.map(b => { const parts = b.split(" + ").map(x => Number(x.replace(/,/g, ""))); return sum(parts); }).filter(x => x !== n && x > 0 && x <= 10000));
+        return {
+            prompt: "Which number is shown in expanded form?" + bigNum(correct, 1.4),
+            equation: "", type: "MCQ", solution: fmt(total), pool: makeChoices(fmt(total), Array.from(new Set(wrongNums)).map(fmt)),
+            explain: "Add the values together: " + correct + " = " + fmt(total) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 5: COMPARING NUMBERS (MISSING SYMBOL / DIGIT)
+    // =====================================================================
+    function genCompare(tier) {
+        if (tier === "easy") {                              // missing symbol
+            const len = 3;
+            const n1 = rnd(100, 999), s1 = String(n1);
+            let n2;
+            const r = Math.random();
+            if (r < 0.15) n2 = n1;
+            else if (r < 0.6) { const i = rnd(0, len - 2); const t = s1.slice(0, i) + s1[i + 1] + s1[i] + s1.slice(i + 2); n2 = Number(t); }
+            else n2 = perturbInt(n1);
+            const sym = n1 < n2 ? "&lt;" : n1 > n2 ? "&gt;" : "=";
+            const words = n1 < n2 ? "less than" : n1 > n2 ? "greater than" : "equal to";
+            return {
+                prompt: "Which symbol goes in the box?" + bigNum(fmt(n1) + " &nbsp;" + emptyBox() + "&nbsp; " + fmt(n2)),
+                equation: "", type: "MCQ", solution: sym, pool: ["&lt;", "&gt;", "="],
+                explain: "Compare the hundreds first, then the tens, then the ones. " + fmt(n1) + " is " + words + " " + fmt(n2) + "."
+            };
+        }
+        // missing digit: exactly one of the four digits shown makes the statement true
+        let p, d, less, valid, invalid, digs;
+        do {
+            p = rnd(1, 3);                                  // 0 = thousands (kept), 1..3 = hundreds, tens, ones
+            d = rnd(1, 8);
+            less = Math.random() < 0.5;
+            valid = less ? [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(x => x < d) : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(x => x > d);
+            invalid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(x => !valid.includes(x));
+        } while (valid.length < 1 || invalid.length < 3);
+        const digits = String(rnd(1000, 9999)).split("");
+        const other = digits.slice(); other[p] = String(d);
+        const shown = digits.slice(); shown[p] = "■";
+        function withBox(arr) {
+            let out = "";
+            for (let i = 0; i < 4; i++) { if (i === 1) out += ","; out += arr[i] === "■" ? emptyBox() : arr[i]; }
+            return out;
+        }
+        function plain(arr) { return arr[0] + "," + arr.slice(1).join(""); }
+        const right = pick(valid);
+        const wrongs = shuffleArray(invalid).slice(0, 3);
+        const sym = less ? "&lt;" : "&gt;";
+        return {
+            prompt: "Which digit can go in the box to make this true?" +
+                    bigNum(withBox(shown) + " &nbsp;" + sym + "&nbsp; " + plain(other)),
+            equation: "", type: "MCQ", solution: String(right), pool: makeChoices(String(right), wrongs.map(String)),
+            explain: "The other digits are the same, so compare the " + PLACE_NAMES[3 - p] + " digit. The digit in the box must be " + (less ? "less than " : "greater than ") + d + ", so " + right + " works."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 6 AND 7: ROUNDING (nearest 10, nearest 100)
+    // =====================================================================
+    function genRoundTen(tier) {
+        let n;
+        do { n = Math.random() < 0.45 ? rnd(11, 99) : rnd(101, 999); } while (n % 10 === 0);
+        const ans = Math.round(n / 10) * 10;
+        const fakes = [Math.floor(n / 10) * 10, Math.ceil(n / 10) * 10, ans + 10, ans - 10, Math.round(n / 100) * 100, n + 1]
+            .filter(x => x !== ans && x > 0);
+        const ones = n % 10;
+        return {
+            prompt: "Round <b>" + n + "</b> to the nearest <b>ten</b>.",
+            equation: "", type: "MCQ", solution: String(ans), pool: makeChoices(String(ans), fakes.map(String)),
+            explain: "Look at the ones digit, which is " + ones + ". " + (ones >= 5 ? "It is 5 or more, so round up" : "It is less than 5, so round down") + ": " + ans + "."
+        };
+    }
+    function genRoundHundred(tier) {
+        let n;
+        do { n = Math.random() < 0.3 ? rnd(11, 99) : rnd(101, 999); } while (n % 100 === 0 || n % 100 === 50 && Math.random() < 0.5);
+        const ans = Math.round(n / 100) * 100;
+        const fakes = [Math.floor(n / 100) * 100, Math.ceil(n / 100) * 100, ans + 100, ans - 100, Math.round(n / 10) * 10, ans + 10]
+            .filter(x => x !== ans && x >= 0);
+        const tens = Math.floor((n % 100) / 10);
+        return {
+            prompt: "Round <b>" + n + "</b> to the nearest <b>hundred</b>.",
+            equation: "", type: "MCQ", solution: String(ans), pool: makeChoices(String(ans), fakes.map(String)),
+            explain: "Look at the tens digit, which is " + tens + ". " + (tens >= 5 ? "It is 5 or more, so round up" : "It is less than 5, so round down") + ": " + ans + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 8: ODD AND EVEN (MISSING DIGIT / NUMBER)
+    // =====================================================================
+    function genOddEven(tier) {
+        if (tier === "easy") {
+            if (Math.random() < 0.5) {
+                const wantEven = Math.random() < 0.5, len = rnd(3, 4);
+                const mk = par => { let x = rnd(Math.pow(10, len - 1), Math.pow(10, len) - 1); if (x % 2 !== par) x += 1; return x; };
+                const par = wantEven ? 0 : 1, right = mk(par), wrong = new Set();
+                while (wrong.size < 3) { const w = mk(1 - par); if (w !== right && w < 10000) wrong.add(w); }
+                return {
+                    prompt: "Which of these numbers is <b>" + (wantEven ? "even" : "odd") + "</b>?",
+                    equation: "", type: "MCQ", solution: fmt(right), pool: makeChoices(fmt(right), Array.from(wrong).map(fmt)),
+                    explain: "Look at the ones digit. A number is " + (wantEven ? "even if it ends in 0, 2, 4, 6 or 8." : "odd if it ends in 1, 3, 5, 7 or 9.") + " " + fmt(right) + " ends in " + (right % 10) + "."
+                };
+            }
+            const wantEven = Math.random() < 0.5;
+            const prefix = String(rnd(10, 999));
+            const right = pick([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(d => d % 2 === (wantEven ? 0 : 1)));
+            const wrongs = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(d => d % 2 === (wantEven ? 1 : 0))).slice(0, 3);
+            const shown = commas(prefix + "0").slice(0, -1) + emptyBox();
+            return {
+                prompt: "Which digit can go in the box to make an <b>" + (wantEven ? "even" : "odd") + "</b> number?" + bigNum(shown),
+                equation: "", type: "MCQ", solution: String(right), pool: makeChoices(String(right), wrongs.map(String)),
+                explain: "Only the ones digit decides. An " + (wantEven ? "even" : "odd") + " number ends in " + (wantEven ? "0, 2, 4, 6 or 8" : "1, 3, 5, 7 or 9") + ", so " + right + " works."
+            };
+        }
+        // medium: missing number in a sequence of odd / even numbers (steps of 2)
+        const odd = Math.random() < 0.5;
+        const mag = pick([100, 1000]);
+        const start = mag - 2 * rnd(1, 2) + (odd ? -1 : 0);
+        const seq = [0, 1, 2, 3, 4].map(i => start + 2 * i);
+        const hide = rnd(1, 3), ans = seq[hide];
+        const shown = seq.map((x, i) => i === hide ? emptyBox() : fmt(x)).join(", &nbsp;");
+        const fakes = [ans + 1, ans - 1, ans + 2, ans - 2, ans + 3].filter(x => x !== ans && x > 0).map(fmt);
+        return {
+            prompt: "Find the missing number in this pattern of <b>" + (odd ? "odd" : "even") + "</b> numbers:" + bigNum(shown, 1.5),
+            equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes),
+            explain: (odd ? "Odd" : "Even") + " numbers that come one after another go up by 2, so the missing number is " + fmt(ans) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 9: TALLY CHARTS
+    // =====================================================================
+    function genTally(tier) {
+        const v = pick([0, 1, 2]);
+        if (v === 0) {                                      // count the tally marks
+            const n = rnd(6, 24);
+            return {
+                prompt: "How many tally marks are there? (A group with a line across is 5.)" + diagramBox(tallySVG(n)),
+                equation: "", type: "MCQ", solution: String(n), pool: makeChoices(String(n), [n + 1, n - 1, n + 5, n - 5, Math.floor(n / 5) * 4 + n % 5].filter(x => x !== n && x > 0).map(String)),
+                explain: "Count in fives: " + Math.floor(n / 5) + " groups of 5 is " + Math.floor(n / 5) * 5 + ", then " + (n % 5) + " more makes " + n + "."
+            };
+        }
+        if (v === 1) {                                      // which tally shows n?
+            const n = rnd(7, 19);
+            const correct = tallySVG(n, true);
+            const wrongNs = [n + 1, n - 1, n + 5, n - 5, n + 2].filter(x => x !== n && x > 0);
+            return {
+                prompt: "Which tally chart row shows <b>" + n + "</b>?",
+                equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, wrongNs.map(x => tallySVG(x, true))),
+                explain: "Draw " + Math.floor(n / 5) + " group" + (Math.floor(n / 5) === 1 ? "" : "s") + " of 5 and " + (n % 5) + " single mark" + (n % 5 === 1 ? "" : "s") + " to make " + n + "."
+            };
+        }
+        const cats = shuffleArray([["Apples", "🍎"], ["Bananas", "🍌"], ["Grapes", "🍇"], ["Oranges", "🍊"]]).slice(0, 3);
+        const ns = [rnd(4, 14), rnd(4, 14), rnd(4, 14)];
+        const missingIdx = rnd(0, 2);
+        const total = ns.reduce((a, b) => a + b, 0);
+        const unknown = ns[missingIdx];
+        let rows = "";
+        cats.forEach((c, i) => {
+            rows += '<tr><td style="padding:6px 12px; font-weight:700;">' + c[1] + ' ' + c[0] + '</td><td style="padding:6px 12px;">' +
+                    (i === missingIdx ? '<span style="color:#64748b;">?</span>' : tallySVG(ns[i], true)) + '</td><td style="padding:6px 12px; font-weight:800; text-align:center;">' +
+                    (i === missingIdx ? '?' : ns[i]) + '</td></tr>';
+        });
+        const table = '<table style="margin:10px auto; border-collapse:collapse; border:2px solid #cbd5e1; background:#fff;"><thead><tr style="background:#e0f2fe;"><th style="padding:6px 12px;">Fruit</th><th style="padding:6px 12px;">Tally</th><th style="padding:6px 12px;">Number</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        return {
+            prompt: "The children voted for their favourite fruit. <b>" + total + "</b> children voted altogether. How many children chose <b>" + cats[missingIdx][0] + "</b>?" + table,
+            equation: "", type: "MCQ", solution: String(unknown), pool: makeChoices(String(unknown), [unknown + 1, unknown - 1, unknown + 2, unknown - 2, unknown + 10].filter(x => x !== unknown && x > 0).map(String)),
+            explain: "Add the known numbers: " + ns.filter((x, i) => i !== missingIdx).join(" + ") + " = " + (total - unknown) + ". Then " + total + " − " + (total - unknown) + " = " + unknown + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPICS 10 AND 11: PLANE SHAPES (point, line, line segment, ray)
+    // =====================================================================
+    const SHAPE_NAMES = { point: "point", line: "line", segment: "line segment", ray: "ray" };
+    function genShapesId(tier) {
+        if (Math.random() < 0.6) {                          // name the picture
+            const kind = pick(["point", "line", "segment", "ray"]);
+            const ang = pick(ANGLES);
+            const labels = kind === "point" ? ["P"] : ["A", "B"];
+            const picture = shapeSVG(kind, ang, labels[0], labels[1], 230);
+            const names = ["point", "line", "line segment", "ray"];
+            const why = {
+                point: "A point shows an exact position. It has no length.",
+                line: "A line goes on forever in both directions. The arrows show this.",
+                segment: "A line segment has two endpoints and a fixed length.",
+                ray: "A ray has one endpoint and goes on forever in one direction."
+            };
+            return {
+                prompt: "What is this called?" + diagramBox(picture),
+                equation: "", type: "MCQ", solution: SHAPE_NAMES[kind], pool: names.slice(),
+                explain: why[kind]
+            };
+        }
+        const q = pick([
+            ["Which one has <b>two endpoints</b>?", "line segment", "A line segment starts and stops at two endpoints."],
+            ["Which one has <b>one endpoint</b> and goes on forever in one direction?", "ray", "A ray starts at one endpoint and keeps going in one direction."],
+            ["Which one goes on <b>forever in both directions</b>?", "line", "A line has no endpoints. It goes on forever both ways."],
+            ["Which one shows an <b>exact position</b> only?", "point", "A point is just a position. It has no length."]
+        ]);
+        return {
+            prompt: q[0], equation: "", type: "MCQ", solution: q[1], pool: ["point", "line", "line segment", "ray"], explain: q[2]
+        };
+    }
+    function genShapesDraw(tier) {
+        const targets = [
+            { key: "segment", text: "line segment <b>AB</b>", why: "A line segment AB has two endpoints, A and B." },
+            { key: "rayAB", text: "ray <b>AB</b> (it starts at A and goes through B)", why: "Ray AB starts at the endpoint A, passes through B and keeps going." },
+            { key: "rayBA", text: "ray <b>BA</b> (it starts at B and goes through A)", why: "Ray BA starts at the endpoint B, passes through A and keeps going." },
+            { key: "line", text: "line <b>AB</b>", why: "A line AB has arrows on both ends and no endpoints." }
+        ];
+        const t = pick(targets);
+        const angs = shuffleArray(ANGLES).slice(0, 4);
+        const pics = {
+            segment: shapeSVG("segment", angs[0], "A", "B", 170),
+            rayAB: shapeSVG("ray", angs[1], "A", "B", 170),
+            rayBA: shapeSVG("ray", angs[2], "B", "A", 170),
+            line: shapeSVG("line", angs[3], "A", "B", 170)
+        };
+        const correct = pics[t.key];
+        const wrong = Object.keys(pics).filter(k => k !== t.key).map(k => pics[k]);
+        return {
+            prompt: "Which picture shows " + t.text + "?",
+            equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, wrong),
+            explain: t.why
+        };
+    }
+
+    // =====================================================================
+    //  TOPICS 12-13: ADDITION AND SUBTRACTION UP TO 10,000
+    // =====================================================================
+    function genAddSub(tier) {
+        const hard = tier === "hard";
+        const sub = hard ? true : Math.random() < 0.5;
+        const digs = n => String(n).padStart(4, "0").split("").map(Number);
+        if (!sub) {
+            let a, b;
+            if (Math.random() < 0.35) {                     // no regrouping: every column adds to 9 or less
+                let g = 0;
+                do {
+                    const da = [rnd(1, 6), rnd(0, 9), rnd(0, 9), rnd(0, 9)];
+                    const db = da.map(x => rnd(0, 9 - x));
+                    a = Number(da.join("")); b = Number(db.join(""));
+                } while ((b < 100 || a < 1000) && g++ < 200);
+            } else {                                        // with regrouping (at least one column carries)
+                let g = 0;
+                do { a = rnd(1000, 6500); b = rnd(120, 3900); } while ((a + b > 9999 || !digs(a).some((x, k) => x + digs(b)[k] > 9)) && g++ < 300);
+            }
+            const ans = a + b;
+            return {
+                prompt: "Work out:" + bigNum(fmt(a) + " + " + fmt(b) + " = ?"),
+                equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), slipNums(ans).map(fmt)),
+                explain: "Add the ones, then the tens, then the hundreds, then the thousands. Regroup when a column makes 10 or more. " + fmt(a) + " + " + fmt(b) + " = " + fmt(ans) + "."
+            };
+        }
+        let a, b;
+        if (hard) {                                         // subtract across zeros
+            const pats = [[0, 0, 0], [0, 0, rnd(1, 9)], [0, rnd(1, 9), 0], [rnd(1, 9), 0, 0], [rnd(1, 9), 0, rnd(1, 9)]];
+            const p = pick(pats);
+            a = rnd(3, 9) * 1000 + p[0] * 100 + p[1] * 10 + p[2];
+            b = rnd(1100, a - 150);
+            if (b % 10 === 0) b += rnd(1, 9);
+        } else if (Math.random() < 0.35) {                  // no regrouping: every digit of the top number is at least the digit below
+            let g = 0;
+            do {
+                const da = [rnd(3, 9), rnd(1, 9), rnd(1, 9), rnd(1, 9)];
+                const db = da.map((x, k) => k === 0 ? rnd(0, x - 1) : rnd(0, x));
+                a = Number(da.join("")); b = Number(db.join(""));
+            } while (b < 100 && g++ < 200);
+        } else {                                            // with regrouping (at least one column borrows)
+            let g = 0;
+            do { a = rnd(2500, 9990); b = rnd(120, a - 300); } while (!digs(a).some((x, k) => x < digs(b)[k]) && g++ < 300);
+        }
+        const ans = a - b;
+        return {
+            prompt: "Work out:" + bigNum(fmt(a) + " − " + fmt(b) + " = ?"),
+            equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), slipNums(ans).map(fmt)),
+            explain: "Subtract the ones, then the tens, then the hundreds, then the thousands. Regroup when the top digit is smaller. " + fmt(a) + " − " + fmt(b) + " = " + fmt(ans) + "."
+        };
+    }
+    function genAddThree(tier) {
+        let a, b, c;
+        do { a = rnd(300, 4000); b = rnd(200, 3500); c = rnd(100, 3000); } while (a + b + c > 9999 || a + b + c < 1500);
+        const ans = a + b + c;
+        const fakes = slipNums(ans, [a + b, ans - c + 10]).filter(x => x !== a + b);
+        return {
+            prompt: "Add the three numbers:" + bigNum(fmt(a) + " + " + fmt(b) + " + " + fmt(c) + " = ?", 1.7),
+            equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes.map(fmt)),
+            explain: "First add two numbers: " + fmt(a) + " + " + fmt(b) + " = " + fmt(a + b) + ". Then add the third: " + fmt(a + b) + " + " + fmt(c) + " = " + fmt(ans) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 14: PROBLEMS WITH A DIAGRAM (bar model)
+    // =====================================================================
+    function genDiagramAdd(tier) {
+        const a = rnd(1100, 4800), b = rnd(900, 4500), total = a + b;
+        if (total > 9999) return genDiagramAdd(tier);
+        const [n1, n2] = shuffleArray(NAMES).slice(0, 2);
+        const ctx = pick([
+            ["A farm has " + fmt(a) + " hens and " + fmt(b) + " ducks. How many birds are there altogether?", "birds"],
+            [n1 + " has " + fmt(a) + " stickers and " + n2 + " has " + fmt(b) + " stickers. How many stickers do they have altogether?", "stickers"],
+            ["A school library has " + fmt(a) + " story books and " + fmt(b) + " science books. How many books is that altogether?", "books"],
+            ["On Saturday " + fmt(a) + " people visited a zoo. On Sunday " + fmt(b) + " people visited. How many people visited on the two days?", "people"]
+        ]);
+        return {
+            prompt: ctx[0] + "<br><span style='color:#475569; font-size:0.95rem;'>Use the diagram to help you.</span>" + diagramBox(barModelSVG(a, b, total, "total")),
+            equation: "", type: "MCQ", solution: fmt(total), pool: makeChoices(fmt(total), slipNums(total, [Math.abs(a - b)]).map(fmt)),
+            explain: "The two parts make the whole, so add: " + fmt(a) + " + " + fmt(b) + " = " + fmt(total) + " " + ctx[1] + "."
+        };
+    }
+    function genDiagramSub(tier) {
+        const total = rnd(3000, 9500), a = rnd(1200, total - 900), b = total - a;
+        const n1 = pick(NAMES);
+        const ctx = pick([
+            ["A hall has " + fmt(total) + " seats. " + fmt(a) + " seats are taken. How many seats are empty?", "seats"],
+            [n1 + " reads a book with " + fmt(total) + " pages. " + n1 + " has read " + fmt(a) + " pages. How many pages are left?", "pages"],
+            ["A shop had " + fmt(total) + " eggs. It sold " + fmt(a) + " eggs. How many eggs are left?", "eggs"],
+            ["A stadium holds " + fmt(total) + " people. " + fmt(a) + " are girls and the rest are boys. How many are boys?", "boys"]
+        ]);
+        return {
+            prompt: ctx[0] + "<br><span style='color:#475569; font-size:0.95rem;'>Use the diagram to help you.</span>" + diagramBox(barModelSVG(a, b, total, "partB")),
+            equation: "", type: "MCQ", solution: fmt(b), pool: makeChoices(fmt(b), slipNums(b, [total + a]).map(fmt)),
+            explain: "The whole is " + fmt(total) + " and one part is " + fmt(a) + ", so subtract: " + fmt(total) + " − " + fmt(a) + " = " + fmt(b) + " " + ctx[1] + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 15: MONEY
+    // =====================================================================
+    function genMoney(tier) {
+        const kind = pick(["add2", "add3", "left", "need"]);
+        const n1 = pick(NAMES);
+        if (kind === "add2") {
+            const a = rnd(1200, 5500), b = rnd(150, 3500), ans = a + b;
+            return {
+                prompt: n1 + " buys a sofa for <b>$" + fmt(a) + "</b> and a lamp for <b>$" + fmt(b) + "</b>. How much does " + n1 + " spend altogether?",
+                equation: "", type: "MCQ", solution: "$" + fmt(ans), pool: makeChoices("$" + fmt(ans), slipNums(ans).map(x => "$" + fmt(x))),
+                explain: "Add the prices: $" + fmt(a) + " + $" + fmt(b) + " = $" + fmt(ans) + "."
+            };
+        }
+        if (kind === "add3") {
+            const a = rnd(500, 3000), b = rnd(400, 3000), c = rnd(300, 2500), ans = a + b + c;
+            return {
+                prompt: "A shop earned <b>$" + fmt(a) + "</b> on Monday, <b>$" + fmt(b) + "</b> on Tuesday and <b>$" + fmt(c) + "</b> on Wednesday. How much did it earn in the three days?",
+                equation: "", type: "MCQ", solution: "$" + fmt(ans), pool: makeChoices("$" + fmt(ans), slipNums(ans).map(x => "$" + fmt(x))),
+                explain: "Add the three amounts: $" + fmt(a) + " + $" + fmt(b) + " + $" + fmt(c) + " = $" + fmt(ans) + "."
+            };
+        }
+        if (kind === "left") {
+            const have = rnd(3000, 9000), cost = rnd(1100, have - 800), ans = have - cost;
+            return {
+                prompt: n1 + " has <b>$" + fmt(have) + "</b> and buys a bike for <b>$" + fmt(cost) + "</b>. How much money is left?",
+                equation: "", type: "MCQ", solution: "$" + fmt(ans), pool: makeChoices("$" + fmt(ans), slipNums(ans).map(x => "$" + fmt(x))),
+                explain: "Subtract the price from the money: $" + fmt(have) + " − $" + fmt(cost) + " = $" + fmt(ans) + "."
+            };
+        }
+        const cost = rnd(2000, 8000), have = rnd(900, cost - 700), ans = cost - have;
+        return {
+            prompt: "A tablet costs <b>$" + fmt(cost) + "</b>. " + n1 + " has saved <b>$" + fmt(have) + "</b>. How much more money does " + n1 + " need?",
+            equation: "", type: "MCQ", solution: "$" + fmt(ans), pool: makeChoices("$" + fmt(ans), slipNums(ans).map(x => "$" + fmt(x))),
+            explain: "Find the difference: $" + fmt(cost) + " − $" + fmt(have) + " = $" + fmt(ans) + "."
+        };
+    }
+
+    // =====================================================================
+    //  THE QUIZ BLUEPRINT: 20 questions covering every Term 1 topic
+    // =====================================================================
+    const TOPICS = {
+        represent:     { label: "Hundreds, Tens and Ones",           gen: genRepresent },
+        standard_form: { label: "Numbers in Standard Form",          gen: genStandardForm },
+        word_form:     { label: "Numbers in Word Form",              gen: genWordForm },
+        expanded:      { label: "Expanded Form",                     gen: genExpanded },
+        compare:       { label: "Comparing Numbers",                 gen: genCompare },
+        round_ten:     { label: "Rounding to the Nearest Ten",       gen: genRoundTen },
+        round_hundred: { label: "Rounding to the Nearest Hundred",   gen: genRoundHundred },
+        odd_even:      { label: "Odd and Even Numbers",              gen: genOddEven },
+        tally:         { label: "Tally Charts",                      gen: genTally },
+        shapes_id:     { label: "Plane Shapes: Point, Line, Ray",    gen: genShapesId },
+        shapes_draw:   { label: "Plane Shapes: Line, Segment, Ray",  gen: genShapesDraw },
+        add_sub:       { label: "Addition and Subtraction",          gen: genAddSub },
+        add_three:     { label: "Adding Three Numbers",              gen: genAddThree },
+        diagram_add:   { label: "Problems with a Diagram (Add)",     gen: genDiagramAdd },
+        diagram_sub:   { label: "Problems with a Diagram (Subtract)", gen: genDiagramSub },
+        money:         { label: "Addition, Subtraction and Money",   gen: genMoney }
+    };
+    const BLUEPRINT = [
+        ["easy", "represent"], ["easy", "standard_form"], ["easy", "compare"], ["easy", "odd_even"], ["easy", "round_ten"], ["easy", "tally"], ["easy", "shapes_id"],
+        ["medium", "word_form"], ["medium", "expanded"], ["medium", "round_hundred"], ["medium", "shapes_draw"], ["medium", "add_sub"], ["medium", "compare"], ["medium", "odd_even"],
+        ["hard", "represent"], ["hard", "add_three"], ["hard", "diagram_add"], ["hard", "diagram_sub"], ["hard", "money"], ["hard", "add_sub"]
+    ];
+
+    function constructProblem(tier, topic) {
+        const t = TOPICS[topic], q = t.gen(tier);
+        q.tier = tier; q.topic = topic; q.categoryType = t.label;
+        return q;
+    }
+    function validProblem(q) {
+        return Array.isArray(q.pool) && q.pool.length >= 3 && q.pool.includes(q.solution) && new Set(q.pool).size === q.pool.length;
+    }
+
+    function generateEntireQuizSuite() {
+        generatedSuite = [];
+        const seen = new Set();
+        const byTier = { easy: [], medium: [], hard: [] };
+        BLUEPRINT.forEach(slot => {
+            let cand = null, guard = 0;
+            while (guard++ < 300) {
+                let c;
+                try { c = constructProblem(slot[0], slot[1]); } catch (e) { continue; }
+                const fp = (c.prompt + "||" + c.solution).replace(/\s+/g, "");
+                if (validProblem(c) && !seen.has(fp)) { cand = c; seen.add(fp); break; }
+            }
+            if (!cand) { do { cand = constructProblem(slot[0], slot[1]); } while (!validProblem(cand)); }
+            byTier[slot[0]].push(cand);
+        });
+        generatedSuite = [...shuffleArray(byTier.easy), ...shuffleArray(byTier.medium), ...shuffleArray(byTier.hard)];
+    }
+/*GEN-END*/
+
+
+    // ========================================== -->
+    // INTERFACE VIEW SYNCHRONIZER                 -->
+    // ========================================== -->
+
+    function synchroniseQuestionIndex() {
+        const activeProblem = generatedSuite[traversalIndex];
+
+        document.getElementById('idx-current').innerText = traversalIndex + 1;
+        document.getElementById('idx-total').innerText = APP_LIMITS.totalItems;
+        document.getElementById('txt-tier-badge').innerText = activeProblem.tier + " level";
+
+
+        document.getElementById('math-prompt-container').innerHTML = `
+            <div style="font-size:1.3rem; line-height:1.6; color: var(--text-main);">
+                ${activeProblem.prompt}
+            </div>
+        `;
+
+        document.getElementById('box-mcq').classList.add('hidden');
+        document.getElementById('box-tf').classList.add('hidden');
+
+        if (activeProblem.type === 'MCQ') {
+            const mcqContainer = document.getElementById('box-mcq');
+            mcqContainer.innerHTML = "";
+            mcqContainer.classList.remove('hidden');
+
+            activeProblem.pool.forEach(choice => {
+                const buttonElement = document.createElement('button');
+                buttonElement.className = `opt-btn p-3 text-center transition flex justify-center items-center ${storedResponses[traversalIndex] === choice ? 'active' : ''}`;
+                buttonElement.style.minHeight = "62px";
+                buttonElement.style.fontSize = "1.5rem";
+                buttonElement.innerHTML = choice;                // choices may contain inline maths
+                buttonElement.onclick = () => {
+                    document.querySelectorAll('#box-mcq .opt-btn').forEach(el => el.classList.remove('active'));
+                    buttonElement.classList.add('active');
+                    recordInput(choice);
+                };
+                mcqContainer.appendChild(buttonElement);
+            });
+        } else if (activeProblem.type === 'TF') {
+            document.getElementById('box-tf').classList.remove('hidden');
+            document.querySelectorAll('#box-tf .flag-tf').forEach(btn => {
+                btn.classList.remove('active');
+                if (storedResponses[traversalIndex] === btn.getAttribute('data-core')) btn.classList.add('active');
+                btn.onclick = () => {
+                    document.querySelectorAll('#box-tf .flag-tf').forEach(el => el.classList.remove('active'));
+                    btn.classList.add('active');
+                    recordInput(btn.getAttribute('data-core'));
+                };
+            });
+        }
+
+        buildShortcutsGridMatrix();
+        document.getElementById('action-back').disabled = traversalIndex === 0;
+        document.getElementById('action-forward').innerText = traversalIndex === APP_LIMITS.totalItems - 1 ? "Finish Quiz" : "Next →";
+
+    }
+
+    function recordInput(value) { storedResponses[traversalIndex] = value; buildShortcutsGridMatrix(); }
+
+    function buildShortcutsGridMatrix() {
+        const grid = document.getElementById('navigation-shortcut-grid');
+        grid.innerHTML = "";
+        for (let i = 0; i < APP_LIMITS.totalItems; i++) {
+            const b = document.createElement('button');
+            b.innerText = i + 1;
+            let bgStyle = "bg-slate-100 text-slate-600 border border-slate-300";
+            if (traversalIndex === i) bgStyle = "bg-sky-600 text-white font-bold ring-2 ring-sky-300";
+            else if (storedResponses[i]) bgStyle = "bg-emerald-100 text-emerald-700 border border-emerald-400 font-semibold";
+
+            b.className = `p-2 text-xs text-center rounded-lg transition cursor-pointer min-w-[32px] ${bgStyle}`;
+            b.onclick = () => { traversalIndex = i; synchroniseQuestionIndex(); };
+            grid.appendChild(b);
+        }
+    }
+
+    // ========================================== -->
+    // TIMERS, REPORT, PDF EXPORT & EVENT LISTENERS-->
+    // ========================================== -->
+
+    function beginTimelineScheduler() {
+        document.getElementById('meter-container').classList.remove('hidden');
+        function pulse() {
+            let m = Math.floor(timeTrackingRemaining / 60);
+            let s = timeTrackingRemaining % 60;
+            document.getElementById('clock-countdown').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            let dynamicPercentage = (timeTrackingRemaining / APP_LIMITS.allocatedDurationSeconds) * 100;
+            const progress = document.getElementById('meter-progress');
+            progress.style.width = `${dynamicPercentage}%`;
+
+            if (dynamicPercentage < 25) progress.style.backgroundColor = 'var(--error)';
+            else if (dynamicPercentage < 50) progress.style.backgroundColor = '#d97706';
+        }
+        pulse();
+        schedulerHandle = setInterval(() => {
+            timeTrackingRemaining--;
+            pulse();
+            if (timeTrackingRemaining <= 0) {
+                clearInterval(schedulerHandle);
+                compileFinalPerformanceReport(true);
+            }
+        }, 1000);
+    }
+
+    function sendGradesToTeacher(name, classroom, score, duration, quizTitle) {
+        // Google Web App link that stores the results in the teacher's sheet
+        const url = "https://script.google.com/macros/s/AKfycbzpYkVVYTJ0VvPNVVCj9pIBrzXznUdB9XTPEMJPAQ8AF8qu-x_T-PhrYA7x_wCaZyWs/exec";
+        fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: name,
+                classroom: classroom,
+                score: score,
+                duration: duration,       // the start time string is logged into Column E of the sheet
+                quizTitle: quizTitle,
+                date: new Date().toLocaleString()
+            })
+        }).catch(err => console.log("Network trace: Client sync fallback triggered."));
+    }
+
+    function compileFinalPerformanceReport(isTimeout = false) {
+        clearInterval(schedulerHandle);
+        document.getElementById('stage-engine').classList.add('hidden');
+        document.getElementById('meter-container').classList.add('hidden');
+        document.getElementById('stage-summary').classList.remove('hidden');
+
+        if (isTimeout) alert("Time limit reached. Compiling final performance report now.");
+
+        let tallyCorrect = 0;
+        let compilationHtml = "";
+
+        generatedSuite.forEach((problem, index) => {
+            const userRaw = storedResponses[index];
+            const userAns = (userRaw || "").toString().trim().toUpperCase();
+            const correctAns = problem.solution.toString().trim().toUpperCase();
+            const outcomeState = userAns === correctAns;
+            if (outcomeState) tallyCorrect++;
+
+            const answerColor = outcomeState ? 'var(--success)' : 'var(--error)';
+            const answerBlock =
+                '<p style="margin:0;"><strong>Your Submitted Answer:</strong> <span style="font-weight:600; color:' + answerColor + '; font-size:1.05rem;">' + (userRaw ? userRaw : 'Unanswered') + '</span></p>' +
+                '<p style="margin:0; color: var(--text-muted);"><strong>Correct Answer:</strong> <span style="font-weight:600; color: var(--text-main); font-size:1.05rem;">' + problem.solution + '</span></p>' +
+                (problem.explain ? '<p style="margin:6px 0 0 0; color: var(--text-muted); font-size:0.85rem;"><strong>Explanation:</strong> ' + problem.explain + '</p>' : '');
+
+            const itemScoreBadge = outcomeState ?
+                `<span style="float: right; font-weight: 700; color: var(--success); background: #f0fdf4; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 0.85rem;">Score: 1 / 1</span>` :
+                `<span style="float: right; font-weight: 700; color: var(--error); background: #fef2f2; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--error); font-size: 0.85rem;">Score: 0 / 1</span>`;
+
+            compilationHtml += `
+            <div class="report-item" style="position: relative; overflow: auto; background:#ffffff; padding:16px; margin-bottom:12px; border-radius:12px; border-left: 5px solid ${outcomeState ? 'var(--success)' : 'var(--error)'};">
+                ${itemScoreBadge}
+                <div style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+                    Question ${index + 1} &middot; Topic: <span style="color: var(--primary);">${problem.categoryType}</span>
+                </div>
+                <div style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px;">
+                    <strong>Question:</strong>
+                    <div style="margin-top: 4px; font-family: system-ui, sans-serif;">${problem.prompt}</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; padding-left: 4px;">
+                    ${answerBlock}
+                </div>
+            </div>
+            `;
+        });
+
+        document.getElementById('m-correct').innerText = tallyCorrect;
+        document.getElementById('m-incorrect').innerText = APP_LIMITS.totalItems - tallyCorrect;
+        document.getElementById('m-percent').innerText = `${Math.round((tallyCorrect / APP_LIMITS.totalItems) * 100)}%`;
+
+        const userTitle = document.getElementById('student-name').value.trim();
+        const sectionTitle = document.getElementById('student-section').value.trim();
+
+        const headerMetaHtml = `
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 0.95rem; line-height:1.4;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                <div><strong>Student Name:</strong> <span style="color: var(--primary); font-weight: 600;">${userTitle}</span></div>
+                <div><strong>Class Section:</strong> <span style="color: var(--primary); font-weight: 600;">${sectionTitle}</span></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem;">
+                <div><strong>Quiz Assessment:</strong> <span style="color: #475569; font-weight: 700;">${APP_LIMITS.quizTitle}</span></div>
+                <div><strong>Quiz Start Timestamp:</strong> <span style="font-family: monospace; font-weight: 600;">${formattedQuizStartTimeStamp}</span></div>
+            </div>
+        </div>
+        `;
+
+        document.getElementById('report-injection-zone').innerHTML = headerMetaHtml + compilationHtml;
+
+        sendGradesToTeacher(
+            userTitle,
+            sectionTitle,
+            `${tallyCorrect} / ${APP_LIMITS.totalItems}`,
+            formattedQuizStartTimeStamp,
+            APP_LIMITS.quizTitle
+        );
+    }
+
+    function triggerDirectPdfDownload() {
+        const targetElement = document.getElementById('stage-summary');
+        const config = {
+            margin:       10,
+            filename:     'Grade3_Math_Practice_Quiz_Report.pdf',
+            image:        { type: 'jpeg', quality: 0.99 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(config).from(targetElement).save();
+    }
+
+    document.getElementById('action-start').onclick = () => {
+        if (!document.getElementById('student-name').value.trim() || !document.getElementById('student-section').value.trim()) {
+            alert("Please enter your name and class section to start.");
+            return;
+        }
+        const now = new Date();
+        formattedQuizStartTimeStamp = now.toLocaleDateString() + " @ " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        document.getElementById('stage-auth').classList.add('hidden');
+        document.getElementById('stage-engine').classList.remove('hidden');
+        generateEntireQuizSuite();
+        beginTimelineScheduler();
+        synchroniseQuestionIndex();
+    };
+
+    document.getElementById('action-forward').onclick = () => {
+        if (traversalIndex < APP_LIMITS.totalItems - 1) {
+            traversalIndex++;
+            synchroniseQuestionIndex();
+        } else {
+            if (confirm("Finalize and compile report sheets?")) compileFinalPerformanceReport();
+        }
+    };
+
+    document.getElementById('action-back').onclick = () => {
+        if (traversalIndex > 0) {
+            traversalIndex--;
+            synchroniseQuestionIndex();
+        }
+    };
+
+    document.getElementById('action-retry').onclick = () => {
+        storedResponses = {}; traversalIndex = 0;
+        timeTrackingRemaining = APP_LIMITS.allocatedDurationSeconds;
+        document.getElementById('clock-countdown').innerText = "20:00";
+        const progress = document.getElementById('meter-progress');
+        progress.style.width = "100%";
+        progress.style.backgroundColor = "";
+        document.getElementById('stage-summary').classList.add('hidden');
+        document.getElementById('stage-auth').classList.remove('hidden');
+    };
+
+    // Print-optimized styles (fixes the page-clipping bug when saving the report as PDF)
+    if (!document.getElementById('print-fix-styles')) {
+        const style = document.createElement('style');
+        style.id = 'print-fix-styles';
+        style.innerHTML = `
+            @media print {
+                html, body {
+                    display: block !important;
+                    height: auto !important;
+                    overflow: visible !important;
+                    background: white !important;
+                }
+                #stage-summary {
+                    display: block !important;
+                    max-width: 100% !important;
+                    width: 100% !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                }
+                footer, #stage-auth, #stage-engine, button, .bg-gradient-to-r button {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // The two PDF buttons open the browser's print / save-as-PDF dialog
+    document.querySelectorAll('button').forEach(button => {
+        if (button.textContent.includes('Save as PDF') || button.textContent.includes('Download as PDF')) {
+            button.removeAttribute('onclick');
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.print();
+            });
+        }
+    });
+</script>
+</body>
+</html>
