@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 6 Math Practice Quiz</title>
+    <!-- Tailwind CSS Styling Framework CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX Mathematical Typography Notation Engine Setup CDN -->                  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+ <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });">
+        </script>
+
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0284c7; --primary-hover: #0369a1; --bg-main: #f8fafc;
+            --bg-surface: #ffffff; --border-color: #cbd5e1; --text-main: #0f172a;
+            --text-muted: #475569; --success: #16a34a; --error: #dc2626;
+        }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: system-ui, sans-serif; }
+        .hidden { display: none !important; }
+        .opt-btn {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-size: 1.05rem;
+        }
+        .opt-btn:hover { border-color: var(--primary); background-color: #f0f9ff; }
+        .opt-btn.active { border-color: var(--primary); background-color: #e0f2fe; font-weight: 600; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15); }
+        .report-item { background: var(--bg-surface); border-radius: 10px; padding: 14px; margin-bottom: 12px; border-left: 5px solid #cbd5e1; }
+        .report-item.pass { border-left-color: var(--success); }
+        .report-item.fail { border-left-color: var(--error); }
+            .katex { font-size: 1.12em; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Credentials Authentication Entry Stage -->
+    <div id="stage-auth" class="max-w-md mx-auto my-auto p-8 bg-white rounded-2xl shadow-xl mt-12 border border-slate-200">
+        <h2 class="text-3xl font-extrabold text-slate-800 text-center tracking-tight mb-2">Grade 6 Math Practice Quiz</h2>
+        <p class="text-sm text-slate-500 text-center mb-3">Term 1 &middot; Whole Numbers, Decimals &amp; Operations</p>
+        <p class="text-xs text-slate-500 text-center mb-8 leading-relaxed"><b>20 questions</b> &middot; <b>20 minutes</b><br>Place value, word &amp; expanded form, odd and even numbers, comparing, ordering and rounding, powers of 2, 3 and 10, decimals, and operations.</p>
+
+        <div class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Student Full Name</label>
+                <input type="text" id="student-name" placeholder="John Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Assigned Class Section</label>
+                <input type="text" id="student-section" placeholder="Grade 6-A" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-sm transition">
+            </div>
+            <button id="action-start" class="w-full bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm tracking-wider uppercase mt-4">Start Quiz</button>
+        </div>
+    </div>
+
+    <!-- FIXED: Active Test Core Engine Integrated Inside One Single Unified Main Box Header Layout -->
+    <div id="stage-engine" class="hidden max-w-4xl mx-auto w-full px-4 py-6 flex-grow">
+        <div class="w-full bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col justify-between min-h-[550px]">
+
+            <!-- HEADER INFO BAR: Time tracking and Question counts grouped inside the single main container block -->
+            <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-5 flex-wrap gap-4">
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-sky-600 uppercase tracking-widest">Question Tracker &middot; <span id="idx-current">0</span> / <span id="idx-total">0</span></span>
+                    <span id="txt-tier-badge" class="px-2.5 py-1 rounded-md text-xs font-extrabold uppercase bg-slate-100 text-slate-600">Tier</span>
+                </div>
+
+                <!-- TIMER COMPONENT: Grouped tightly inside the primary top header control area -->
+                <div id="meter-container" class="hidden flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl text-white shadow-inner">
+                    <span class="text-[10px] uppercase font-black tracking-wider text-slate-400">Remaining:</span>
+                    <span id="clock-countdown" class="text-lg font-black tracking-tight font-mono text-sky-400">20:00</span>
+                    <div class="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden hidden sm:block">
+                        <div id="meter-progress" class="bg-sky-400 h-full transition-all duration-1000" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Central Content Presentation Window -->
+            <div class="flex-grow flex flex-col justify-center">
+                <div id="math-prompt-container" class="mb-6"></div>
+
+                <div id="interactive-zone" class="w-full flex flex-col items-center justify-center mb-6">
+                    <div id="box-mcq" class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"></div>
+                    <div id="box-tf" class="hidden flex gap-4 w-full justify-center">
+                        <button class="flag-tf opt-btn px-8 py-3.5 text-center font-bold text-lg min-w-[140px]" data-core="TRUE">TRUE</button>
+                        <button class="flag-tf opt-btn px-8 py-3.5 text-center font-bold text-lg min-w-[140px]" data-core="FALSE">FALSE</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lower Layout Shortcut Matrix Navigation Row -->
+            <div class="border-t border-slate-100 pt-4 mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <!-- Grid Shortcuts inline at the bottom left -->
+                <div class="flex flex-wrap gap-1.5 items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden md:block">Overview:</span>
+                    <div id="navigation-shortcut-grid" class="flex flex-wrap gap-1.5"></div>
+                </div>
+
+                <!-- Navigation Action Buttons -->
+                <div class="flex gap-3 justify-end w-full sm:w-auto">
+                    <button id="action-back" class="px-5 py-2 border border-slate-300 rounded-xl font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-40 text-sm transition cursor-pointer">&larr; Back</button>
+                    <button id="action-forward" class="px-6 py-2 bg-sky-600 text-white rounded-xl font-bold hover:bg-sky-700 text-sm shadow transition cursor-pointer">Next &rarr;</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Final Diagnostic Summary Sheet Layout -->
+    <div id="stage-summary" class="hidden max-w-3xl mx-auto w-full px-4 py-8">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight">Performance Summary Report</h1>
+                    <p class="text-sky-100 text-xs mt-1">Grade 6 Math &middot; Term 1 Practice Quiz</p>
+                </div>
+                <button onclick="triggerDirectPdfDownload()" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 transition cursor-pointer shadow-sm border border-white/10 text-white">Download as PDF</button>
+            </div>
+
+            <div class="grid grid-cols-3 text-center border-b border-slate-100 bg-slate-50 py-4">
+                <div>
+                    <div id="m-correct" class="text-2xl font-extrabold text-emerald-600">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Correct</div>
+                </div>
+                <div class="border-x border-slate-200">
+                    <div id="m-incorrect" class="text-2xl font-extrabold text-rose-600">0</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Incorrect</div>
+                </div>
+                <div>
+                    <div id="m-percent" class="text-2xl font-extrabold text-sky-600">0%</div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Score Rate</div>
+                </div>
+            </div>
+
+                    <!-- Dynamic Question Injections -->
+                        <div id="report-injection-zone" class="p-6 space-y-4 bg-slate-50/50"></div>
+                </div>
+
+                <!-- FIXED: Repositioned standalone PDF action handler bar to the absolute bottom of the page structure -->
+                <div class="flex flex-col sm:flex-row gap-3 w-full mt-4">
+                        <button id="action-pdf-bottom" onclick="triggerDirectPdfDownload()" class="flex-grow bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm text-center uppercase tracking-wider">Save as PDF</button>
+                        <button id="action-retry" class="w-full sm:w-1/3 bg-slate-800 text-white font-bold py-3 px-4 rounded-xl shadow hover:bg-slate-900 transition cursor-pointer text-sm text-center uppercase tracking-wider">Retake Quiz</button>
+                </div>
+        </div>
+
+    <footer class="w-full py-4 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 bg-white">
+        &copy; 2026 Grade 6 Math Practice Quiz &bull; Cambridge Term 1
+    </footer>
+
+<script>
+    // =====================================================================
+    //  GRADE 6 MATH PRACTICE QUIZ  ·  Term 1 (Cambridge Grade 6)
+    //  Topics: whole numbers & decimals, powers, operations
+    // =====================================================================
+    const APP_LIMITS = {
+        totalItems: 20,
+        allocatedDurationSeconds: 1200,   // 20 minutes exactly
+        quizTitle: "Grade 6 Math Practice Quiz"
+    };
+
+    let generatedSuite = [];
+    let traversalIndex = 0;
+    let storedResponses = {};
+    let timeTrackingRemaining = APP_LIMITS.allocatedDurationSeconds;
+    let schedulerHandle = null;
+    let formattedQuizStartTimeStamp = "";
+
+/*GEN-START*/
+    // ---------- tiny helpers ----------
+    // LaTeX is written with @ instead of a backslash (BS is a backslash), so JS never eats a backslash
+    const BS = String.fromCharCode(92);
+    function tx(s) { return s.split('@').join(BS); }
+    function M(latex) { return BS + "(" + tx(latex) + BS + ")"; }     // inline maths for options / text
+    const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+    const pick = arr => arr[rnd(0, arr.length - 1)];
+    function shuffleArray(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+    function commas(intStr) { return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function fmt(n) { return commas(String(n)); }                      // whole number with commas
+    function texInt(n) { return fmt(n).split(",").join("{,}"); }       // whole number for KaTeX
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    // integer n scaled by 10^dec  ->  text. keep=true keeps trailing zeros.
+    function dstr(n, dec, keep) {
+        const neg = n < 0;
+        let s = String(Math.abs(n));
+        if (dec > 0) {
+            s = s.padStart(dec + 1, "0");
+            const ip = s.slice(0, s.length - dec);
+            let fp = s.slice(s.length - dec);
+            if (!keep) fp = fp.replace(/0+$/, "");
+            s = commas(ip) + (fp ? "." + fp : "");
+        } else {
+            s = commas(s);
+        }
+        return (neg ? "-" : "") + s;
+    }
+
+    // Options: correct answer + distinct wrong ones (3 wrong when available)
+    function makeChoices(correct, fakes, n) {
+        n = n || 4;
+        const out = [correct];
+        shuffleArray(fakes).forEach(f => {
+            if (out.length < n && f !== undefined && f !== null && f !== "" && !out.includes(f)) out.push(f);
+        });
+        return shuffleArray(out);
+    }
+    function plainBox(lines) {
+        return '<span class="block mt-2 font-mono text-sm bg-slate-50 p-2.5 rounded-lg border border-slate-200">' + lines.join('<br>') + '</span>';
+    }
+    function bigNum(html) {
+        return '<div style="text-align:center; font-size:1.7rem; font-weight:800; letter-spacing:0.03em; margin:12px 0; color:#0f172a;">' + html + '</div>';
+    }
+    // digit string with commas; digit at index hi (from the left) is underlined
+    function numHTML(s, hi) {
+        let out = "";
+        const L = s.length;
+        for (let i = 0; i < L; i++) {
+            if (i > 0 && (L - i) % 3 === 0) out += ",";
+            out += (i === hi) ? '<span style="color:#dc2626; text-decoration:underline;">' + s[i] + '</span>' : s[i];
+        }
+        return out;
+    }
+
+    // ---------- number helpers ----------
+    const PLACES = ["ones", "tens", "hundreds", "thousands", "ten thousands", "hundred thousands",
+                    "millions", "ten millions", "hundred millions", "billions", "ten billions", "hundred billions"];
+    const ONES_W = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+                    "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+    const TENS_W = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+    function words3(n) {
+        const s = [];
+        if (n >= 100) { s.push(ONES_W[Math.floor(n / 100)] + " hundred"); n %= 100; }
+        if (n >= 20) { s.push(TENS_W[Math.floor(n / 10)] + (n % 10 ? "-" + ONES_W[n % 10] : "")); }
+        else if (n > 0) { s.push(ONES_W[n]); }
+        return s.join(" ");
+    }
+    function numToWords(n) {
+        if (n === 0) return "zero";
+        const parts = [];
+        [[1e9, "billion"], [1e6, "million"], [1e3, "thousand"], [1, ""]].forEach(u => {
+            const q = Math.floor(n / u[0]);
+            if (q > 0) { parts.push(words3(q) + (u[1] ? " " + u[1] : "")); n -= q * u[0]; }
+        });
+        return parts.join(" ");
+    }
+    // a digit string of the given length with all different digits (length <= 10)
+    function distinctDigits(len) {
+        const first = rnd(1, 9);
+        const rest = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(d => d !== first)).slice(0, len - 1);
+        return String(first) + rest.join("");
+    }
+    // a digit string with some zeros (at least minNZ non-zero digits)
+    function zeroDigits(len, minNZ) {
+        for (let g = 0; g < 200; g++) {
+            let s = String(rnd(1, 9));
+            for (let i = 1; i < len; i++) s += (Math.random() < 0.38 ? "0" : String(rnd(1, 9)));
+            if (s.split("").filter(c => c !== "0").length >= minNZ && s[len - 1] !== "0") return s;
+        }
+        return "30450700".slice(0, len);
+    }
+    function perturbInt(n) {
+        const s = String(n);
+        const i = rnd(0, s.length - 1);
+        let nd = (+s[i] + rnd(1, 9)) % 10;
+        if (i === 0 && nd === 0) nd = 1;
+        if (nd === +s[i]) nd = (nd + 1) % 10 || 1;
+        return Number(s.slice(0, i) + nd + s.slice(i + 1));
+    }
+    // numbers that look like n but are different (digit swaps, inserted zero, changed digit)
+    function varNums(n) {
+        const s = String(n), out = new Set();
+        for (let i = 0; i < s.length - 1; i++) {
+            if (s[i] !== s[i + 1]) {
+                const t = s.slice(0, i) + s[i + 1] + s[i] + s.slice(i + 2);
+                if (t[0] !== "0") out.add(Number(t));
+            }
+        }
+        const z = rnd(1, s.length - 1);
+        out.add(Number(s.slice(0, z) + "0" + s.slice(z)));
+        const zi = s.indexOf("0", 1);
+        if (zi > 0) out.add(Number(s.slice(0, zi) + s.slice(zi + 1)));
+        for (let k = 0; k < 4; k++) out.add(perturbInt(n));
+        out.delete(n);
+        return shuffleArray(Array.from(out)).filter(x => x > 0);
+    }
+    // wrong answers for a whole-number result: carry / borrow slips and one wrong digit
+    function slipNums(ans, extras) {
+        const out = new Set((extras || []).filter(x => Number.isFinite(x)));
+        const len = String(ans).length;
+        for (let k = 1; k < len && k <= 6; k++) { out.add(ans + Math.pow(10, k)); out.add(ans - Math.pow(10, k)); }
+        for (let k = 0; k < 4; k++) out.add(perturbInt(ans));
+        out.delete(ans);
+        return shuffleArray(Array.from(out)).filter(x => x > 0);
+    }
+
+    // =====================================================================
+    //  TOPIC 1: PLACE VALUE
+    // =====================================================================
+    function genPlaceValue(tier) {
+        const len = tier === "easy" ? rnd(6, 7) : tier === "medium" ? rnd(7, 9) : rnd(9, 10);
+        const s = distinctDigits(len);
+        const variants = tier === "easy" ? [0, 1] : tier === "medium" ? [0, 1, 2] : [0, 2];
+        const v = pick(variants);
+        const L = s.length;
+        if (v === 0) {                                  // value of a digit
+            let i;
+            do { i = rnd(0, L - 1); } while (s[i] === "0" || (L - 1 - i) < 2);
+            const d = +s[i], k = L - 1 - i, val = d * Math.pow(10, k);
+            const fakes = [d * Math.pow(10, k + 1), d * Math.pow(10, k - 1), d * Math.pow(10, k + 2), d * Math.pow(10, k - 2), d]
+                .filter(x => x >= 1 && x !== val).map(fmt);
+            return {
+                prompt: "What is the <b>value</b> of the underlined digit?" + bigNum(numHTML(s, i)),
+                equation: "", type: "MCQ", solution: fmt(val), pool: makeChoices(fmt(val), fakes),
+                explain: "The digit " + d + " is in the " + PLACES[k] + " place, so its value is " + fmt(val) + "."
+            };
+        }
+        if (v === 1) {                                  // which digit is in the ___ place
+            const k = rnd(3, Math.min(L - 1, 8)), i = L - 1 - k;
+            const others = s.split("").filter((c, idx) => idx !== i);
+            const fakes = shuffleArray(Array.from(new Set(others.filter(c => c !== s[i])))).slice(0, 3);
+            return {
+                prompt: "Which digit is in the <b>" + PLACES[k] + "</b> place of this number?" + bigNum(numHTML(s, -1)),
+                equation: "", type: "MCQ", solution: s[i], pool: makeChoices(s[i], fakes),
+                explain: "Count the places from the right: ones, tens, hundreds, thousands, ... The " + PLACES[k] + " place holds the digit " + s[i] + "."
+            };
+        }
+        // v === 2: name the place of the underlined digit
+        const i = rnd(0, L - 4), k = L - 1 - i;
+        const near = [k - 1, k + 1, k - 2, k + 2].filter(x => x >= 0 && x < PLACES.length && x !== k).map(x => PLACES[x]);
+        return {
+            prompt: "In which <b>place</b> is the underlined digit?" + bigNum(numHTML(s, i)),
+            equation: "", type: "MCQ", solution: PLACES[k], pool: makeChoices(PLACES[k], near),
+            explain: "Counting from the right, the underlined digit " + s[i] + " is in the " + PLACES[k] + " place."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 2: WORD FORM
+    // =====================================================================
+    function genGroupNum(tier) {
+        for (let g = 0; g < 100; g++) {
+            const B = tier === "easy" ? 0 : rnd(1, 99);
+            const Mi = tier === "easy" ? rnd(1, 9) : (Math.random() < 0.25 ? 0 : rnd(1, 999));
+            const T = Math.random() < 0.3 ? 0 : rnd(1, 999);
+            const O = Math.random() < 0.3 ? 0 : rnd(1, 999);
+            const nz = [B, Mi, T, O].filter(x => x > 0).length;
+            if (nz >= 3 || (tier === "easy" && nz >= 2)) return B * 1e9 + Mi * 1e6 + T * 1e3 + O;
+        }
+        return tier === "easy" ? 3405200 : 12045300007;
+    }
+    function genWordForm(tier) {
+        const n = genGroupNum(tier);
+        const fakes = varNums(n);
+        if (Math.random() < 0.5) {                      // standard form -> words
+            const correct = cap(numToWords(n));
+            const wrongWords = Array.from(new Set(fakes.map(x => cap(numToWords(x))))).filter(w => w !== correct);
+            return {
+                prompt: "Write this number in <b>word form</b>:" + bigNum(fmt(n)),
+                equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, wrongWords),
+                explain: fmt(n) + " is read " + numToWords(n) + "."
+            };
+        }
+        const w = cap(numToWords(n));                   // words -> standard form
+        return {
+            prompt: "Write this number in <b>standard form</b> (digits):" + bigNum(w).replace("1.7rem", "1.25rem"),
+            equation: "", type: "MCQ", solution: fmt(n), pool: makeChoices(fmt(n), fakes.map(fmt)),
+            explain: w + " is written " + fmt(n) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 3: EXPANDED FORM (powers of 10)
+    // =====================================================================
+    function termsOf(s) {
+        const L = s.length, t = [];
+        for (let i = 0; i < L; i++) if (s[i] !== "0") t.push({ d: +s[i], k: L - 1 - i });
+        return t;
+    }
+    function renderTerms(t) {
+        return t.slice().sort((a, b) => b.k - a.k).map(x => x.k === 0 ? String(x.d) : x.d + " @times 10^{" + x.k + "}").join(" + ");
+    }
+    function termsValue(t) { return t.reduce((a, x) => a + x.d * Math.pow(10, x.k), 0); }
+    function fakeTerms(t) {
+        const out = [];
+        const sh = t.map(x => ({ d: x.d, k: x.k + 1 }));
+        out.push(sh);
+        if (t.every(x => x.k >= 1)) out.push(t.map(x => ({ d: x.d, k: x.k - 1 })));
+        for (let r = 0; r < 4; r++) {                      // one exponent off by one
+            const c = t.map(x => ({ d: x.d, k: x.k })), i = rnd(0, c.length - 1);
+            c[i].k = Math.max(0, c[i].k + (Math.random() < 0.5 ? 1 : -1));
+            out.push(c);
+        }
+        for (let r = 0; r < 3; r++) {                      // two coefficients swapped
+            if (t.length >= 2) {
+                const c = t.map(x => ({ d: x.d, k: x.k })), i = rnd(0, c.length - 1);
+                let j = rnd(0, c.length - 1);
+                if (i !== j && c[i].d !== c[j].d) { const tmp = c[i].d; c[i].d = c[j].d; c[j].d = tmp; out.push(c); }
+            }
+        }
+        if (t.length >= 3) out.push(t.slice(0, t.length - 1));  // last term forgotten
+        return out;
+    }
+    function genExpanded(tier) {
+        const len = tier === "medium" ? rnd(6, 8) : rnd(9, 10);
+        const s = zeroDigits(len, tier === "medium" ? 3 : 4);
+        const t = termsOf(s), n = Number(s);
+        const correctTex = renderTerms(t);
+        const fk = fakeTerms(t).filter(c => termsValue(c) !== n);
+        if (tier === "hard" && Math.random() < 0.4) {   // expanded form -> number
+            const fakes = Array.from(new Set(fk.map(c => fmt(termsValue(c))))).filter(x => x !== fmt(n));
+            return {
+                prompt: "Which number is written in expanded form below?",
+                equation: correctTex, type: "MCQ", solution: fmt(n), pool: makeChoices(fmt(n), fakes.concat(varNums(n).map(fmt))),
+                explain: "Each term gives one digit: " + t.map(x => x.d + " in the " + PLACES[x.k]).join(", ") + ". The number is " + fmt(n) + "."
+            };
+        }
+        const solution = M(correctTex);
+        const fakes = Array.from(new Set(fk.map(c => M(renderTerms(c))))).filter(x => x !== solution);
+        return {
+            prompt: "Write this number in <b>expanded form</b> using powers of 10:" + bigNum(fmt(n)),
+            equation: "", type: "MCQ", solution: solution, pool: makeChoices(solution, fakes),
+            explain: "Multiply each digit by its place value written as a power of 10 (zero digits are left out): " + M(correctTex) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 4: ODD AND EVEN NUMBERS (including missing digits / numbers)
+    // =====================================================================
+    const PARITY_STATEMENTS = [
+        ["The sum of two odd numbers is always even.", true],
+        ["The sum of two even numbers is always even.", true],
+        ["The sum of an odd number and an even number is odd.", true],
+        ["The sum of three odd numbers is odd.", true],
+        ["The product of an even number and any whole number is even.", true],
+        ["The product of two odd numbers is odd.", true],
+        ["Zero is an even number.", true],
+        ["The product of two odd numbers is always even.", false],
+        ["The difference of two even numbers can be odd.", false],
+        ["The square of an odd number is even.", false],
+        ["An even number multiplied by an odd number is odd.", false],
+        ["The sum of two odd numbers is odd.", false],
+        ["Any number that ends in 5 is even.", false],
+        ["Any number that ends in 0 is odd.", false]
+    ];
+    function genOddEven(tier) {
+        if (tier === "easy") {
+            if (Math.random() < 0.5) {                  // which number is odd / even?
+                const wantEven = Math.random() < 0.5, len = rnd(5, 7);
+                const mk = par => {
+                    let x = rnd(Math.pow(10, len - 1), Math.pow(10, len) - 1);
+                    if (x % 2 !== par) x += 1;
+                    return x;
+                };
+                const par = wantEven ? 0 : 1, right = mk(par);
+                const wrong = new Set();
+                while (wrong.size < 3) { const w = mk(1 - par); if (w !== right) wrong.add(w); }
+                return {
+                    prompt: "Which of these numbers is <b>" + (wantEven ? "even" : "odd") + "</b>?",
+                    equation: "", type: "MCQ", solution: fmt(right), pool: makeChoices(fmt(right), Array.from(wrong).map(fmt)),
+                    explain: "Look at the last digit. A number is " + (wantEven ? "even if it ends in 0, 2, 4, 6 or 8." : "odd if it ends in 1, 3, 5, 7 or 9.") + " " + fmt(right) + " ends in " + (right % 10) + "."
+                };
+            }
+            const wantEven = Math.random() < 0.5;
+            const prefix = String(rnd(100, 99999));
+            const right = pick([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(d => d % 2 === (wantEven ? 0 : 1)));
+            const wrongs = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(d => d % 2 === (wantEven ? 1 : 0))).slice(0, 3);
+            const shownNum = commas(prefix + "0");
+            return {
+                prompt: "Which digit can replace the missing digit ■ so that the number is <b>" + (wantEven ? "even" : "odd") + "</b>?" +
+                        bigNum(shownNum.slice(0, -1) + "■"),
+                equation: "", type: "MCQ", solution: String(right), pool: makeChoices(String(right), wrongs.map(String)),
+                explain: "Only the last digit decides. For an " + (wantEven ? "even" : "odd") + " number the last digit must be " + (wantEven ? "0, 2, 4, 6 or 8" : "1, 3, 5, 7 or 9") + ", so " + right + " works."
+            };
+        }
+        if (tier === "medium") {                        // missing number in a sequence of odds / evens
+            const odd = Math.random() < 0.5;
+            const mag = pick([1000, 10000, 100000]);
+            const start = mag - 2 * rnd(1, 2) + (odd ? -1 : 0);   // crosses a power of 10
+            const seq = [0, 1, 2, 3, 4].map(i => start + 2 * i);
+            const hide = rnd(1, 3), ans = seq[hide];
+            const shown = seq.map((x, i) => i === hide ? "■" : fmt(x)).join(";&nbsp; ");
+            const fakes = [ans + 1, ans - 1, ans + 2, ans - 2, ans + 3].filter(x => x !== ans && x > 0).map(fmt);
+            return {
+                prompt: "Find the missing number in this sequence of consecutive <b>" + (odd ? "odd" : "even") + "</b> numbers:" + bigNum(shown),
+                equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes),
+                explain: "Consecutive " + (odd ? "odd" : "even") + " numbers go up in steps of 2, so the missing number is " + fmt(ans) + "."
+            };
+        }
+        // hard: true / false rule, or which calculation gives an odd number
+        if (Math.random() < 0.5) {
+            const st = pick(PARITY_STATEMENTS);
+            return {
+                prompt: "Is this statement true or false?" + bigNum(st[0]).replace("1.7rem", "1.2rem"),
+                equation: "", type: "TF", solution: st[1] ? "TRUE" : "FALSE", pool: [],
+                explain: st[1] ? "This is always true." : "This is false, for example it fails for small numbers such as 3 and 5."
+            };
+        }
+        const od = () => rnd(6, 49) * 2 + 1, ev = () => rnd(6, 49) * 2;
+        const right = pick([
+            () => { const a = od(), b = od(); return [fmt(a) + " × " + fmt(b), "odd × odd = odd"]; },
+            () => { const a = od(), b = ev(); return [fmt(a) + " + " + fmt(b), "odd + even = odd"]; }
+        ])();
+        const wrongPool = [
+            () => { const a = od(), b = od(); return fmt(a) + " + " + fmt(b); },
+            () => { const a = od(), b = ev(); return fmt(a) + " × " + fmt(b); },
+            () => { const a = ev(), b = ev(); return fmt(a) + " + " + fmt(b); },
+            () => { const a = ev(), b = ev() ; return fmt(a) + " × " + fmt(b); },
+            () => { const a = ev(), b = ev(); return fmt(a + b + 2) + " − " + fmt(b); }
+        ];
+        const wrongs = new Set();
+        while (wrongs.size < 3) wrongs.add(pick(wrongPool)());
+        return {
+            prompt: "Which calculation gives an <b>odd</b> answer? (You do not need to work it out.)",
+            equation: "", type: "MCQ", solution: right[0], pool: makeChoices(right[0], Array.from(wrongs)),
+            explain: "Use the parity rules: " + right[1] + ". The other calculations give even answers."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 5: COMPARING NUMBERS
+    // =====================================================================
+    function genCompare(tier) {
+        const len = rnd(6, 7);
+        if (Math.random() < 0.55) {                     // choose the symbol
+            const n1 = Number(zeroDigits(len, 4)), s1 = String(n1);
+            let n2, r = Math.random();
+            if (r < 0.15) n2 = n1;
+            else if (r < 0.6) { const i = rnd(0, len - 2); const t = s1.slice(0, i) + s1[i + 1] + s1[i] + s1.slice(i + 2); n2 = Number(t[0] === "0" ? s1 : t); }
+            else n2 = perturbInt(n1);
+            if (n2 !== n1 && String(n2).length !== len) n2 = n1 + rnd(1, 9) * 10;
+            const sym = n1 < n2 ? "@lt" : n1 > n2 ? "@gt" : "=";
+            const symTxt = n1 < n2 ? "less than" : n1 > n2 ? "greater than" : "equal to";
+            return {
+                prompt: "Choose the symbol that makes the statement true:",
+                equation: texInt(n1) + " @;@square@; " + texInt(n2), type: "MCQ", solution: M(sym),
+                pool: [M("@lt"), M("@gt"), M("=")],
+                explain: "Compare the digits from the left. " + fmt(n1) + " is " + symTxt + " " + fmt(n2) + "."
+            };
+        }
+        const base = distinctDigits(len).split("");
+        const nums = new Set();
+        nums.add(Number(base.join("")));
+        let g = 0;
+        while (nums.size < 4 && g++ < 100) {            // digit rearrangements of the same number
+            const a = base.slice(), i = rnd(len - 4, len - 2), j = rnd(i + 1, len - 1);
+            [a[i], a[j]] = [a[j], a[i]];
+            if (Math.random() < 0.5) { const k = rnd(len - 3, len - 1); a[k] = String(rnd(0, 9)); }
+            nums.add(Number(a.join("")));
+        }
+        const arr = Array.from(nums);
+        const greatest = Math.random() < 0.5;
+        const sorted = arr.slice().sort((a, b) => a - b);
+        const ans = greatest ? sorted[sorted.length - 1] : sorted[0];
+        return {
+            prompt: "Which is the <b>" + (greatest ? "greatest" : "smallest") + "</b> number?",
+            equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), arr.filter(x => x !== ans).map(fmt)),
+            explain: "Compare digits from the left. The " + (greatest ? "greatest" : "smallest") + " number is " + fmt(ans) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 6: ORDERING NUMBERS
+    // =====================================================================
+    function genOrder(tier) {
+        const asc = Math.random() < 0.5;
+        const sep = asc ? " &lt; " : " &gt; ";
+        let items;                                       // [{v: integer value, txt: string}]
+        if (Math.random() < 0.55) {                      // whole numbers
+            const len = rnd(6, 8), base = distinctDigits(len).split(""), set = new Set([base.join("")]);
+            let g = 0;
+            while (set.size < 4 && g++ < 100) {
+                const a = base.slice(), i = rnd(0, len - 2), j = rnd(i + 1, len - 1);
+                [a[i], a[j]] = [a[j], a[i]];
+                if (a[0] !== "0") set.add(a.join(""));
+            }
+            items = Array.from(set).map(s => ({ v: Number(s), txt: fmt(s) }));
+        } else {                                         // decimals (scaled by 1000)
+            const used = new Set(), list = [];
+            let g = 0;
+            while (list.length < 4 && g++ < 200) {
+                const dec = rnd(1, 3);
+                let n = rnd(1, Math.pow(10, dec) * 6 - 1);
+                if (n % 10 === 0) n += 1;
+                const v = n * Math.pow(10, 3 - dec);
+                if (!used.has(v)) { used.add(v); list.push({ v: v, txt: dstr(n, dec) }); }
+            }
+            items = list;
+        }
+        const sorted = items.slice().sort((a, b) => asc ? a.v - b.v : b.v - a.v);
+        const render = arr => arr.map(x => x.txt).join(sep);
+        const correct = render(sorted);
+        const fakes = [render(sorted.slice().reverse())];
+        for (let i = 0; i < 3; i++) { const c = sorted.slice(); [c[i], c[i + 1]] = [c[i + 1], c[i]]; fakes.push(render(c)); }
+        const rp = shuffleArray(sorted); fakes.push(render(rp));
+        return {
+            prompt: "Put these numbers in <b>" + (asc ? "ascending (smallest to largest)" : "descending (largest to smallest)") + "</b> order:" +
+                    bigNum(shuffleArray(items).map(x => x.txt).join(" &nbsp;&nbsp; ")).replace("1.7rem", "1.3rem"),
+            equation: "", type: "MCQ", solution: correct, pool: makeChoices(correct, fakes.filter(f => f !== correct)),
+            explain: "Compare place by place from the left (for decimals, compare tenths first, then hundredths, then thousandths). Correct order: " + correct + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 7: ROUNDING
+    // =====================================================================
+    function genRound(tier) {
+        if (tier === "hard" && Math.random() < 0.45) {   // decimals
+            const dec = 3, n = rnd(1000, 99999);        // value n / 1000
+            const p = pick([1, 2]);                      // round to p decimal places
+            const unit = Math.pow(10, dec - p);
+            if (n % unit === unit / 2) return genRound(tier);
+            const r = Math.round(n / unit);
+            const ans = dstr(r, p, true);
+            const fakes = [dstr(Math.floor(n / unit), p, true), dstr(Math.ceil(n / unit), p, true),
+                           dstr(Math.round(n / Math.pow(10, dec - p + 1)), p - 1 >= 0 ? p - 1 : 0, true),
+                           dstr(Math.round(n / Math.pow(10, dec - p - 1)), p + 1, true),
+                           dstr(Math.round(n / 1000), 0, true)]
+                .filter(x => x !== ans);
+            const pname = p === 1 ? "tenth" : "hundredth";
+            return {
+                prompt: "Round <b>" + dstr(n, dec, true) + "</b> to the nearest <b>" + pname + "</b>.",
+                equation: "", type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+                explain: "Look at the digit after the " + pname + " place: 5 or more rounds up, 4 or less rounds down. " + dstr(n, dec, true) + " rounds to " + ans + "."
+            };
+        }
+        let len, ks;
+        if (tier === "medium") { len = rnd(6, 8); ks = [{ k: 4, name: "ten thousand" }, { k: 5, name: "hundred thousand" }, { k: 3, name: "thousand" }, { k: 6, name: "million" }]; }
+        else { len = rnd(9, 11); ks = [{ k: 6, name: "million" }, { k: 7, name: "ten million" }, { k: 8, name: "hundred million" }, { k: 9, name: "billion" }]; }
+        ks = ks.filter(x => x.k <= len - 2);
+        const place = pick(ks), unit = Math.pow(10, place.k);
+        let n;
+        do { n = Number(zeroDigits(len, 5)); } while (n % unit === unit / 2 || n % unit === 0);
+        const ans = Math.round(n / unit) * unit;
+        const fakes = [Math.floor(n / unit) * unit, Math.ceil(n / unit) * unit, ans + unit, ans - unit,
+                       Math.round(n / (unit * 10)) * unit * 10, Math.round(n / (unit / 10)) * (unit / 10),
+                       Math.round(n / (unit * 100)) * unit * 100, Math.round(n / (unit / 100 < 1 ? 1 : unit / 100)) * (unit / 100 < 1 ? 1 : unit / 100)]
+            .filter(x => x !== ans && x > 0).map(fmt);
+        const digitBelow = Math.floor((n % unit) / (unit / 10));
+        return {
+            prompt: "Round <b>" + fmt(n) + "</b> to the nearest <b>" + place.name + "</b>.",
+            equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes),
+            explain: "Look at the digit to the right of the " + place.name + " place, which is " + digitBelow + ". " + (digitBelow >= 5 ? "It is 5 or more, so round up" : "It is less than 5, so round down") + ": " + fmt(ans) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 8: POWERS OF 2, 3 AND 10
+    // =====================================================================
+    function genPowers(tier) {
+        if (tier === "easy") {
+            const v = pick([0, 1, 2, 3]);
+            if (v === 0) {
+                const e = rnd(2, 5), val = Math.pow(2, e);
+                return { prompt: "Calculate the value of:", equation: "2^{" + e + "}", type: "MCQ", solution: fmt(val),
+                    pool: makeChoices(fmt(val), [2 * e, Math.pow(2, e - 1), Math.pow(2, e + 1), e * e, val + 2, val + 4, val - 2, val + 6].filter(x => x !== val).map(fmt)),
+                    explain: "2^" + e + " means 2 multiplied by itself " + e + " times: " + Array(e).fill(2).join(" × ") + " = " + fmt(val) + "." };
+            }
+            if (v === 1) {
+                const e = rnd(2, 3), val = Math.pow(3, e);
+                return { prompt: "Calculate the value of:", equation: "3^{" + e + "}", type: "MCQ", solution: fmt(val),
+                    pool: makeChoices(fmt(val), [3 * e, Math.pow(3, e - 1), Math.pow(3, e + 1), e * e * e, val + 3, val + 6, val - 3, val - 1].filter(x => x !== val).map(fmt)),
+                    explain: "3^" + e + " = " + Array(e).fill(3).join(" × ") + " = " + fmt(val) + "." };
+            }
+            const e = rnd(2, 6), val = Math.pow(10, e);
+            if (v === 2) {
+                return { prompt: "Calculate the value of:", equation: "10^{" + e + "}", type: "MCQ", solution: fmt(val),
+                    pool: makeChoices(fmt(val), [Math.pow(10, e - 1), Math.pow(10, e + 1), 10 * e, Math.pow(10, e + 2)].filter(x => x !== val).map(fmt)),
+                    explain: "10^" + e + " is 1 followed by " + e + " zeros: " + fmt(val) + "." };
+            }
+            const f = rnd(2, 3), w = f === 2 ? 2 : 3;     // how many repeated factors
+            const e2 = w === 2 ? rnd(3, 5) : rnd(2, 3), val2 = Math.pow(w, e2);
+            return { prompt: "Calculate the value of:", equation: w + "^{" + e2 + "}", type: "MCQ", solution: fmt(val2),
+                pool: makeChoices(fmt(val2), [w * e2, Math.pow(w, e2 - 1), Math.pow(w, e2 + 1), e2 * e2, val2 + 2, val2 - 2, val2 + 4].filter(x => x !== val2).map(fmt)),
+                explain: w + "^" + e2 + " = " + Array(e2).fill(w).join(" × ") + " = " + fmt(val2) + "." };
+        }
+        if (tier === "medium") {
+            const v = pick([0, 1, 2, 3]);
+            if (v === 0) {                                // repeated multiplication -> power
+                const b = rnd(2, 9), e = rnd(3, 6);
+                const eq = Array(e).fill(b).join(" @times ");
+                const sol = M(b + "^{" + e + "}");
+                const fakes = [M(e + "^{" + b + "}"), M(b + "^{" + (e - 1) + "}"), M(b + "^{" + (e + 1) + "}"), M(b + " @times " + e), M(b + "^{2}")]
+                    .filter(x => x !== sol);
+                return { prompt: "Write this repeated multiplication as a <b>power</b>:", equation: eq, type: "MCQ", solution: sol,
+                    pool: makeChoices(sol, fakes),
+                    explain: "The base " + b + " is multiplied " + e + " times, so it is " + M(b + "^{" + e + "}") + "." };
+            }
+            if (v === 1) {                                // power of 10 <-> standard form
+                const e = rnd(4, 9), val = Math.pow(10, e);
+                if (Math.random() < 0.5) {
+                    return { prompt: "Write this power of 10 in <b>standard form</b>:", equation: "10^{" + e + "}", type: "MCQ", solution: fmt(val),
+                        pool: makeChoices(fmt(val), [Math.pow(10, e - 1), Math.pow(10, e + 1), Math.pow(10, e - 2), 10 * e].filter(x => x !== val).map(fmt)),
+                        explain: "10^" + e + " is 1 followed by " + e + " zeros: " + fmt(val) + "." };
+                }
+                const sol = M("10^{" + e + "}");
+                return { prompt: "Write <b>" + fmt(val) + "</b> as a power of 10.", equation: "", type: "MCQ", solution: sol,
+                    pool: makeChoices(sol, [M("10^{" + (e - 1) + "}"), M("10^{" + (e + 1) + "}"), M("10^{" + (e + 2) + "}"), M(e + "^{10}")].filter(x => x !== sol)),
+                    explain: fmt(val) + " has " + e + " zeros, so it equals " + M("10^{" + e + "}") + "." };
+            }
+            if (v === 2) {                                // bigger powers of 2 and 3
+                const base = pick([2, 3]), e = base === 2 ? rnd(4, 6) : rnd(2, 3), val = Math.pow(base, e);
+                return { prompt: "Calculate the value of:", equation: base + "^{" + e + "}", type: "MCQ", solution: fmt(val),
+                    pool: makeChoices(fmt(val), [base * e, Math.pow(base, e - 1), Math.pow(base, e + 1), e * e * e, val + base].filter(x => x !== val).map(fmt)),
+                    explain: base + "^" + e + " = " + fmt(val) + "  (" + Array(e).fill(base).join(" × ") + ")." };
+            }
+            const b = pick([2, 3]), e = b === 2 ? rnd(3, 6) : rnd(2, 3), k = rnd(2, 4);   // power x power of 10
+            const val = Math.pow(b, e) * Math.pow(10, k);
+            return { prompt: "Calculate:", equation: b + "^{" + e + "} @times 10^{" + k + "}", type: "MCQ", solution: fmt(val),
+                pool: makeChoices(fmt(val), [Math.pow(b, e) * Math.pow(10, k - 1), Math.pow(b, e) * Math.pow(10, k + 1), b * e * Math.pow(10, k), Math.pow(b, e) + Math.pow(10, k)].filter(x => x !== val).map(fmt)),
+                explain: b + "^" + e + " = " + Math.pow(b, e) + " and 10^" + k + " = " + fmt(Math.pow(10, k)) + ", so the product is " + fmt(val) + "." };
+        }
+        // hard
+        const v = pick([0, 1, 2]);
+        if (v === 0) {                                    // a^b + c^d
+            const plus = Math.random() < 0.5, e1 = plus ? rnd(2, 5) : rnd(3, 5), e2 = rnd(2, 3);
+            const val = plus ? Math.pow(2, e1) + Math.pow(3, e2) : Math.pow(2, e1 + 1) - Math.pow(3, 2);
+            const eq = plus ? "2^{" + e1 + "} + 3^{" + e2 + "}" : "2^{" + (e1 + 1) + "} - 3^{2}";
+            const wrongs = plus ? [2 * e1 + 3 * e2, Math.pow(2, e1) + 3 * e2, 2 * e1 + Math.pow(3, e2), Math.pow(5, e1 + e2), val + 10]
+                                : [2 * (e1 + 1) - 6, Math.pow(2, e1 + 1) - 6, Math.pow(2, e1 + 1) - 3, val + 2];
+            return { prompt: "Calculate:", equation: eq, type: "MCQ", solution: fmt(val),
+                pool: makeChoices(fmt(val), wrongs.filter(x => x !== val && x > 0).map(fmt)),
+                explain: "Work out each power first, then add or subtract. The answer is " + fmt(val) + "." };
+        }
+        if (v === 1) {                                    // greatest / smallest power
+            const pool = [];
+            for (let e = 3; e <= 6; e++) pool.push({ b: 2, e: e });
+            for (let e = 2; e <= 3; e++) pool.push({ b: 3, e: e });
+            for (let e = 2; e <= 3; e++) pool.push({ b: 10, e: e });
+            let chosen, g = 0;
+            do {
+                chosen = shuffleArray(pool).slice(0, 4);
+                g++;
+            } while (g < 200 && (new Set(chosen.map(x => Math.pow(x.b, x.e))).size < 4 || new Set(chosen.map(x => x.b)).size < 2));
+            const greatest = Math.random() < 0.5;
+            const sorted = chosen.slice().sort((a, b) => Math.pow(a.b, a.e) - Math.pow(b.b, b.e));
+            const win = greatest ? sorted[3] : sorted[0];
+            const toT = x => M(x.b + "^{" + x.e + "}");
+            return { prompt: "Which is the <b>" + (greatest ? "greatest" : "smallest") + "</b> value?", equation: "", type: "MCQ", solution: toT(win),
+                pool: makeChoices(toT(win), chosen.filter(x => x !== win).map(toT)),
+                explain: "Values: " + chosen.map(x => x.b + "^" + x.e + " = " + fmt(Math.pow(x.b, x.e))).join(", ") + "." };
+        }
+        const b = pick([2, 3]), e = b === 2 ? rnd(3, 6) : rnd(2, 3), k = rnd(3, 6);     // value of b^e x 10^k, then compare
+        const a1 = Math.pow(b, e) * Math.pow(10, k);
+        return { prompt: "Calculate the value of:", equation: b + "^{" + e + "} @times 10^{" + k + "}", type: "MCQ", solution: fmt(a1),
+            pool: makeChoices(fmt(a1), [Math.pow(b, e) * Math.pow(10, k - 1), Math.pow(b, e) * Math.pow(10, k + 1), b * e * Math.pow(10, k), Math.pow(b, e) * 10 * k].filter(x => x !== a1 && x > 0).map(fmt)),
+            explain: b + "^" + e + " = " + Math.pow(b, e) + ". Multiplying by 10^" + k + " adds " + k + " zeros: " + fmt(a1) + "." };
+    }
+
+    // =====================================================================
+    //  TOPIC 9: DECIMALS IN TERMS OF POWERS OF 10 AND OF 1/10
+    // =====================================================================
+    function decTerms(whole, frac) {                      // whole: array of digits (tens first), frac: array of digits
+        const t = [];
+        const wl = whole.length;
+        whole.forEach((d, i) => { if (d !== 0) t.push({ d: d, p: wl - 1 - i }); });
+        frac.forEach((d, i) => { if (d !== 0) t.push({ d: d, p: -(i + 1) }); });
+        return t;
+    }
+    function renderDecTerms(t, hard) {
+        return t.slice().sort((a, b) => b.p - a.p).map(x => {
+            if (x.p === 1) return x.d + " @times 10";
+            if (x.p === 0) return x.d + " @times 1";
+            if (x.p === -1) return x.d + " @times @frac{1}{10}";
+            return hard ? x.d + " @times (@frac{1}{10})^{" + (-x.p) + "}" : x.d + " @times @frac{1}{" + Math.pow(10, -x.p) + "}";
+        }).join(" + ");
+    }
+    function decValueText(t) {                            // value as text, from terms
+        const minP = Math.min(0, ...t.map(x => x.p));
+        const dec = -minP;
+        let n = 0;
+        t.forEach(x => { n += x.d * Math.pow(10, x.p + dec); });
+        return dstr(n, dec, false);
+    }
+    function genDecimalPowers(tier) {
+        const hard = tier === "hard";
+        const whole = hard ? [rnd(1, 9), rnd(0, 9)] : [rnd(1, 9)];
+        const fl = hard ? 3 : 2;
+        const frac = Array.from({ length: fl }, () => rnd(0, 9));
+        if (frac[fl - 1] === 0) frac[fl - 1] = rnd(1, 9);
+        if (hard && Math.random() < 0.6) frac[rnd(0, fl - 2)] = 0;
+        const t = decTerms(whole, frac);
+        const dec = fl;
+        const valOf = c => c.reduce((a, x) => a + x.d * Math.pow(10, x.p + dec + 1), 0);   // scaled by 10^(dec+1)
+        const N = t.reduce((a, x) => a + x.d * Math.pow(10, x.p + dec), 0);
+        const dtext = dstr(N, dec, false);
+        const correctTex = renderDecTerms(t, hard);
+        const wrongs = new Set();
+        for (let r = 0; r < 14; r++) {
+            const c = t.map(x => ({ d: x.d, p: x.p })), i = rnd(0, c.length - 1), m = rnd(0, 2);
+            if (m === 0) c[i].p += (Math.random() < 0.5 ? 1 : -1);                                   // wrong power
+            else if (m === 1 && c.length >= 2) { const j = rnd(0, c.length - 1); const tmp = c[i].d; c[i].d = c[j].d; c[j].d = tmp; }   // digits swapped
+            else c[i].p = c[i].p >= 0 ? -(c[i].p + 1) : c[i].p - 1;                                  // one place too far right
+            const txt = renderDecTerms(c, hard);
+            if (txt !== correctTex && valOf(c) !== valOf(t)) wrongs.add(txt);
+        }
+        const place = p => p === 1 ? "tens" : p === 0 ? "ones" : p === -1 ? "tenths" : p === -2 ? "hundredths" : "thousandths";
+        if (Math.random() < 0.45) {                       // reverse: expression -> decimal
+            const alt = new Set(varNums(N).map(x => dstr(x, dec, false)));
+            alt.add(dstr(N, dec + 1, false)); alt.add(dstr(N, dec - 1 < 0 ? 0 : dec - 1, false)); alt.add(dstr(N * 10, dec, false));
+            const wrongDecs = Array.from(alt).filter(x => x !== dtext && x !== "");
+            return {
+                prompt: "Which decimal is equal to this expression?",
+                equation: correctTex, type: "MCQ", solution: dtext, pool: makeChoices(dtext, wrongDecs),
+                explain: "Each term gives one digit: " + t.slice().sort((a, b) => b.p - a.p).map(x => x.d + " in the " + place(x.p) + " place").join(", ") + ". So the number is " + dtext + "."
+            };
+        }
+        const sol = M(correctTex);
+        return {
+            prompt: "Write <b>" + dtext + "</b> in terms of powers of 10 and of " + M("@frac{1}{10}") + ":",
+            equation: "", type: "MCQ", solution: sol, pool: makeChoices(sol, Array.from(wrongs).map(M).filter(x => x !== sol)),
+            explain: "Write each digit times its place value (tens = 10, ones = 1, tenths = " + M("@frac{1}{10}") + ", hundredths = " + M("@frac{1}{100}") + ", ...). Zero digits are left out: " + M(correctTex) + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 10: DECIMAL <-> DECIMAL FRACTION
+    // =====================================================================
+    function genDecimalFraction(tier) {
+        const hard = tier === "hard";
+        const dec = hard ? rnd(2, 3) : rnd(1, 3);
+        let n;
+        do { n = rnd(1, Math.pow(10, dec) - 1); } while (n % 10 === 0 && dec > 1);
+        const whole = hard ? rnd(1, 9) : 0;
+        const total = whole * Math.pow(10, dec) + n;          // integer numerator over 10^dec
+        const den = Math.pow(10, dec);
+        const decTxt = dstr(total, dec, false);
+        const frTex = "@frac{" + total + "}{" + den + "}";
+        const fakeFr = [
+            "@frac{" + total + "}{" + den * 10 + "}", "@frac{" + total + "}{" + Math.max(10, den / 10) + "}",
+            "@frac{" + total + "}{" + den * 100 + "}",
+            "@frac{" + Number(String(total).split("").reverse().join("")) + "}{" + den + "}",
+            "@frac{" + (total + 1) + "}{" + den + "}"
+        ].filter(x => x !== frTex);
+        const v = pick([0, 1]);
+        if (v === 0) {
+            return {
+                prompt: "Write the decimal <b>" + decTxt + "</b> as a <b>decimal fraction</b> (a fraction with denominator 10, 100 or 1000):",
+                equation: "", type: "MCQ", solution: M(frTex), pool: makeChoices(M(frTex), fakeFr.map(M)),
+                explain: decTxt + " has " + dec + " decimal place" + (dec > 1 ? "s" : "") + ", so the denominator is " + den + ": " + M(frTex) + "."
+            };
+        }
+        const wrongDecs = [dstr(total, dec + 1), dstr(total, Math.max(dec - 1, 0)), dstr(total, dec + 2),
+                           dstr(Number(String(total).split("").reverse().join("")), dec), dstr(total + 1, dec)]
+            .filter(x => x !== decTxt);
+        return {
+            prompt: "Write this decimal fraction as a <b>decimal</b>:",
+            equation: frTex, type: "MCQ", solution: decTxt, pool: makeChoices(decTxt, wrongDecs),
+            explain: "Dividing by " + den + " moves the decimal point " + dec + " place" + (dec > 1 ? "s" : "") + " to the left: " + decTxt + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 11: MULTIPLY / DIVIDE A DECIMAL BY 10, 100, 1000
+    // =====================================================================
+    function genMulDiv10(tier) {
+        const dec = tier === "easy" ? rnd(1, 2) : rnd(1, 3);
+        let n;
+        do { n = rnd(2, Math.pow(10, dec + (tier === "easy" ? 1 : 2)) - 1); } while (n % 10 === 0);
+        const k = tier === "easy" ? pick([1, 2]) : pick([2, 3]);
+        const mult = Math.random() < 0.5;
+        const startTxt = dstr(n, dec, true);
+        if (tier === "medium" && Math.random() < 0.4) {   // find the missing number
+            if (Math.random() < 0.5) {
+                const res = dstr(n * Math.pow(10, k), dec, false);
+                return {
+                    prompt: "Find the missing number:", equation: startTxt + " @times @square = " + res.split(",").join("{,}"), type: "MCQ",
+                    solution: fmt(Math.pow(10, k)), pool: makeChoices(fmt(Math.pow(10, k)), [10, 100, 1000, 10000, 1].filter(x => x !== Math.pow(10, k)).map(fmt)),
+                    explain: "Going from " + startTxt + " to " + res + " moves the digits " + k + " place" + (k > 1 ? "s" : "") + " to the left, which is multiplying by " + fmt(Math.pow(10, k)) + "."
+                };
+            }
+            const res = dstr(n, dec + k, false);
+            return {
+                prompt: "Find the missing number:", equation: "@square @div " + texInt(Math.pow(10, k)) + " = " + res, type: "MCQ",
+                solution: startTxt, pool: makeChoices(startTxt, [dstr(n, dec + k + 1), dstr(n * 10, dec + k), dstr(n, dec + k - 1 < 0 ? 0 : dec + k - 1), dstr(n * 100, dec + k)].filter(x => x !== startTxt)),
+                explain: "Dividing moves the digits " + k + " place" + (k > 1 ? "s" : "") + " to the right, so the missing number is " + startTxt + " (" + startTxt + " ÷ " + fmt(Math.pow(10, k)) + " = " + res + ")."
+            };
+        }
+        const factor = Math.pow(10, k);
+        let ans, fakes;
+        if (mult) {
+            ans = dstr(n * factor, dec);
+            fakes = [dstr(n, dec + k), dstr(n * factor / 10, dec), dstr(n * factor * 10, dec), dstr(n, dec + k - 1 < 0 ? 0 : dec + k - 1)].filter(x => x !== ans);
+        } else {
+            ans = dstr(n, dec + k);
+            fakes = [dstr(n * factor, dec), dstr(n, dec + k + 1), dstr(n, dec + k - 1), dstr(n * 10, dec + k)].filter(x => x !== ans);
+        }
+        return {
+            prompt: "Work out:", equation: startTxt + (mult ? " @times " : " @div ") + texInt(factor), type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+            explain: (mult ? "Multiplying by " : "Dividing by ") + fmt(factor) + " moves every digit " + k + " place" + (k > 1 ? "s" : "") + " to the " + (mult ? "left" : "right") + ": " + ans + "."
+        };
+    }
+
+    // =====================================================================
+    //  TOPIC 12: OPERATIONS (+ - x ÷)
+    // =====================================================================
+    function genOperations(tier) {
+        if (tier === "medium") {
+            const kind = pick(["add", "sub", "adddec", "subdec"]);
+            if (kind === "add" || kind === "sub") {
+                // mental-friendly: round numbers (hundreds / thousands / ten thousands) or a subtraction from a power of 10
+                const u = pick([100, 1000, 10000]);
+                const uName = u === 100 ? "hundreds" : u === 1000 ? "thousands" : "ten thousands";
+                let a, b;
+                if (kind === "add") { a = rnd(11, 89) * u; b = rnd(11, 89) * u; }
+                else if (Math.random() < 0.5) { a = 100 * u; b = rnd(11, 89) * u; }          // e.g. 10,000 - 3,500
+                else { a = rnd(30, 99) * u; b = rnd(11, a / u - 5) * u; }
+                const ans = kind === "add" ? a + b : a - b;
+                const near = [ans + u, ans - u, ans + 10 * u, ans - 10 * u, ans * 10, ans / 10].filter(x => Number.isInteger(x) && x > 0 && x !== ans).map(fmt);
+                const sgn = kind === "add" ? " + " : " - ";
+                return { prompt: "Work out:", equation: texInt(a) + sgn + texInt(b), type: "MCQ", solution: fmt(ans),
+                    pool: makeChoices(fmt(ans), near),
+                    explain: "Think in " + uName + ": " + fmt(a / u) + (kind === "add" ? " + " : " − ") + fmt(b / u) + " = " + fmt(ans / u) + " " + uName + ", so the answer is " + fmt(ans) + "." };
+            }
+            // decimals with friendly numbers that can be done mentally
+            const plus = kind === "adddec", dm = 2;
+            let x, y;
+            if (Math.random() < 0.5) {                    // both with one decimal place, small numbers
+                const t1 = rnd(1, 9), t2 = rnd(1, 9);
+                x = { n: rnd(2, 15) * 10 + t1, d: 1 }; y = { n: rnd(1, 9) * 10 + t2, d: 1 };
+            } else {                                      // one decimal place with a "friendly" two-decimal number
+                x = { n: rnd(2, 15) * 10 + rnd(1, 9), d: 1 };
+                y = { n: rnd(0, 6) * 100 + pick([5, 25, 75]), d: 2 };
+                if (Math.random() < 0.5) { const tmp = x; x = y; y = tmp; }
+            }
+            let X = x.n * Math.pow(10, dm - x.d), Y = y.n * Math.pow(10, dm - y.d);
+            if (!plus && X < Y) { const tmp = x; x = y; y = tmp; const t2 = X; X = Y; Y = t2; }
+            const ansInt = plus ? X + Y : X - Y;
+            const ans = dstr(ansInt, dm, false);
+            const fakes = [dstr(ansInt + 10, dm), dstr(ansInt - 10, dm), dstr(ansInt + 100, dm), dstr(ansInt - 100, dm), dstr(ansInt + 1, dm), dstr(ansInt - 1, dm), dstr(ansInt * 10, dm)]
+                .filter(v => v !== ans && v.indexOf("-") < 0);
+            const xT = dstr(x.n, x.d, true), yT = dstr(y.n, y.d, true);
+            return { prompt: "Work out:", equation: xT + (plus ? " + " : " - ") + yT, type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
+                explain: "Line up the decimal points (write " + dstr(X, dm, true) + " and " + dstr(Y, dm, true) + "). " + xT + (plus ? " + " : " − ") + yT + " = " + ans + "." };
+        }
+        // hard: multiplication / division, calculation or word problem
+        const kind = pick(["mul", "div", "mulw", "divw"]);
+        if (kind === "mul" || kind === "mulw") {
+            const a = pick([12, 15, 25, 30, 40, 50, 60, 70, 80, 90, 120, 150, 200, 300, 400, 500, 600]), b = pick([3, 4, 5, 6, 7, 8, 9]);
+            const ans = a * b;
+            const z = a % 100 === 0 ? 100 : a % 10 === 0 ? 10 : 1;
+            const how = z > 1 ? fmt(a / z) + " × " + b + " = " + (a / z) * b + ", then add the zeros: " + fmt(ans) + "."
+                              : fmt(10 * Math.floor(a / 10)) + " × " + b + " = " + fmt(10 * Math.floor(a / 10) * b) + " and " + (a % 10) + " × " + b + " = " + (a % 10) * b + ", so " + fmt(ans) + ".";
+            const fakes = [ans + a, ans - a, ans * 10, ans / 10, a * (b + 1), a * (b - 1), ans + 10, ans - 10].filter(x => Number.isInteger(x) && x > 0 && x !== ans);
+            if (kind === "mul") {
+                return { prompt: "Work out:", equation: texInt(a) + " @times " + b, type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes.map(fmt)),
+                    explain: fmt(a) + " × " + b + ": " + how };
+            }
+            const ctx = pick([
+                ["A school buys " + fmt(b) + " boxes of pencils. Each box holds " + fmt(a) + " pencils. How many pencils does the school buy?"],
+                ["A bakery makes " + fmt(a) + " rolls every day. How many rolls does it make in " + b + " days?"],
+                ["A factory fills " + b + " trucks. Each truck carries " + fmt(a) + " bottles. How many bottles are carried altogether?"]
+            ])[0];
+            return { prompt: ctx, equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes.map(fmt)),
+                explain: "Multiply: " + fmt(a) + " × " + b + ": " + how };
+        }
+        const q = rnd(3, 9) * pick([1, 10]), d = pick([20, 30, 40, 50, 60]), dividend = q * d;   // mental: cancel the zeros
+        const fakes = [q * 10, q / 10, q + 1, q - 1, q + 10, q - 10, q + 2, q * 100].filter(x => Number.isInteger(x) && x !== q && x > 0).map(fmt);
+        if (kind === "div") {
+            return { prompt: "Work out:", equation: texInt(dividend) + " @div " + d, type: "MCQ", solution: fmt(q), pool: makeChoices(fmt(q), fakes),
+                explain: "Cancel one zero from both numbers: " + fmt(dividend) + " ÷ " + d + " = " + fmt(dividend / 10) + " ÷ " + (d / 10) + " = " + fmt(q) + " (check: " + fmt(q) + " × " + d + " = " + fmt(dividend) + ")." };
+        }
+        const ctx = pick([
+            "A warehouse packs " + fmt(dividend) + " bottles into crates of " + d + ". How many crates are needed?",
+            "A library shares " + fmt(dividend) + " books equally among " + d + " schools. How many books does each school get?",
+            "A farmer collects " + fmt(dividend) + " eggs and packs them in boxes of " + d + ". How many boxes does he fill?"
+        ]);
+        return { prompt: ctx, equation: "", type: "MCQ", solution: fmt(q), pool: makeChoices(fmt(q), fakes),
+            explain: "Cancel one zero from both numbers: " + fmt(dividend) + " ÷ " + d + " = " + fmt(dividend / 10) + " ÷ " + (d / 10) + " = " + fmt(q) + "." };
+    }
+
+    // =====================================================================
+    //  THE QUIZ BLUEPRINT: 20 questions covering every Term 1 topic
+    // =====================================================================
+    const TOPICS = {
+        place_value:     { label: "Place Value",                      gen: genPlaceValue },
+        word_form:       { label: "Numbers in Word Form",             gen: genWordForm },
+        expanded:        { label: "Expanded Form (Powers of 10)",     gen: genExpanded },
+        odd_even:        { label: "Odd and Even Numbers",             gen: genOddEven },
+        compare:         { label: "Comparing Numbers",                gen: genCompare },
+        order:           { label: "Ordering Numbers",                 gen: genOrder },
+        round:           { label: "Rounding",                         gen: genRound },
+        powers:          { label: "Powers of 2, 3 and 10",            gen: genPowers },
+        decimal_powers:  { label: "Decimals and Powers of 10 / 1/10", gen: genDecimalPowers },
+        decimal_fraction:{ label: "Decimals and Decimal Fractions",   gen: genDecimalFraction },
+        mul_div_10:      { label: "Multiply / Divide by 10, 100, 1000", gen: genMulDiv10 },
+        operations:      { label: "Operations on Numbers",            gen: genOperations }
+    };
+    const BLUEPRINT = [
+        ["easy", "place_value"], ["easy", "word_form"], ["easy", "odd_even"], ["easy", "compare"], ["easy", "powers"], ["easy", "mul_div_10"],
+        ["medium", "expanded"], ["medium", "round"], ["medium", "order"], ["medium", "odd_even"], ["medium", "decimal_fraction"],
+        ["medium", "decimal_powers"], ["medium", "operations"], ["medium", "mul_div_10"],
+        ["hard", "word_form"], ["hard", "expanded"], ["hard", "powers"], ["hard", "round"], ["hard", "operations"], ["hard", "decimal_powers"]
+    ];
+
+    function constructProblem(tier, topic) {
+        const t = TOPICS[topic], q = t.gen(tier);
+        q.tier = tier; q.topic = topic; q.categoryType = t.label;
+        return q;
+    }
+    function validProblem(q) {
+        if (q.type === "TF") return q.solution === "TRUE" || q.solution === "FALSE";
+        return Array.isArray(q.pool) && q.pool.length >= 3 && q.pool.includes(q.solution) && new Set(q.pool).size === q.pool.length;
+    }
+
+    function generateEntireQuizSuite() {
+        generatedSuite = [];
+        const seen = new Set();
+        const byTier = { easy: [], medium: [], hard: [] };
+        BLUEPRINT.forEach(slot => {
+            let cand = null, guard = 0;
+            while (guard++ < 300) {
+                let c;
+                try { c = constructProblem(slot[0], slot[1]); } catch (e) { continue; }
+                const fp = (c.prompt + "||" + c.equation).replace(/\s+/g, "");
+                if (validProblem(c) && !seen.has(fp)) { cand = c; seen.add(fp); break; }
+            }
+            if (!cand) { do { cand = constructProblem(slot[0], slot[1]); } while (!validProblem(cand)); }
+            byTier[slot[0]].push(cand);
+        });
+        // easy first, then medium, then hard; the order inside each tier is shuffled
+        generatedSuite = [...shuffleArray(byTier.easy), ...shuffleArray(byTier.medium), ...shuffleArray(byTier.hard)];
+    }
+/*GEN-END*/
+
+    // ========================================== -->
+    // INTERFACE VIEW SYNCHRONIZER                 -->
+    // ========================================== -->
+
+    function synchroniseQuestionIndex() {
+        const activeProblem = generatedSuite[traversalIndex];
+
+        document.getElementById('idx-current').innerText = traversalIndex + 1;
+        document.getElementById('idx-total').innerText = APP_LIMITS.totalItems;
+        document.getElementById('txt-tier-badge').innerText = activeProblem.tier + " level";
+
+        let equationBlock = activeProblem.equation ? `
+            <div style="font-size:1.45rem; font-weight:bold; color: var(--primary); margin-top: 8px; text-align:center;">
+                $$${tx(activeProblem.equation)}$$
+            </div>
+        ` : "";
+
+        document.getElementById('math-prompt-container').innerHTML = `
+            <div style="font-size:1.1rem; line-height:1.5; color: var(--text-main);">
+                ${activeProblem.prompt}
+                ${equationBlock}
+            </div>
+        `;
+
+        document.getElementById('box-mcq').classList.add('hidden');
+        document.getElementById('box-tf').classList.add('hidden');
+
+        if (activeProblem.type === 'MCQ') {
+            const mcqContainer = document.getElementById('box-mcq');
+            mcqContainer.innerHTML = "";
+            mcqContainer.classList.remove('hidden');
+
+            activeProblem.pool.forEach(choice => {
+                const buttonElement = document.createElement('button');
+                buttonElement.className = `opt-btn p-3 text-center transition flex justify-center items-center ${storedResponses[traversalIndex] === choice ? 'active' : ''}`;
+                buttonElement.style.minHeight = "48px";
+                buttonElement.style.fontSize = "1.2rem";
+                buttonElement.innerHTML = choice;                // choices may contain inline maths
+                buttonElement.onclick = () => {
+                    document.querySelectorAll('#box-mcq .opt-btn').forEach(el => el.classList.remove('active'));
+                    buttonElement.classList.add('active');
+                    recordInput(choice);
+                };
+                mcqContainer.appendChild(buttonElement);
+            });
+            if (window.katex && typeof window.renderMathInElement === 'function') {
+                window.renderMathInElement(mcqContainer);
+            }
+        } else if (activeProblem.type === 'TF') {
+            document.getElementById('box-tf').classList.remove('hidden');
+            document.querySelectorAll('#box-tf .flag-tf').forEach(btn => {
+                btn.classList.remove('active');
+                if (storedResponses[traversalIndex] === btn.getAttribute('data-core')) btn.classList.add('active');
+                btn.onclick = () => {
+                    document.querySelectorAll('#box-tf .flag-tf').forEach(el => el.classList.remove('active'));
+                    btn.classList.add('active');
+                    recordInput(btn.getAttribute('data-core'));
+                };
+            });
+        }
+
+        buildShortcutsGridMatrix();
+        document.getElementById('action-back').disabled = traversalIndex === 0;
+        document.getElementById('action-forward').innerText = traversalIndex === APP_LIMITS.totalItems - 1 ? "Finish Quiz" : "Next →";
+
+        if (window.katex && typeof window.renderMathInElement === 'function') {
+            window.renderMathInElement(document.getElementById('math-prompt-container'));
+        }
+    }
+
+    function recordInput(value) { storedResponses[traversalIndex] = value; buildShortcutsGridMatrix(); }
+
+    function buildShortcutsGridMatrix() {
+        const grid = document.getElementById('navigation-shortcut-grid');
+        grid.innerHTML = "";
+        for (let i = 0; i < APP_LIMITS.totalItems; i++) {
+            const b = document.createElement('button');
+            b.innerText = i + 1;
+            let bgStyle = "bg-slate-100 text-slate-600 border border-slate-300";
+            if (traversalIndex === i) bgStyle = "bg-sky-600 text-white font-bold ring-2 ring-sky-300";
+            else if (storedResponses[i]) bgStyle = "bg-emerald-100 text-emerald-700 border border-emerald-400 font-semibold";
+
+            b.className = `p-2 text-xs text-center rounded-lg transition cursor-pointer min-w-[32px] ${bgStyle}`;
+            b.onclick = () => { traversalIndex = i; synchroniseQuestionIndex(); };
+            grid.appendChild(b);
+        }
+    }
+
+    // ========================================== -->
+    // TIMERS, REPORT, PDF EXPORT & EVENT LISTENERS-->
+    // ========================================== -->
+
+    function beginTimelineScheduler() {
+        document.getElementById('meter-container').classList.remove('hidden');
+        function pulse() {
+            let m = Math.floor(timeTrackingRemaining / 60);
+            let s = timeTrackingRemaining % 60;
+            document.getElementById('clock-countdown').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            let dynamicPercentage = (timeTrackingRemaining / APP_LIMITS.allocatedDurationSeconds) * 100;
+            const progress = document.getElementById('meter-progress');
+            progress.style.width = `${dynamicPercentage}%`;
+
+            if (dynamicPercentage < 25) progress.style.backgroundColor = 'var(--error)';
+            else if (dynamicPercentage < 50) progress.style.backgroundColor = '#d97706';
+        }
+        pulse();
+        schedulerHandle = setInterval(() => {
+            timeTrackingRemaining--;
+            pulse();
+            if (timeTrackingRemaining <= 0) {
+                clearInterval(schedulerHandle);
+                compileFinalPerformanceReport(true);
+            }
+        }, 1000);
+    }
+
+    function sendGradesToTeacher(name, classroom, score, duration, quizTitle) {
+        // Google Web App link that stores the results in the teacher's sheet
+        const url = "https://script.google.com/macros/s/AKfycbzpYkVVYTJ0VvPNVVCj9pIBrzXznUdB9XTPEMJPAQ8AF8qu-x_T-PhrYA7x_wCaZyWs/exec";
+        fetch(url, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: name,
+                classroom: classroom,
+                score: score,
+                duration: duration,       // the start time string is logged into Column E of the sheet
+                quizTitle: quizTitle,
+                date: new Date().toLocaleString()
+            })
+        }).catch(err => console.log("Network trace: Client sync fallback triggered."));
+    }
+
+    function compileFinalPerformanceReport(isTimeout = false) {
+        clearInterval(schedulerHandle);
+        document.getElementById('stage-engine').classList.add('hidden');
+        document.getElementById('meter-container').classList.add('hidden');
+        document.getElementById('stage-summary').classList.remove('hidden');
+
+        if (isTimeout) alert("Time limit reached. Compiling final performance report now.");
+
+        let tallyCorrect = 0;
+        let compilationHtml = "";
+
+        generatedSuite.forEach((problem, index) => {
+            const userRaw = storedResponses[index];
+            const userAns = (userRaw || "").toString().trim().toUpperCase();
+            const correctAns = problem.solution.toString().trim().toUpperCase();
+            const outcomeState = userAns === correctAns;
+            if (outcomeState) tallyCorrect++;
+
+            const answerColor = outcomeState ? 'var(--success)' : 'var(--error)';
+            const answerBlock =
+                '<p style="margin:0;"><strong>Your Submitted Answer:</strong> <span style="font-weight:600; color:' + answerColor + '; font-size:1.05rem;">' + (userRaw ? userRaw : 'Unanswered') + '</span></p>' +
+                '<p style="margin:0; color: var(--text-muted);"><strong>Correct Answer:</strong> <span style="font-weight:600; color: var(--text-main); font-size:1.05rem;">' + problem.solution + '</span></p>' +
+                (problem.explain ? '<p style="margin:6px 0 0 0; color: var(--text-muted); font-size:0.85rem;"><strong>Explanation:</strong> ' + problem.explain + '</p>' : '');
+
+            const itemScoreBadge = outcomeState ?
+                `<span style="float: right; font-weight: 700; color: var(--success); background: #f0fdf4; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--success); font-size: 0.85rem;">Score: 1 / 1</span>` :
+                `<span style="float: right; font-weight: 700; color: var(--error); background: #fef2f2; padding: 2px 8px; border-radius: 6px; border: 1px solid var(--error); font-size: 0.85rem;">Score: 0 / 1</span>`;
+
+            compilationHtml += `
+            <div class="report-item" style="position: relative; overflow: auto; background:#ffffff; padding:16px; margin-bottom:12px; border-radius:12px; border-left: 5px solid ${outcomeState ? 'var(--success)' : 'var(--error)'};">
+                ${itemScoreBadge}
+                <div style="font-size: 0.85rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+                    Question ${index + 1} &middot; Topic: <span style="color: var(--primary);">${problem.categoryType}</span>
+                </div>
+                <div style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px;">
+                    <strong>Question:</strong>
+                    <div style="margin-top: 4px; font-family: system-ui, sans-serif;">${problem.prompt}</div>
+                    <div style="margin: 10px 0 0 0; text-align: center; font-size: 1.3rem; font-weight: bold; color: var(--text-main);">
+                        ${problem.equation ? '$$' + tx(problem.equation) + '$$' : ''}
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; padding-left: 4px;">
+                    ${answerBlock}
+                </div>
+            </div>
+            `;
+        });
+
+        document.getElementById('m-correct').innerText = tallyCorrect;
+        document.getElementById('m-incorrect').innerText = APP_LIMITS.totalItems - tallyCorrect;
+        document.getElementById('m-percent').innerText = `${Math.round((tallyCorrect / APP_LIMITS.totalItems) * 100)}%`;
+
+        const userTitle = document.getElementById('student-name').value.trim();
+        const sectionTitle = document.getElementById('student-section').value.trim();
+
+        const headerMetaHtml = `
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; margin-bottom: 16px; font-size: 0.95rem; line-height:1.4;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                <div><strong>Student Name:</strong> <span style="color: var(--primary); font-weight: 600;">${userTitle}</span></div>
+                <div><strong>Class Section:</strong> <span style="color: var(--primary); font-weight: 600;">${sectionTitle}</span></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem;">
+                <div><strong>Quiz Assessment:</strong> <span style="color: #475569; font-weight: 700;">${APP_LIMITS.quizTitle}</span></div>
+                <div><strong>Quiz Start Timestamp:</strong> <span style="font-family: monospace; font-weight: 600;">${formattedQuizStartTimeStamp}</span></div>
+            </div>
+        </div>
+        `;
+
+        document.getElementById('report-injection-zone').innerHTML = headerMetaHtml + compilationHtml;
+        if (window.katex && typeof window.renderMathInElement === 'function') {
+            window.renderMathInElement(document.getElementById('report-injection-zone'));
+        }
+
+        sendGradesToTeacher(
+            userTitle,
+            sectionTitle,
+            `${tallyCorrect} / ${APP_LIMITS.totalItems}`,
+            formattedQuizStartTimeStamp,
+            APP_LIMITS.quizTitle
+        );
+    }
+
+    function triggerDirectPdfDownload() {
+        const targetElement = document.getElementById('stage-summary');
+        const config = {
+            margin:       10,
+            filename:     'Grade6_Math_Practice_Quiz_Report.pdf',
+            image:        { type: 'jpeg', quality: 0.99 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(config).from(targetElement).save();
+    }
+
+    document.getElementById('action-start').onclick = () => {
+        if (!document.getElementById('student-name').value.trim() || !document.getElementById('student-section').value.trim()) {
+            alert("Please enter your name and class section to start.");
+            return;
+        }
+        const now = new Date();
+        formattedQuizStartTimeStamp = now.toLocaleDateString() + " @ " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        document.getElementById('stage-auth').classList.add('hidden');
+        document.getElementById('stage-engine').classList.remove('hidden');
+        generateEntireQuizSuite();
+        beginTimelineScheduler();
+        synchroniseQuestionIndex();
+    };
+
+    document.getElementById('action-forward').onclick = () => {
+        if (traversalIndex < APP_LIMITS.totalItems - 1) {
+            traversalIndex++;
+            synchroniseQuestionIndex();
+        } else {
+            if (confirm("Finalize and compile report sheets?")) compileFinalPerformanceReport();
+        }
+    };
+
+    document.getElementById('action-back').onclick = () => {
+        if (traversalIndex > 0) {
+            traversalIndex--;
+            synchroniseQuestionIndex();
+        }
+    };
+
+    document.getElementById('action-retry').onclick = () => {
+        storedResponses = {}; traversalIndex = 0;
+        timeTrackingRemaining = APP_LIMITS.allocatedDurationSeconds;
+        document.getElementById('clock-countdown').innerText = "20:00";
+        const progress = document.getElementById('meter-progress');
+        progress.style.width = "100%";
+        progress.style.backgroundColor = "";
+        document.getElementById('stage-summary').classList.add('hidden');
+        document.getElementById('stage-auth').classList.remove('hidden');
+    };
+
+    // Print-optimized styles (fixes the page-clipping bug when saving the report as PDF)
+    if (!document.getElementById('print-fix-styles')) {
+        const style = document.createElement('style');
+        style.id = 'print-fix-styles';
+        style.innerHTML = `
+            @media print {
+                html, body {
+                    display: block !important;
+                    height: auto !important;
+                    overflow: visible !important;
+                    background: white !important;
+                }
+                #stage-summary {
+                    display: block !important;
+                    max-width: 100% !important;
+                    width: 100% !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                }
+                footer, #stage-auth, #stage-engine, button, .bg-gradient-to-r button {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // The two PDF buttons open the browser's print / save-as-PDF dialog
+    document.querySelectorAll('button').forEach(button => {
+        if (button.textContent.includes('Save as PDF') || button.textContent.includes('Download as PDF')) {
+            button.removeAttribute('onclick');
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.print();
+            });
+        }
+    });
+</script>
+</body>
+</html>
