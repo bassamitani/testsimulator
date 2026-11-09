@@ -494,7 +494,7 @@
             const start = mag - 2 * rnd(1, 2) + (odd ? -1 : 0);   // crosses a power of 10
             const seq = [0, 1, 2, 3, 4].map(i => start + 2 * i);
             const hide = rnd(1, 3), ans = seq[hide];
-            const shown = seq.map((x, i) => i === hide ? "■" : fmt(x)).join(",&nbsp; ");
+            const shown = seq.map((x, i) => i === hide ? "■" : fmt(x)).join(";&nbsp; ");
             const fakes = [ans + 1, ans - 1, ans + 2, ans - 2, ans + 3].filter(x => x !== ans && x > 0).map(fmt);
             return {
                 prompt: "Find the missing number in this sequence of consecutive <b>" + (odd ? "odd" : "even") + "</b> numbers:" + bigNum(shown),
@@ -511,7 +511,7 @@
                 explain: st[1] ? "This is always true." : "This is false, for example it fails for small numbers such as 3 and 5."
             };
         }
-        const od = () => rnd(50, 999) * 2 + 1, ev = () => rnd(50, 999) * 2;
+        const od = () => rnd(6, 49) * 2 + 1, ev = () => rnd(6, 49) * 2;
         const right = pick([
             () => { const a = od(), b = od(); return [fmt(a) + " × " + fmt(b), "odd × odd = odd"]; },
             () => { const a = od(), b = ev(); return [fmt(a) + " + " + fmt(b), "odd + even = odd"]; }
@@ -666,15 +666,15 @@
         if (tier === "easy") {
             const v = pick([0, 1, 2, 3]);
             if (v === 0) {
-                const e = rnd(2, 6), val = Math.pow(2, e);
+                const e = rnd(2, 5), val = Math.pow(2, e);
                 return { prompt: "Calculate the value of:", equation: "2^{" + e + "}", type: "MCQ", solution: fmt(val),
-                    pool: makeChoices(fmt(val), [2 * e, Math.pow(2, e - 1), Math.pow(2, e + 1), e * e, val + 2].filter(x => x !== val).map(fmt)),
+                    pool: makeChoices(fmt(val), [2 * e, Math.pow(2, e - 1), Math.pow(2, e + 1), e * e, val + 2, val + 4, val - 2, val + 6].filter(x => x !== val).map(fmt)),
                     explain: "2^" + e + " means 2 multiplied by itself " + e + " times: " + Array(e).fill(2).join(" × ") + " = " + fmt(val) + "." };
             }
             if (v === 1) {
-                const e = rnd(2, 4), val = Math.pow(3, e);
+                const e = rnd(2, 3), val = Math.pow(3, e);
                 return { prompt: "Calculate the value of:", equation: "3^{" + e + "}", type: "MCQ", solution: fmt(val),
-                    pool: makeChoices(fmt(val), [3 * e, Math.pow(3, e - 1), Math.pow(3, e + 1), e * e * e, val + 3].filter(x => x !== val).map(fmt)),
+                    pool: makeChoices(fmt(val), [3 * e, Math.pow(3, e - 1), Math.pow(3, e + 1), e * e * e, val + 3, val + 6, val - 3, val - 1].filter(x => x !== val).map(fmt)),
                     explain: "3^" + e + " = " + Array(e).fill(3).join(" × ") + " = " + fmt(val) + "." };
             }
             const e = rnd(2, 6), val = Math.pow(10, e);
@@ -684,9 +684,9 @@
                     explain: "10^" + e + " is 1 followed by " + e + " zeros: " + fmt(val) + "." };
             }
             const f = rnd(2, 3), w = f === 2 ? 2 : 3;     // how many repeated factors
-            const e2 = rnd(3, 5), val2 = Math.pow(w, e2);
+            const e2 = w === 2 ? rnd(3, 5) : rnd(2, 3), val2 = Math.pow(w, e2);
             return { prompt: "Calculate the value of:", equation: w + "^{" + e2 + "}", type: "MCQ", solution: fmt(val2),
-                pool: makeChoices(fmt(val2), [w * e2, Math.pow(w, e2 - 1), Math.pow(w, e2 + 1), e2 * e2].filter(x => x !== val2).map(fmt)),
+                pool: makeChoices(fmt(val2), [w * e2, Math.pow(w, e2 - 1), Math.pow(w, e2 + 1), e2 * e2, val2 + 2, val2 - 2, val2 + 4].filter(x => x !== val2).map(fmt)),
                 explain: w + "^" + e2 + " = " + Array(e2).fill(w).join(" × ") + " = " + fmt(val2) + "." };
         }
         if (tier === "medium") {
@@ -714,12 +714,12 @@
                     explain: fmt(val) + " has " + e + " zeros, so it equals " + M("10^{" + e + "}") + "." };
             }
             if (v === 2) {                                // bigger powers of 2 and 3
-                const base = pick([2, 3]), e = base === 2 ? rnd(6, 10) : rnd(4, 6), val = Math.pow(base, e);
+                const base = pick([2, 3]), e = base === 2 ? rnd(4, 6) : rnd(2, 3), val = Math.pow(base, e);
                 return { prompt: "Calculate the value of:", equation: base + "^{" + e + "}", type: "MCQ", solution: fmt(val),
                     pool: makeChoices(fmt(val), [base * e, Math.pow(base, e - 1), Math.pow(base, e + 1), e * e * e, val + base].filter(x => x !== val).map(fmt)),
                     explain: base + "^" + e + " = " + fmt(val) + "  (" + Array(e).fill(base).join(" × ") + ")." };
             }
-            const b = pick([2, 3]), e = b === 2 ? rnd(3, 6) : rnd(2, 4), k = rnd(2, 4);   // power x power of 10
+            const b = pick([2, 3]), e = b === 2 ? rnd(3, 6) : rnd(2, 3), k = rnd(2, 4);   // power x power of 10
             const val = Math.pow(b, e) * Math.pow(10, k);
             return { prompt: "Calculate:", equation: b + "^{" + e + "} @times 10^{" + k + "}", type: "MCQ", solution: fmt(val),
                 pool: makeChoices(fmt(val), [Math.pow(b, e) * Math.pow(10, k - 1), Math.pow(b, e) * Math.pow(10, k + 1), b * e * Math.pow(10, k), Math.pow(b, e) + Math.pow(10, k)].filter(x => x !== val).map(fmt)),
@@ -728,7 +728,7 @@
         // hard
         const v = pick([0, 1, 2]);
         if (v === 0) {                                    // a^b + c^d
-            const plus = Math.random() < 0.5, e1 = plus ? rnd(2, 6) : rnd(3, 6), e2 = rnd(2, 4);
+            const plus = Math.random() < 0.5, e1 = plus ? rnd(2, 5) : rnd(3, 5), e2 = rnd(2, 3);
             const val = plus ? Math.pow(2, e1) + Math.pow(3, e2) : Math.pow(2, e1 + 1) - Math.pow(3, 2);
             const eq = plus ? "2^{" + e1 + "} + 3^{" + e2 + "}" : "2^{" + (e1 + 1) + "} - 3^{2}";
             const wrongs = plus ? [2 * e1 + 3 * e2, Math.pow(2, e1) + 3 * e2, 2 * e1 + Math.pow(3, e2), Math.pow(5, e1 + e2), val + 10]
@@ -739,9 +739,9 @@
         }
         if (v === 1) {                                    // greatest / smallest power
             const pool = [];
-            for (let e = 3; e <= 10; e++) pool.push({ b: 2, e: e });
-            for (let e = 3; e <= 6; e++) pool.push({ b: 3, e: e });
-            for (let e = 2; e <= 4; e++) pool.push({ b: 10, e: e });
+            for (let e = 3; e <= 6; e++) pool.push({ b: 2, e: e });
+            for (let e = 2; e <= 3; e++) pool.push({ b: 3, e: e });
+            for (let e = 2; e <= 3; e++) pool.push({ b: 10, e: e });
             let chosen, g = 0;
             do {
                 chosen = shuffleArray(pool).slice(0, 4);
@@ -755,7 +755,7 @@
                 pool: makeChoices(toT(win), chosen.filter(x => x !== win).map(toT)),
                 explain: "Values: " + chosen.map(x => x.b + "^" + x.e + " = " + fmt(Math.pow(x.b, x.e))).join(", ") + "." };
         }
-        const b = pick([2, 3]), e = b === 2 ? rnd(3, 7) : rnd(2, 5), k = rnd(3, 6);     // value of b^e x 10^k, then compare
+        const b = pick([2, 3]), e = b === 2 ? rnd(3, 6) : rnd(2, 3), k = rnd(3, 6);     // value of b^e x 10^k, then compare
         const a1 = Math.pow(b, e) * Math.pow(10, k);
         return { prompt: "Calculate the value of:", equation: b + "^{" + e + "} @times 10^{" + k + "}", type: "MCQ", solution: fmt(a1),
             pool: makeChoices(fmt(a1), [Math.pow(b, e) * Math.pow(10, k - 1), Math.pow(b, e) * Math.pow(10, k + 1), b * e * Math.pow(10, k), Math.pow(b, e) * 10 * k].filter(x => x !== a1 && x > 0).map(fmt)),
@@ -913,30 +913,36 @@
         if (tier === "medium") {
             const kind = pick(["add", "sub", "adddec", "subdec"]);
             if (kind === "add" || kind === "sub") {
-                const len = rnd(6, 7);
-                let a = rnd(Math.pow(10, len - 1), Math.pow(10, len) - 1), b = rnd(Math.pow(10, len - 2), Math.pow(10, len - 1) - 1);
-                if (kind === "add") {
-                    const ans = a + b;
-                    return { prompt: "Work out:", equation: texInt(a) + " + " + texInt(b), type: "MCQ", solution: fmt(ans),
-                        pool: makeChoices(fmt(ans), slipNums(ans).map(fmt)),
-                        explain: "Add column by column, carrying when needed: " + fmt(a) + " + " + fmt(b) + " = " + fmt(ans) + "." };
-                }
-                if (b > a) { const t = a; a = b; b = t; }
-                const ans = a - b;
-                return { prompt: "Work out:", equation: texInt(a) + " - " + texInt(b), type: "MCQ", solution: fmt(ans),
-                    pool: makeChoices(fmt(ans), slipNums(ans).map(fmt)),
-                    explain: "Subtract column by column, exchanging when needed: " + fmt(a) + " − " + fmt(b) + " = " + fmt(ans) + "." };
+                // mental-friendly: round numbers (hundreds / thousands / ten thousands) or a subtraction from a power of 10
+                const u = pick([100, 1000, 10000]);
+                const uName = u === 100 ? "hundreds" : u === 1000 ? "thousands" : "ten thousands";
+                let a, b;
+                if (kind === "add") { a = rnd(11, 89) * u; b = rnd(11, 89) * u; }
+                else if (Math.random() < 0.5) { a = 100 * u; b = rnd(11, 89) * u; }          // e.g. 10,000 - 3,500
+                else { a = rnd(30, 99) * u; b = rnd(11, a / u - 5) * u; }
+                const ans = kind === "add" ? a + b : a - b;
+                const near = [ans + u, ans - u, ans + 10 * u, ans - 10 * u, ans * 10, ans / 10].filter(x => Number.isInteger(x) && x > 0 && x !== ans).map(fmt);
+                const sgn = kind === "add" ? " + " : " - ";
+                return { prompt: "Work out:", equation: texInt(a) + sgn + texInt(b), type: "MCQ", solution: fmt(ans),
+                    pool: makeChoices(fmt(ans), near),
+                    explain: "Think in " + uName + ": " + fmt(a / u) + (kind === "add" ? " + " : " − ") + fmt(b / u) + " = " + fmt(ans / u) + " " + uName + ", so the answer is " + fmt(ans) + "." };
             }
-            // decimals with a different number of places (line up the decimal points)
-            const mk = d => { let n; do { n = rnd(Math.pow(10, d), Math.pow(10, d + 2) - 1); } while (n % 10 === 0); return { n: n, d: d }; };
-            let x = mk(1), y = mk(2);
-            if (Math.random() < 0.5) { const tmp = x; x = y; y = tmp; }
-            const dm = 2, plus = kind === "adddec";
+            // decimals with friendly numbers that can be done mentally
+            const plus = kind === "adddec", dm = 2;
+            let x, y;
+            if (Math.random() < 0.5) {                    // both with one decimal place, small numbers
+                const t1 = rnd(1, 9), t2 = rnd(1, 9);
+                x = { n: rnd(2, 15) * 10 + t1, d: 1 }; y = { n: rnd(1, 9) * 10 + t2, d: 1 };
+            } else {                                      // one decimal place with a "friendly" two-decimal number
+                x = { n: rnd(2, 15) * 10 + rnd(1, 9), d: 1 };
+                y = { n: rnd(0, 6) * 100 + pick([5, 25, 75]), d: 2 };
+                if (Math.random() < 0.5) { const tmp = x; x = y; y = tmp; }
+            }
             let X = x.n * Math.pow(10, dm - x.d), Y = y.n * Math.pow(10, dm - y.d);
             if (!plus && X < Y) { const tmp = x; x = y; y = tmp; const t2 = X; X = Y; Y = t2; }
             const ansInt = plus ? X + Y : X - Y;
             const ans = dstr(ansInt, dm, false);
-            const fakes = [dstr(ansInt + 10, dm), dstr(ansInt - 10, dm), dstr(ansInt + 100, dm), dstr(perturbInt(ansInt), dm), dstr(ansInt * 10, dm)]
+            const fakes = [dstr(ansInt + 10, dm), dstr(ansInt - 10, dm), dstr(ansInt + 100, dm), dstr(ansInt - 100, dm), dstr(ansInt + 1, dm), dstr(ansInt - 1, dm), dstr(ansInt * 10, dm)]
                 .filter(v => v !== ans && v.indexOf("-") < 0);
             const xT = dstr(x.n, x.d, true), yT = dstr(y.n, y.d, true);
             return { prompt: "Work out:", equation: xT + (plus ? " + " : " - ") + yT, type: "MCQ", solution: ans, pool: makeChoices(ans, fakes),
@@ -945,14 +951,15 @@
         // hard: multiplication / division, calculation or word problem
         const kind = pick(["mul", "div", "mulw", "divw"]);
         if (kind === "mul" || kind === "mulw") {
-            const a = rnd(120, 999) + (Math.random() < 0.4 ? rnd(1, 9) * 1000 : 0), b = rnd(12, 48);
+            const a = pick([12, 15, 25, 30, 40, 50, 60, 70, 80, 90, 120, 150, 200, 300, 400, 500, 600]), b = pick([3, 4, 5, 6, 7, 8, 9]);
             const ans = a * b;
-            const tens = Math.floor(b / 10), ones = b % 10;
-            const noShift = a * ones + a * tens;                   // forgot to shift the tens partial product
-            const fakes = slipNums(ans, [noShift, a * ones, a * (ones + tens * 10) + 10 * a]).filter(x => x !== ans);
+            const z = a % 100 === 0 ? 100 : a % 10 === 0 ? 10 : 1;
+            const how = z > 1 ? fmt(a / z) + " × " + b + " = " + (a / z) * b + ", then add the zeros: " + fmt(ans) + "."
+                              : fmt(10 * Math.floor(a / 10)) + " × " + b + " = " + fmt(10 * Math.floor(a / 10) * b) + " and " + (a % 10) + " × " + b + " = " + (a % 10) * b + ", so " + fmt(ans) + ".";
+            const fakes = [ans + a, ans - a, ans * 10, ans / 10, a * (b + 1), a * (b - 1), ans + 10, ans - 10].filter(x => Number.isInteger(x) && x > 0 && x !== ans);
             if (kind === "mul") {
                 return { prompt: "Work out:", equation: texInt(a) + " @times " + b, type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes.map(fmt)),
-                    explain: fmt(a) + " × " + b + " = " + fmt(a * ones) + " + " + fmt(a * tens * 10) + " = " + fmt(ans) + "." };
+                    explain: fmt(a) + " × " + b + ": " + how };
             }
             const ctx = pick([
                 ["A school buys " + fmt(b) + " boxes of pencils. Each box holds " + fmt(a) + " pencils. How many pencils does the school buy?"],
@@ -960,13 +967,13 @@
                 ["A factory fills " + b + " trucks. Each truck carries " + fmt(a) + " bottles. How many bottles are carried altogether?"]
             ])[0];
             return { prompt: ctx, equation: "", type: "MCQ", solution: fmt(ans), pool: makeChoices(fmt(ans), fakes.map(fmt)),
-                explain: "Multiply: " + fmt(a) + " × " + b + " = " + fmt(ans) + "." };
+                explain: "Multiply: " + fmt(a) + " × " + b + ": " + how };
         }
-        const q = rnd(120, 999) + (Math.random() < 0.4 ? rnd(1, 9) * 1000 : 0), d = rnd(12, 48), dividend = q * d;
-        const fakes = [q * 10, Math.floor(q / 10), q + 1, q - 1, q + 10, q - 10, perturbInt(q)].filter(x => x !== q && x > 0).map(fmt);
+        const q = rnd(3, 9) * pick([1, 10]), d = pick([20, 30, 40, 50, 60]), dividend = q * d;   // mental: cancel the zeros
+        const fakes = [q * 10, q / 10, q + 1, q - 1, q + 10, q - 10, q + 2, q * 100].filter(x => Number.isInteger(x) && x !== q && x > 0).map(fmt);
         if (kind === "div") {
             return { prompt: "Work out:", equation: texInt(dividend) + " @div " + d, type: "MCQ", solution: fmt(q), pool: makeChoices(fmt(q), fakes),
-                explain: "Use long division: " + fmt(dividend) + " ÷ " + d + " = " + fmt(q) + " (check: " + fmt(q) + " × " + d + " = " + fmt(dividend) + ")." };
+                explain: "Cancel one zero from both numbers: " + fmt(dividend) + " ÷ " + d + " = " + fmt(dividend / 10) + " ÷ " + (d / 10) + " = " + fmt(q) + " (check: " + fmt(q) + " × " + d + " = " + fmt(dividend) + ")." };
         }
         const ctx = pick([
             "A warehouse packs " + fmt(dividend) + " bottles into crates of " + d + ". How many crates are needed?",
@@ -974,7 +981,7 @@
             "A farmer collects " + fmt(dividend) + " eggs and packs them in boxes of " + d + ". How many boxes does he fill?"
         ]);
         return { prompt: ctx, equation: "", type: "MCQ", solution: fmt(q), pool: makeChoices(fmt(q), fakes),
-            explain: "Divide: " + fmt(dividend) + " ÷ " + d + " = " + fmt(q) + "." };
+            explain: "Cancel one zero from both numbers: " + fmt(dividend) + " ÷ " + d + " = " + fmt(dividend / 10) + " ÷ " + (d / 10) + " = " + fmt(q) + "." };
     }
 
     // =====================================================================
