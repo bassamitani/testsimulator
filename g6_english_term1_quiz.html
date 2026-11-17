@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 6 English · Term 1 Reading, Spelling, Vocabulary & Language</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--primary:#0284c7;--bg-main:#f8fafc;--border-color:#cbd5e1;--text-main:#0f172a;--text-muted:#475569;--success:#16a34a;--error:#dc2626}
+body{background:var(--bg-main);color:var(--text-main);font-family:system-ui,sans-serif}
+.hidden{display:none!important}
+.opt-btn{background:#fff;border:1px solid var(--border-color);border-radius:8px;cursor:pointer;transition:all .2s;font-size:1.1rem}
+.opt-btn:hover{border-color:var(--primary);background:#f0f9ff}
+.opt-btn.active{border-color:var(--primary);background:#e0f2fe;font-weight:600;box-shadow:0 0 0 2px rgba(2,132,199,.15)}
+.w{display:inline-block;padding:2px 6px;margin:2px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:.15s}
+.w:hover{background:#f0f9ff;border-color:var(--primary)}
+.w.active{background:#fde68a;border-color:#d97706;font-weight:700}
+.sent{font-size:1.45rem;line-height:2.1rem;font-family:Georgia,serif;text-align:center;padding:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}
+.good{background:#bbf7d0;border-radius:4px;padding:0 4px;font-weight:700}.bad{background:#fecaca;border-radius:4px;padding:0 4px;font-weight:700}
+@media print{html,body{display:block!important;height:auto!important;background:#fff!important}#stage-auth,#stage-engine,footer,button{display:none!important}#stage-summary{display:block!important;max-width:100%!important}}
+</style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+<div id="stage-auth" class="max-w-md mx-auto my-auto p-8 bg-white rounded-2xl shadow-xl mt-12 border border-slate-200">
+  <h1 class="text-3xl font-extrabold text-slate-800 text-center tracking-tight mb-2">Grade 6 English Quiz</h1>
+  <p class="text-sm text-slate-500 text-center mb-2">Term 1 · Reading, Spelling, Vocabulary &amp; Language</p>
+  <p class="text-xs text-slate-400 text-center mb-6">20 questions · 20 minutes · every attempt has new questions</p>
+  <div class="space-y-5">
+    <div><label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Student Full Name</label>
+      <input type="text" id="student-name" placeholder="John Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"></div>
+    <div><label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Assigned Class Section</label>
+      <input type="text" id="student-section" placeholder="Grade 6-A" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"></div>
+    <button id="action-start" class="w-full bg-sky-600 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm tracking-wider uppercase mt-4">Start Quiz</button>
+  </div>
+</div>
+
+<div id="stage-engine" class="hidden max-w-4xl mx-auto w-full px-4 py-6 flex-grow">
+  <div class="w-full bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col justify-between min-h-[550px]">
+    <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-5 flex-wrap gap-3">
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="text-xs font-bold text-sky-600 uppercase tracking-widest">Question <span id="idx-current">0</span> / <span id="idx-total">0</span></span>
+        <span id="txt-section-badge" class="px-2.5 py-1 rounded-md text-xs font-extrabold uppercase bg-indigo-100 text-indigo-700"></span>
+        <span id="txt-tier-badge" class="px-2.5 py-1 rounded-md text-xs font-extrabold uppercase bg-slate-100 text-slate-600"></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btn-sound" title="Sound on/off" class="px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white hover:bg-slate-50 cursor-pointer">🔊</button>
+        <div id="meter-container" class="hidden flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl text-white">
+          <span class="text-[10px] uppercase font-black tracking-wider text-slate-400">Remaining:</span>
+          <span id="clock-countdown" class="text-lg font-black font-mono text-sky-400">20:00</span>
+          <div class="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden hidden sm:block"><div id="meter-progress" class="bg-sky-400 h-full transition-all duration-1000" style="width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flex-grow flex flex-col justify-center">
+      <div id="prompt-container" class="mb-6"></div>
+      <div id="interactive-zone" class="w-full flex flex-col items-center mb-6">
+        <div id="box-proof" class="hidden w-full"></div>
+        <div id="box-mcq" class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"></div>
+      </div>
+    </div>
+    <div class="border-t border-slate-100 pt-4 mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div id="navigation-shortcut-grid" class="flex flex-wrap gap-1.5"></div>
+      <div class="flex gap-3 justify-end w-full sm:w-auto">
+        <button id="action-back" class="px-5 py-2 border border-slate-300 rounded-xl font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-40 text-sm cursor-pointer">&larr; Back</button>
+        <button id="action-forward" class="px-6 py-2 bg-sky-600 text-white rounded-xl font-bold hover:bg-sky-700 text-sm shadow cursor-pointer">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="stage-summary" class="hidden max-w-3xl mx-auto w-full px-4 py-8">
+  <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white flex justify-between items-center flex-wrap gap-4">
+      <div><h2 class="text-2xl font-black tracking-tight">Performance Summary Report</h2>
+      <p class="text-sky-100 text-xs mt-1">Grade 6 English · Term 1 · Reading, Spelling, Vocabulary &amp; Language</p></div>
+      <button onclick="window.print()" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 border border-white/10 cursor-pointer">Download as PDF</button>
+    </div>
+    <div class="grid grid-cols-3 text-center border-b border-slate-100 bg-slate-50 py-4">
+      <div><div id="m-correct" class="text-2xl font-extrabold text-emerald-600">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Correct</div></div>
+      <div class="border-x border-slate-200"><div id="m-incorrect" class="text-2xl font-extrabold text-rose-600">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Incorrect</div></div>
+      <div><div id="m-percent" class="text-2xl font-extrabold text-sky-600">0%</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Score Rate</div></div>
+    </div>
+    <div id="report-injection-zone" class="p-6 space-y-4 bg-slate-50/50"></div>
+  </div>
+  <div class="flex flex-col sm:flex-row gap-3 w-full mt-4">
+    <button onclick="window.print()" class="flex-grow bg-sky-600 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-sky-700 cursor-pointer text-sm uppercase tracking-wider">Save as PDF</button>
+    <button id="action-retry" class="w-full sm:w-1/3 bg-slate-800 text-white font-bold py-3 rounded-xl shadow hover:bg-slate-900 cursor-pointer text-sm uppercase tracking-wider">Retake Quiz (new questions)</button>
+  </div>
+</div>
+
+<footer class="w-full py-4 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 bg-white">&copy; 2026 Grade 6 English Assessment Suite</footer>
+
+<script>
+const LIMITS={total:20,seconds:1200};
+let suite=[],idx=0,answers={},remaining=LIMITS.seconds,timer=null,startStamp="",finished=false;
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TIERS=['easy','medium','hard'];
+
+/* ---------- sound (Web Audio, no files needed) + read-aloud ---------- */
+let soundOn=true,ac=null;
+function beep(f,d,type,v,t0){if(!soundOn)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain(),s=ac.currentTime+(t0||0);o.type=type||'sine';o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(v||.08,s);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d);}catch(e){}}
+const SND={pick:()=>beep(660,.09),nav:()=>beep(440,.06,'triangle'),tick:()=>beep(1000,.05,'square',.03),
+  done:()=>[523,659,784,1047].forEach((f,i)=>beep(f,.25,'sine',.09,i*.14)),time:()=>{beep(220,.4,'sawtooth');beep(170,.5,'sawtooth',.08,.35);}};
+function speak(t){if(!soundOn||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=.9;speechSynthesis.speak(u);}
+
+/* ---------- GRADE 6 DATA (Unit 1 Different voices · Unit 2 People in the news · Unit 3 Personification and imagery) ---------- */
+const SPW=[['journey|The journey to Norway took three hours.','climate|The climate is very cold in winter.','mountain|They climbed the highest mountain.','reporter|The reporter wrote a news article.','museum|We visited the museum on Friday.','famous|She became famous around the world.'],
+ ['prologue|The prologue sets the scene for the story.','biography|She read a biography of Tenzing Norgay.','headline|The headline caught my attention.','imagery|The poem is full of vivid imagery.','tributary|A tributary flows into the main river.','expedition|The expedition set off at dawn.','courageous|The courageous girl climbed Everest.'],
+ ['autobiography|He started to write his autobiography.','persuasive|She wrote a persuasive speech.','significant|It was a significant event in history.','metaphor|The poet used an extended metaphor.','personification|The poem is full of personification.','accommodation|The hotel offered free accommodation.','environment|Rivers are important for the environment.','flashback|The story moves back in time in a flashback.','achievement|Climbing Everest was a great achievement.']];
+const sw=s=>s.split('|')[0];
+const PS=[['garnip','blinket','crupid','dontle','sprockle','crandow'],['adventrel','mysterable','celebrusion','electromity','magnifiture','volcanation'],['biographitude','headlinement','persuasivity','autoscriptive','flashbackery','significating']];
+const RL=[['garden','window','pencil','monster','lantern','picnic','pirate','compass'],['adventure','mysterious','celebration','electricity','temperature','imagination','volcano','magnificent'],['biography','prologue','journalist','persuasive','headline','significant','flashback','imagery']];
+const COMP=[[
+ 'The reporter wrote a short article about a girl who climbed a mountain. The headline said, “Brave Girl Reaches the Top!”|What was the article about?|A girl who climbed a mountain|A football match,A new school,A lost dog',
+ 'In the museum, an old toy soldier began to speak. He told the children about the day he was packed away in a box.|Who spoke in the museum?|A toy soldier|A guard,A teacher,A reporter',
+ 'The river began as a tiny trickle high in the hills. By the time it reached the sea, it was wide and slow.|Where did the river begin?|High in the hills|At the sea,In a town,Under a bridge'],[
+ 'The prologue of the story is set far in the future. A lone traveller walks across a frozen land, remembering the world as it used to be.|What does the prologue show?|A traveller in the future|A school trip,A birthday party,A news report',
+ 'Tenzing Norgay worked as a guide in the Himalayas for many years. In 1953 he stood on the top of Everest beside Edmund Hillary.|Who stood on top of Everest beside Tenzing Norgay?|Edmund Hillary|Jamila Gavin,Neddy,Poorna Malavath',
+ '“The river chuckled over the stones and whispered to the reeds.” The poet gives the river actions that only people can do.|What technique is the poet using?|Personification|A news headline,A recipe,A timeline'],[
+ 'The news report began with the most important facts: a flood had closed the main road. Details about the rescue came later, and the history of the town came last.|How is the report organised?|Most important facts first|In time order from the beginning,Opinions first,Questions first',
+ 'When Amira first spoke in the museum, she sounded certain; yet her flashback revealed that she had been terrified. The reader realises her confidence was only a mask.|What does the flashback reveal?|Her confidence hid her fear|She was never at the museum,She was angry,She was bored',
+ 'The poem describes the storm as an angry giant stomping across the hills, and the thunder as his growling voice. Through this extended metaphor, the poet makes the storm feel alive and threatening.|Why does the poet describe the storm as a giant?|To make the storm seem alive and threatening|To explain how thunder forms,To make the reader laugh,To give a weather forecast']].map(t=>t.map(s=>{const p=s.split('|');return{t:p[0],q:p[1],r:p[2],w:p[3].split(',')};}));
+const CLZ=[['The ___ wrote a news article about the flood.|reporter|farmer,pilot,baker','The river ___ gently over the smooth stones.|flowed|flew,froze,fell'],
+ ['The climbers began their ___ to the summit at dawn.|ascent|descent,insect,accent','Her speech was so ___ that everyone agreed with her.|persuasive|silent,careless,blurry','The headline was short and ___, so it grabbed attention.|catchy|gloomy,muddy,leafy'],
+ ['The ___ river rushed through the gorge, tearing at the rocks.|turbulent|serene,stagnant,trickling','Scientists ___ the glacier’s melting every year.|monitor|ignore,decorate,borrow','The author kept her tone ___, avoiding any strong opinion.|neutral|furious,joyful,sarcastic']].map(t=>t.map(s=>s.split('|')));
+const PRE=[[['un-','not','unfair'],['re-','again','rewrite'],['-ful','full of','hopeful'],['-ness','the state of being','kindness']],[['pre-','before','prehistoric'],['mis-','wrongly','misunderstand'],['sub-','under','submarine'],['anti-','against','antisocial']],[['auto-','self','autobiography'],['bio-','life','biography'],['inter-','between','international'],['trans-','across','transport']]];
+const HOM=[['We had to ___ for the bus in the rain.|wait|weight,wheat,wade','I could ___ the waves crashing from far away.|hear|here,hair,hare'],['The boy ___ his bike to the river.|rode|road,rowed,rod','She ___ a long letter to the editor.|wrote|right,rote,rite'],['The old king’s ___ lasted for fifty years.|reign|rain,rein,rang','The ___ ran down the mountain to the sea.|stream|steam,stem,scream']].map(t=>t.map(s=>s.split('|')));
+const WAT=[['trickle','to flow slowly in a thin stream'],['cascade','to fall over rocks like a waterfall'],['ripple','a tiny wave on the surface of water'],['torrent','a very strong, fast-flowing rush of water'],['meander','to flow in slow, winding curves'],['tributary','a smaller stream that flows into a larger river']];
+const MUL=[['bank','the side of a river','We sat on the bank of the river.',['She went to the bank to get money.','The bank closed at five.','He saved his money at the bank.']],['current','a strong flow of water','The current carried the boat downstream.',['The current president gave a speech.','Check the current news.','Her current address is new.']],['press','newspapers and reporters','The press reported the story at once.',['Press the button to start.','Please press the bell twice.','She will press her shirt with an iron.']],['bark','the outer covering of a tree','The bark of the old oak was rough.',['The dog began to bark loudly.','I heard the bark of a fox.','The puppy’s bark was very high.']]];
+const IDM=['a piece of cake|something very easy|0','under the weather|feeling unwell|0','break the ice|start a friendly conversation|0','hit the nail on the head|say exactly the right thing|1','once in a blue moon|very rarely|1','let the cat out of the bag|accidentally reveal a secret|1','the early bird catches the worm|people who start early succeed|2','every cloud has a silver lining|something good can come from a bad situation|2','actions speak louder than words|what you do matters more than what you say|2','don’t judge a book by its cover|don’t judge by appearances alone|2'].map(s=>{const p=s.split('|');return{p:p[0],m:p[1],t:+p[2]};});
+const REL=['The girl ___ climbed Everest is thirteen.|who|which,where,whose','The river, ___ begins in the hills, flows to the sea.|which|who,whose,when','The boy ___ story won the prize read it aloud.|whose|who,which,when','The town ___ she was born is by the sea.|where|who,which,whose'].map(s=>s.split('|'));
+const REP=[['“I am tired,” said Mia.','Mia said that she was tired.','Mia said that I was tired.,Mia said that she will be tired.,Mia said “she was tired.”'],['“We are climbing the hill,” said the guide.','The guide said that they were climbing the hill.','The guide said that we were climbing the hill.,The guide said that they will climb the hill.,The guide said “they were climbing the hill.”'],['“I want to read the news,” said Omar.','Omar said that he wanted to read the news.','Omar said that I wanted to read the news.,Omar said that he will want to read the news.,Omar said “he wanted to read the news.”'],['“I saw the river,” said Sara.','Sara said that she had seen the river.','Sara said that I had seen the river.,Sara said that she will see the river.,Sara said “she had seen the river.”']];
+const STD=['We were playing by the river.','She doesn’t have any water.','He and I went to the museum.','They did their homework.','I didn’t see anything.','I saw those mountains.'],NST=['We was playing by the river.','She don’t have no water.','Me and him went to the museum.','They done their homework.','I didn’t see nothing.','I seen them mountains.','Her ain’t got any water.'];
+const PER=['The wind whispered through the trees.','The river danced down the hill.','The storm roared angrily at the sea.','The sun smiled down on the valley.'],LIT=['The river is two hundred miles long.','The storm began at midnight.','The wind blew from the north.','The sun rose at six o’clock.','Rain fell on the town.'];
+const PORT=[['brunch','breakfast','lunch'],['smog','smoke','fog'],['motel','motor','hotel'],['podcast','iPod','broadcast'],['camcorder','camera','recorder']];
+const TM=[['headline','a short title at the top of a news story that tells the main point',0],['biography','an account of a person’s life written by someone else',0],['autobiography','an account of a person’s life written by that person',0],['prologue','an introduction at the start of a story',0],['flashback','a part of a story that goes back to an earlier time',1],['persuasive','trying to make the reader agree with you',1],['summarise','to give the main points in fewer words',1],['inverted pyramid','a news layout with the most important facts first',2],['extended metaphor','a comparison that continues through several lines',2],['register','the level of formality of the language you use',2],['classify','to sort things into groups',1]].map(s=>({t:s[0],d:s[1],tier:s[2]}));
+
+/* ---------- QUESTION ENGINES (new random questions every start) ---------- */
+function misspell(w){const v=new Set(),vow='aeiou';
+  for(let i=0;i<w.length-1;i++)if(w[i]!==w[i+1])v.add(w.slice(0,i)+w[i+1]+w[i]+w.slice(i+2));
+  for(let i=0;i<w.length;i++){if(w.length>=6)v.add(w.slice(0,i)+w.slice(i+1));
+    if(vow.includes(w[i]))vow.split('').forEach(c=>{if(c!==w[i])v.add(w.slice(0,i)+c+w.slice(i+1));});else v.add(w.slice(0,i+1)+w[i]+w.slice(i+1));}
+  v.delete(w);return shuffle([...v]);}
+function mc(prompt,correct,wrongs,expl,cat,tier,sp){const w=[];shuffle(wrongs).forEach(x=>{if(x!==correct&&!w.includes(x)&&w.length<3)w.push(x);});
+  return{type:'MCQ',prompt,pool:shuffle([correct,...w]),solution:correct,expl,categoryType:cat,tier,
+    speak:sp===undefined?prompt.replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim():sp};}
+const box=h=>`<div class="mt-3 text-lg font-serif bg-slate-50 border border-slate-200 rounded-xl p-4">${h}</div>`;
+const blank=s=>esc(s).replace('___','<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>');
+const hl=s=>`<b class="text-sky-700">${s}</b>`;
+const R='READING · ',V='VOCABULARY · ',L='LANGUAGE · ';
+const rSpell=t=>{const w=sw(pick(SPW[t]));return mc('Which word is spelled '+hl('correctly')+'?',w,misspell(w),`The correct spelling is “${w}”.`,R+'WORD RECOGNITION',t,'Which word is spelled correctly?');};
+const rPseudo=t=>{const p=pick(PS[t]);return mc('Three of these are real words. One is '+hl('made up')+'. Which one is made up?',p,shuffle(RL[t]).slice(0,3),`“${p}” is not a real word.`,R+'WORD DECODING',t,'');};
+const rComp=t=>{const e=pick(COMP[t]);return mc(`Read the text, then choose the best answer.${box(esc(e.t))}<p class="mt-3"><b>${esc(e.q)}</b></p>`,e.r,e.w,`Answer: ${e.r}.`,R+'COMPREHENSION',t,e.t+' '+e.q);};
+const rClz=t=>{const e=pick(CLZ[t]);return mc('Choose the best word to complete the sentence:'+box(blank(e[0])),e[1],e[2].split(','),`The best word is “${e[1]}”.`,R+'SENTENCE COMPLETION',t,e[0].replace('___','blank'));};
+function sSpell(t){const p=pick(SPW[t]).split('|'),w=p[0];
+  return{type:'SPELL',prompt:`<b>Listen to the word and the sentence, then type the missing word.</b> Press “Listen” to hear it again.${box(blank(p[1].replace(w,'___')))}<div class="text-2xl tracking-widest text-center mt-3 text-slate-400">${'_ '.repeat(w.length)}</div>`,solution:w,expl:`The word is “${w}”.`,categoryType:'SPELLING · LISTEN AND SPELL',tier:t,speak:w+'. '+p[1]+' '+w+'.'};}
+function vPre(t){const e=pick(PRE[t]),all=PRE.flat().filter(x=>x[0]!==e[0]).map(x=>x[1]);
+  return mc(`What does ${hl('“'+e[0]+'”')} mean in the word “${e[2]}”?`,e[1],all,`“${e[0]}” means “${e[1]}”, as in “${e[2]}”.`,V+'PREFIXES & SUFFIXES',t,'What does '+e[0].replace('-','')+' mean in the word '+e[2]+'?');}
+function vHomo(t){const e=pick(HOM[t]);return mc('Choose the correct word to complete the sentence:'+box(blank(e[0])),e[1],e[2].split(','),`The correct word is “${e[1]}”.`,V+'HOMOPHONES & WORD CHOICE',t,e[0].replace('___','blank'));}
+function vWater(t){const e=pick(WAT);return mc('Which word means '+hl('“'+e[1]+'”')+'?',e[0],WAT.filter(x=>x[0]!==e[0]).map(x=>x[0]),`“${e[0]}” – ${e[1]}.`,V+'WORDS ABOUT WATER',t);}
+function vMulti(t){const e=pick(MUL);return mc(`In which sentence does the word ${hl('“'+e[0]+'”')} mean “${e[1]}”?`,e[2],e[3],`Here “${e[0]}” means “${e[1]}”.`,V+'MULTIPLE MEANINGS',t);}
+function vIdiom(t){const l=IDM.filter(x=>x.t===t),e=pick(l.length?l:IDM);return mc(`What does the saying ${hl('“'+e.p+'”')} mean?`,e.m,IDM.filter(x=>x.p!==e.p).map(x=>x.m),`“${e.p}” means ${e.m}.`,V+'IDIOMS & PROVERBS',t);}
+function lTerm(t){const l=TM.filter(x=>x.tier===t),e=pick(l.length?l:TM);return mc('Which word matches this meaning?'+box(esc(e.d)),e.t,TM.filter(x=>x.t!==e.t).map(x=>x.t),`“${e.t}” – ${e.d}.`,L+'WORDS ABOUT TEXTS',t,e.d);}
+function lPerson(t){return mc('Which sentence uses '+hl('personification')+'?',pick(PER),LIT,'Personification gives human actions or feelings to something that is not human.',L+'PERSONIFICATION',t);}
+function lPort(t){const e=pick(PORT);return mc(`Which word is a ${hl('portmanteau')} (a blend) made from “${e[1]}” and “${e[2]}”?`,e[0],PORT.filter(x=>x[0]!==e[0]).map(x=>x[0]).concat(['sunset','teacup']),`“${e[0]}” blends “${e[1]}” and “${e[2]}”.`,L+'PORTMANTEAU WORDS',t);}
+function lRel(t){const e=pick(REL);return mc('Choose the correct '+hl('relative pronoun')+':'+box(blank(e[0])),e[1],e[2].split(','),`“${e[1]}” is the correct relative pronoun here.`,L+'RELATIVE PRONOUNS',t,e[0].replace('___','blank'));}
+function lStd(t){return mc('Which sentence is written in '+hl('Standard English')+'?',pick(STD),shuffle(NST),'Standard English follows the usual rules of grammar.',L+'STANDARD ENGLISH',t);}
+function lRep(t){const e=pick(REP);return mc('Which sentence changes this direct speech into '+hl('reported speech')+'?'+box(esc(e[0])),e[1],e[2].split(','),`Reported speech drops the speech marks and changes the pronoun and tense: “${e[1]}”.`,L+'REPORTED SPEECH',t);}
+
+function buildSuite(){
+  const out=[],seen=new Set();
+  const add=(sec,fn)=>{let q,g=0;do{q=fn();}while(seen.has(q.prompt+q.solution)&&g++<60);seen.add(q.prompt+q.solution);q.sec=sec;out.push(q);};
+  const pe=(a,b)=>Math.random()<.5?a():b();
+  [()=>rSpell(1),()=>rPseudo(1),()=>rComp(0),()=>rClz(1),()=>rSpell(2),()=>rPseudo(2),()=>rComp(1),()=>rComp(2)].forEach(f=>add('Reading',f));
+  [0,1,1,2].forEach(t=>add('Spelling',()=>sSpell(t)));
+  [()=>vPre(0),()=>pe(()=>vWater(1),()=>vHomo(1)),()=>vIdiom(1),()=>pe(()=>vMulti(2),()=>vIdiom(2))].forEach(f=>add('Vocabulary',f));
+  [()=>lTerm(0),()=>pe(()=>lPerson(1),()=>lPort(1)),()=>pe(()=>lRel(1),()=>lStd(1)),()=>lRep(2)].forEach(f=>add('Language',f));
+  suite=out;
+}
+
+/* ---------- interface ---------- */
+function render(){
+  const q=suite[idx];
+  $('idx-current').innerText=idx+1;$('idx-total').innerText=LIMITS.total;
+  $('txt-tier-badge').innerText=TIERS[q.tier];$('txt-section-badge').innerText=q.sec;
+  $('prompt-container').innerHTML=`<div style="font-size:1.2rem;line-height:1.6">${q.prompt}<div class="mt-3"><button id="btn-listen" class="text-sm px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 cursor-pointer">🔊 Listen</button></div></div>`;
+  $('btn-listen').onclick=()=>speak(q.speak);
+  const mcq=$('box-mcq'),pr=$('box-proof');mcq.innerHTML='';pr.innerHTML='';
+  if(q.type==='MCQ'){
+    mcq.classList.remove('hidden');pr.classList.add('hidden');
+    q.pool.forEach(c=>{const b=document.createElement('button');
+      b.className='opt-btn p-3 text-center flex justify-center items-center'+(answers[idx]===c?' active':'');b.style.minHeight='56px';b.style.fontSize='1.25rem';b.textContent=c;
+      b.onclick=()=>{mcq.querySelectorAll('.opt-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');answers[idx]=c;SND.pick();shortcuts();};
+      mcq.appendChild(b);});
+  }else{
+    mcq.classList.add('hidden');pr.classList.remove('hidden');
+    pr.innerHTML=`<input id="spell-in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type the word here" class="block mx-auto w-full max-w-sm text-center text-2xl px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:border-sky-500">`;
+    const inp=$('spell-in');inp.value=answers[idx]||'';
+    inp.oninput=()=>{const v=inp.value.trim().toLowerCase();if(v)answers[idx]=v;else delete answers[idx];shortcuts();};
+    setTimeout(()=>{speak(q.speak);inp.focus();},300);
+  }
+  shortcuts();
+  $('action-back').disabled=idx===0;
+  $('action-forward').innerText=idx===LIMITS.total-1?'Finish Quiz':'Next →';
+}
+function shortcuts(){
+  const g=$('navigation-shortcut-grid');g.innerHTML='';
+  for(let i=0;i<LIMITS.total;i++){const b=document.createElement('button');b.innerText=i+1;
+    let c='bg-slate-100 text-slate-600 border border-slate-300';
+    if(i===idx)c='bg-sky-600 text-white font-bold ring-2 ring-sky-300';else if(answers[i]!==undefined)c='bg-emerald-100 text-emerald-700 border border-emerald-400 font-semibold';
+    b.className='p-2 text-xs text-center rounded-lg cursor-pointer min-w-[32px] '+((i===7||i===11||i===15)?'mr-3 ':'')+c;
+    b.onclick=()=>{idx=i;SND.nav();render();};g.appendChild(b);}
+}
+
+/* ---------- timer ---------- */
+function startTimer(){
+  $('meter-container').classList.remove('hidden');
+  const bar=$('meter-progress');bar.style.backgroundColor='';
+  const pulse=()=>{const m=Math.floor(remaining/60),s=remaining%60,pc=remaining/LIMITS.seconds*100;
+    $('clock-countdown').innerText=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    bar.style.width=pc+'%';if(pc<25)bar.style.backgroundColor='var(--error)';else if(pc<50)bar.style.backgroundColor='#d97706';
+    if(remaining<=10&&remaining>0)SND.tick();};
+  pulse();clearInterval(timer);
+  timer=setInterval(()=>{remaining--;pulse();if(remaining<=0){clearInterval(timer);SND.time();finish(true);}},1000);
+}
+
+/* ---------- report ---------- */
+function sendGradesToTeacher(name,classroom,score,stamp){
+  const url="https://script.google.com/macros/s/AKfycbzpYkVVYTJ0VvPNVVCj9pIBrzXznUdB9XTPEMJPAQ8AF8qu-x_T-PhrYA7x_wCaZyWs/exec";
+  fetch(url,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({name,classroom,score,duration:stamp,quizTitle:"Grade 6 English Term 1 - Reading, Spelling, Vocabulary & Language",date:new Date().toLocaleString()})}).catch(()=>{});
+}
+function finish(timeout){
+  if(finished)return;finished=true;clearInterval(timer);if(window.speechSynthesis)speechSynthesis.cancel();
+  $('stage-engine').classList.add('hidden');$('meter-container').classList.add('hidden');$('stage-summary').classList.remove('hidden');
+  if(!timeout)SND.done();else alert("Time limit reached. Compiling final performance report now.");
+  let ok=0,html='';
+  suite.forEach((q,i)=>{
+    const r=answers[i],good=r!==undefined&&r===q.solution;if(good)ok++;
+    let body;
+    if(q.type==='SPELL'){body=`<div class="my-2">🔊 Listen and spell the word.</div><p><strong>You typed:</strong> <span style="color:${good?'var(--success)':'var(--error)'};font-weight:600">${r!==undefined?esc(r):'Unanswered'}</span></p><p><strong>Correct spelling:</strong> <b>${esc(q.solution)}</b></p>`;}
+    else if(q.type==='PROOF'){
+      const sent=q.toks.map((x,k)=>k===q.correct?`<span class="good">${esc(x.t)}</span>`:(String(k)===r?`<span class="bad">${esc(x.t)}</span>`:esc(x.t))).join(' ');
+      body=`<div class="font-serif text-lg my-2">${sent}</div><p><strong>You clicked:</strong> <span style="color:${good?'var(--success)':'var(--error)'};font-weight:600">${r!==undefined?esc(q.toks[+r].t):'Unanswered'}</span></p><p><strong>Mistake was:</strong> ${esc(q.toks[q.correct].t)} → <b>${esc(q.fix)}</b></p>`;
+    }else body=`<div class="my-2">${q.prompt}</div><p><strong>Your answer:</strong> <span style="color:${good?'var(--success)':'var(--error)'};font-weight:600">${r!==undefined?esc(r):'Unanswered'}</span></p><p><strong>Correct answer:</strong> <b>${esc(q.solution)}</b></p>`;
+    html+=`<div class="report-item" style="background:#fff;padding:16px;margin-bottom:12px;border-radius:12px;border-left:5px solid ${good?'var(--success)':'var(--error)'};overflow:auto;page-break-inside:avoid">
+      <span style="float:right;font-weight:700;color:${good?'var(--success)':'var(--error)'};border:1px solid;border-radius:6px;padding:2px 8px;font-size:.85rem">Score: ${good?1:0} / 1</span>
+      <div style="font-size:.8rem;text-transform:uppercase;font-weight:700;color:var(--text-muted)">Question ${i+1} · <span style="color:var(--primary)">${q.categoryType}</span> · ${TIERS[q.tier]}</div>${body}
+      <p style="color:var(--text-muted);font-size:.9rem;margin-top:6px">💡 ${esc(q.expl)}</p></div>`;
+  });
+  $('m-correct').innerText=ok;$('m-incorrect').innerText=LIMITS.total-ok;$('m-percent').innerText=Math.round(ok/LIMITS.total*100)+'%';
+  const n=$('student-name').value.trim(),s=$('student-section').value.trim();
+  $('report-injection-zone').innerHTML=`<div style="background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:14px;margin-bottom:16px;font-size:.95rem">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px dashed #cbd5e1;padding-bottom:6px;margin-bottom:6px"><div><strong>Student Name:</strong> <span style="color:var(--primary);font-weight:600">${esc(n)}</span></div><div><strong>Class Section:</strong> <span style="color:var(--primary);font-weight:600">${esc(s)}</span></div></div>
+    <div><strong>Quiz:</strong> Grade 6 English · Term 1 · Reading, Spelling, Vocabulary &amp; Language</div><div><strong>Start:</strong> <span style="font-family:monospace">${startStamp}</span></div></div>`+html;
+  sendGradesToTeacher(n,s,ok+' / '+LIMITS.total,startStamp);
+}
+
+/* ---------- events ---------- */
+$('btn-sound').onclick=()=>{soundOn=!soundOn;$('btn-sound').innerText=soundOn?'🔊':'🔇';if(!soundOn&&window.speechSynthesis)speechSynthesis.cancel();else SND.pick();};
+$('action-start').onclick=()=>{
+  if(!$('student-name').value.trim()||!$('student-section').value.trim()){alert("Please enter your name and class section to start.");return;}
+  const d=new Date();startStamp=d.toLocaleDateString()+" @ "+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  idx=0;answers={};remaining=LIMITS.seconds;finished=false;
+  buildSuite();                       // brand-new questions on every start
+  $('stage-auth').classList.add('hidden');$('stage-engine').classList.remove('hidden');
+  SND.nav();startTimer();render();
+};
+$('action-forward').onclick=()=>{
+  if(idx<LIMITS.total-1){idx++;SND.nav();render();}
+  else{const left=LIMITS.total-Object.keys(answers).length;if(confirm(left?`You have ${left} unanswered question(s). Finish anyway?`:"Finalize and compile the report?"))finish(false);}
+};
+$('action-back').onclick=()=>{if(idx>0){idx--;SND.nav();render();}};
+$('action-retry').onclick=()=>{answers={};idx=0;remaining=LIMITS.seconds;finished=false;
+  $('stage-summary').classList.add('hidden');$('stage-auth').classList.remove('hidden');};
+</script>
+</body>
+</html>

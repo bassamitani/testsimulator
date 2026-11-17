@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 8 English · Term 1 Vocabulary & Proofreading</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--primary:#0284c7;--bg-main:#f8fafc;--border-color:#cbd5e1;--text-main:#0f172a;--text-muted:#475569;--success:#16a34a;--error:#dc2626}
+body{background:var(--bg-main);color:var(--text-main);font-family:system-ui,sans-serif}
+.hidden{display:none!important}
+.opt-btn{background:#fff;border:1px solid var(--border-color);border-radius:8px;cursor:pointer;transition:all .2s;font-size:1.1rem}
+.opt-btn:hover{border-color:var(--primary);background:#f0f9ff}
+.opt-btn.active{border-color:var(--primary);background:#e0f2fe;font-weight:600;box-shadow:0 0 0 2px rgba(2,132,199,.15)}
+.w{display:inline-block;padding:2px 6px;margin:2px;border-radius:6px;cursor:pointer;border:1px solid transparent;transition:.15s}
+.w:hover{background:#f0f9ff;border-color:var(--primary)}
+.w.active{background:#fde68a;border-color:#d97706;font-weight:700}
+.sent{font-size:1.45rem;line-height:2.1rem;font-family:Georgia,serif;text-align:center;padding:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}
+.good{background:#bbf7d0;border-radius:4px;padding:0 4px;font-weight:700}.bad{background:#fecaca;border-radius:4px;padding:0 4px;font-weight:700}
+@media print{html,body{display:block!important;height:auto!important;background:#fff!important}#stage-auth,#stage-engine,footer,button{display:none!important}#stage-summary{display:block!important;max-width:100%!important}}
+</style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+<div id="stage-auth" class="max-w-md mx-auto my-auto p-8 bg-white rounded-2xl shadow-xl mt-12 border border-slate-200">
+  <h1 class="text-3xl font-extrabold text-slate-800 text-center tracking-tight mb-2">Grade 8 English Quiz</h1>
+  <p class="text-sm text-slate-500 text-center mb-2">Term 1 · Vocabulary &amp; Proofreading</p>
+  <p class="text-xs text-slate-400 text-center mb-6">20 questions · 20 minutes · every attempt has new questions</p>
+  <div class="space-y-5">
+    <div><label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Student Full Name</label>
+      <input type="text" id="student-name" placeholder="John Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"></div>
+    <div><label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Assigned Class Section</label>
+      <input type="text" id="student-section" placeholder="Grade 8-A" class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"></div>
+    <button id="action-start" class="w-full bg-sky-600 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-sky-700 transition cursor-pointer text-sm tracking-wider uppercase mt-4">Start Quiz</button>
+  </div>
+</div>
+
+<div id="stage-engine" class="hidden max-w-4xl mx-auto w-full px-4 py-6 flex-grow">
+  <div class="w-full bg-white rounded-2xl shadow-lg border border-slate-200 p-6 flex flex-col justify-between min-h-[550px]">
+    <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-5 flex-wrap gap-3">
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="text-xs font-bold text-sky-600 uppercase tracking-widest">Question <span id="idx-current">0</span> / <span id="idx-total">0</span></span>
+        <span id="txt-section-badge" class="px-2.5 py-1 rounded-md text-xs font-extrabold uppercase bg-indigo-100 text-indigo-700"></span>
+        <span id="txt-tier-badge" class="px-2.5 py-1 rounded-md text-xs font-extrabold uppercase bg-slate-100 text-slate-600"></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btn-sound" title="Sound on/off" class="px-3 py-2 rounded-xl border border-slate-300 text-sm bg-white hover:bg-slate-50 cursor-pointer">🔊</button>
+        <div id="meter-container" class="hidden flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl text-white">
+          <span class="text-[10px] uppercase font-black tracking-wider text-slate-400">Remaining:</span>
+          <span id="clock-countdown" class="text-lg font-black font-mono text-sky-400">20:00</span>
+          <div class="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden hidden sm:block"><div id="meter-progress" class="bg-sky-400 h-full transition-all duration-1000" style="width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flex-grow flex flex-col justify-center">
+      <div id="prompt-container" class="mb-6"></div>
+      <div id="interactive-zone" class="w-full flex flex-col items-center mb-6">
+        <div id="box-proof" class="hidden w-full"></div>
+        <div id="box-mcq" class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"></div>
+      </div>
+    </div>
+    <div class="border-t border-slate-100 pt-4 mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div id="navigation-shortcut-grid" class="flex flex-wrap gap-1.5"></div>
+      <div class="flex gap-3 justify-end w-full sm:w-auto">
+        <button id="action-back" class="px-5 py-2 border border-slate-300 rounded-xl font-medium text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-40 text-sm cursor-pointer">&larr; Back</button>
+        <button id="action-forward" class="px-6 py-2 bg-sky-600 text-white rounded-xl font-bold hover:bg-sky-700 text-sm shadow cursor-pointer">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="stage-summary" class="hidden max-w-3xl mx-auto w-full px-4 py-8">
+  <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="bg-gradient-to-r from-sky-600 to-indigo-700 p-6 text-white flex justify-between items-center flex-wrap gap-4">
+      <div><h2 class="text-2xl font-black tracking-tight">Performance Summary Report</h2>
+      <p class="text-sky-100 text-xs mt-1">Grade 8 English · Term 1 · Vocabulary &amp; Proofreading</p></div>
+      <button onclick="window.print()" class="bg-white/10 px-4 py-2 rounded-lg text-xs font-bold hover:bg-white/20 border border-white/10 cursor-pointer">Download as PDF</button>
+    </div>
+    <div class="grid grid-cols-3 text-center border-b border-slate-100 bg-slate-50 py-4">
+      <div><div id="m-correct" class="text-2xl font-extrabold text-emerald-600">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Correct</div></div>
+      <div class="border-x border-slate-200"><div id="m-incorrect" class="text-2xl font-extrabold text-rose-600">0</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Incorrect</div></div>
+      <div><div id="m-percent" class="text-2xl font-extrabold text-sky-600">0%</div><div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Score Rate</div></div>
+    </div>
+    <div id="report-injection-zone" class="p-6 space-y-4 bg-slate-50/50"></div>
+  </div>
+  <div class="flex flex-col sm:flex-row gap-3 w-full mt-4">
+    <button onclick="window.print()" class="flex-grow bg-sky-600 text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-sky-700 cursor-pointer text-sm uppercase tracking-wider">Save as PDF</button>
+    <button id="action-retry" class="w-full sm:w-1/3 bg-slate-800 text-white font-bold py-3 rounded-xl shadow hover:bg-slate-900 cursor-pointer text-sm uppercase tracking-wider">Retake Quiz (new questions)</button>
+  </div>
+</div>
+
+<footer class="w-full py-4 text-center text-xs text-slate-400 border-t border-slate-200 mt-12 bg-white">&copy; 2026 Grade 8 English Assessment Suite</footer>
+
+<script>
+const LIMITS={total:20,seconds:1200};
+let suite=[],idx=0,answers={},remaining=LIMITS.seconds,timer=null,startStamp="",finished=false;
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TIERS=['easy','medium','hard'];
+
+/* ---------- sound (Web Audio, no files needed) + read-aloud ---------- */
+let soundOn=true,ac=null;
+function beep(f,d,type,v,t0){if(!soundOn)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain(),s=ac.currentTime+(t0||0);o.type=type||'sine';o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(v||.08,s);g.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d);}catch(e){}}
+const SND={pick:()=>beep(660,.09),nav:()=>beep(440,.06,'triangle'),tick:()=>beep(1000,.05,'square',.03),
+  done:()=>[523,659,784,1047].forEach((f,i)=>beep(f,.25,'sine',.09,i*.14)),time:()=>{beep(220,.4,'sawtooth');beep(170,.5,'sawtooth',.08,.35);}};
+function speak(t){if(!soundOn||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=.9;speechSynthesis.speak(u);}
+
+/* ---------- VOCABULARY DATA (Unit 1 Nature & humans · Unit 2 Grandmother's Song · Unit 3 Strange islands) ---------- */
+// word|synonym|antonym — each tier keeps meanings distinct so distractors are never also correct
+const WORDS=[
+ ['vast|enormous|tiny','fierce|savage|gentle','swift|rapid|slow','hidden|concealed|visible','brave|courageous|cowardly','ancient|very old|modern','destroy|ruin|build','silent|noiseless|noisy'],
+ ['mysterious|puzzling|obvious','fragile|delicate|sturdy','peril|danger|safety','fortune|wealth|poverty','barren|unproductive|fruitful','abandoned|deserted|occupied','reluctant|unwilling|eager','scarce|rare|plentiful','anguish|agony|joy'],
+ ['ominous|threatening|promising','gradual|steady|abrupt','sceptical|doubtful|trusting','lament|mourn|celebrate','cunning|crafty|honest','reckless|careless|cautious','catastrophic|disastrous|trivial','legendary|renowned|ordinary']
+].map(t=>t.map(s=>{const p=s.split('|');return{w:p[0],s:p[1],a:p[2]};}));
+const CLOZE=[
+ ['After the long climb, the hikers were ___ and fell asleep at once.|exhausted|delighted,curious,generous','The eagle ___ high above the valley, searching for food.|soared|crawled,whispered,jumped','The old map led the children to a ___ chest of gold.|buried|singing,hungry,polite','It is important to ___ our planet by recycling and saving energy.|protect|ignore,damage,waste','The explorers were ___ to find a path through the thick forest.|determined|sleepy,bored,silent'],
+ ['The villagers heard a ___ rumble before the mountain began to shake.|distant|tasty,sticky,polite','Climate change is a ___ process, but humans are making it faster.|natural|imaginary,painful,unwilling','“I do not know,” she ___, afraid anyone would hear.|whispered|roared,boomed,shouted','Grandmother told a ___ tale to teach the children to be honest.|moral|tasteless,expensive,windy','The ___ of the island was kept secret for hundreds of years.|location|weather,pencil,laughter'],
+ ['Scientists ___ that sea levels will keep rising unless emissions fall.|predict|conceal,apologise,imitate','The pirate’s ___ smile made the sailors wonder what he was planning.|sly|sleepy,frank,gentle','The treasure hunters ___ the island for weeks but found nothing.|scoured|ignored,painted,borrowed','The poet used ___ to give the river human feelings, saying it “sighed”.|personification|alliteration,rhyme,caesura','The storm had a ___ effect on the coast, destroying hundreds of homes.|devastating|negligible,pleasant,fleeting']
+].map(t=>t.map(s=>s.split('|')));
+const TERMS=[
+ ['simile|compares two things using “like” or “as”',0],['metaphor|says that one thing IS another to create a picture',0],['monologue|a long speech spoken by one character',0],['stage directions|instructions in a play script about how to move or speak',0],['moral tale|a story that teaches a lesson about how to behave',0],
+ ['personification|giving human feelings or actions to something that is not human',1],['enjambment|when a line of poetry runs on into the next line without a pause',1],['end-stopped line|a line of poetry that finishes with a pause or punctuation mark',1],['formal language|serious, polite language without slang, used in reports and speeches',1],['informal language|relaxed, chatty language, often with contractions and slang',1],
+ ['caesura|a pause in the middle of a line of poetry',2],['reporting verb|a verb such as “muttered” or “declared” that shows how something was said',2],['biography|an account of a real person’s life written by someone else',2],['figurative language|imaginative language such as similes and metaphors, not meant literally',2],['theme|the central message or big idea of a text',2]
+].map(s=>{const p=s[0].split('|');return{t:p[0],d:p[1],tier:s[1]};});
+const ANA=[
+ ['Hot is to cold as strong is to ___.|weak|mighty,heavy,fast','Bird is to nest as bee is to ___.|hive|honey,flower,sting'],
+ ['Author is to novel as poet is to ___.|poem|library,pencil,teacher','Wave is to ocean as gust is to ___.|wind|cloud,rain,tree'],
+ ['Whisper is to shout as nibble is to ___.|devour|taste,share,cook','Scarce is to plentiful as ancient is to ___.|modern|old,rare,historic']
+].map(t=>t.map(s=>s.split('|')));
+
+/* ---------- PROOFREADING DATA: sentence (error between *stars*) | correction | explanation ---------- */
+const PR=[[
+ 'We stayed inside *becuase* the rain was heavy.|because','The hikers walked *accross* the snowy field.|across','My best *freind* lives near the beach.|friend','The view from the top was *beutiful*.|beautiful','A small *iland* lay far out in the bay.|island','The *wether* was cold and windy.|weather','We will visit the caves *tommorow*.|tomorrow',
+ 'We went to the beach *an* swam in the sea.|and|“And” joins the two actions.','The two boys *was* playing near the river.|were|“Two boys” is plural, so use “were”.','I have *to* much homework tonight.|too|“Too” means “more than enough”.','The children left *there* bags on the beach.|their|“Their” shows ownership.','Yesterday the waves *crash* against the rocks.|crashed|“Yesterday” needs the past tense.','He *runned* all the way up the hill.|ran|“Run” is irregular: ran.'
+],[
+ 'They dug up a *tresure* chest on the shore.|treasure','We must protect the *enviroment*.|environment','It was a *misterious* light in the sky.|mysterious','The *adventrue* began at dawn.|adventure','Please *seperate* the maps from the notes.|separate','We will *recieve* the news soon.|receive','The *mountian* was covered in snow.|mountain','The boat seemed to *dissapear* in the fog.|disappear',
+ 'The *eagles* nest was high on the cliff.|eagle’s|One eagle owns the nest, so add ’s.','My *grandmothers* song always made us smile.|grandmother’s|Possession needs an apostrophe.','The island lost *it’s* beauty after the storm.|its|“Its” without an apostrophe shows possession.','*Who’s* map is this lying on the table?|Whose|“Whose” asks about ownership.','We must find out *weather* the tide is coming in.|whether|“Whether” introduces a choice.','The *childrens* poem was read aloud.|children’s|“Children” is already plural, so add ’s.','The tide rose faster *then* we expected.|than|Use “than” to compare.','Last night the wind *blowed* through the trees.|blew|“Blow” is irregular: blew.','Have you ever seen a *tsunami.*|tsunami?|A question needs a question mark.'
+],[
+ 'The wave will *definately* reach the coast.|definitely','Food and water are *neccessary* for the trek.|necessary','She felt *embarassed* when she lost the map.|embarrassed','The earthquake *occured* before dawn.|occurred','The old sailor’s *knowlege* of the sea was amazing.|knowledge','The *goverment* sent help to the coast.|government','We left *imediately* after the warning.|immediately','It was a *dangerus* climb.|dangerous',
+ 'Neither of the sailors *were* afraid of the storm.|was|“Neither” takes a singular verb.','If I *was* you, I would not open the old chest.|were|Use “were” for imaginary situations.','The poet *use* enjambment so the lines flow into one another.|uses|A singular subject needs “uses”.','The captain *effected* the whole crew with his courage.|affected|“Affect” is the verb.','Everyone in the class *have* read the Treasure Island extract.|has|“Everyone” is singular.','The tsunami, which *destroy* the harbour, came without warning.|destroyed|The event is in the past.','Between you and *I*, the legend is probably untrue.|me|After “between”, use “me”.','The wind howled *threw* the empty streets.|through|“Through” means from one side to the other.'
+]];
+const SUBJ=[['The explorers',1],['Our class',0],['The villagers',1],['Maya',0],['The captain',0],['My grandmother',0],['The scientists',1],['Omar',0],['The students',1],['The pirates',1]];
+const TRAP=[['The group of hikers',0],['The box of old coins',0],['The villagers near the coast',1],['The scientists in the lab',1],['Every one of the students',0],['The map of the islands',0],['The poems in this book',1]];
+const PLACES=['Lebanon','Japan','Scotland','Cyprus','Kenya','Everest','Madagascar','Egypt','Brazil','Norway'];
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const CONTR=[['didn’t','didnt'],['couldn’t','couldnt'],['wouldn’t','wouldnt'],['shouldn’t','shouldnt'],['mustn’t','mustnt']];
+
+/* ---------- QUESTION ENGINES (fresh random questions on every call) ---------- */
+function mc(prompt,correct,wrongs,expl,cat,tier,speakText){
+  const w=[];shuffle(wrongs).forEach(x=>{if(x!==correct&&!w.includes(x)&&w.length<3)w.push(x);});
+  return{type:'MCQ',prompt,pool:shuffle([correct,...w]),solution:correct,expl,categoryType:cat,tier,speak:speakText||''};
+}
+const flat=(t,k)=>WORDS.flatMap(x=>x).map(e=>e[k]);
+function vSyn(t,used){const e=pick(WORDS[t].filter(x=>!used.has(x.w)));used.add(e.w);
+  const others=WORDS.flatMap(x=>x).filter(x=>x.w!==e.w).map(x=>x.s);
+  return mc(`Which word is closest in meaning to <b class="text-sky-700">${e.w.toUpperCase()}</b>?`,e.s,[e.a,...shuffle(others)],`“${e.w}” means ${e.s}.`,'VOCABULARY · SYNONYM',t,e.w);}
+function vAnt(t,used){const e=pick(WORDS[t].filter(x=>!used.has(x.w)));used.add(e.w);
+  const others=WORDS.flatMap(x=>x).filter(x=>x.w!==e.w).map(x=>x.a);
+  return mc(`Which word is the <b class="text-sky-700">OPPOSITE</b> of <b class="text-sky-700">${e.w.toUpperCase()}</b>?`,e.a,[e.s,...shuffle(others)],`The opposite of “${e.w}” is “${e.a}”.`,'VOCABULARY · OPPOSITE',t,e.w);}
+function vClz(t){const e=pick(CLOZE[t]);
+  return mc(`Choose the best word to complete the sentence:<div class="mt-3 text-lg font-serif bg-slate-50 border border-slate-200 rounded-xl p-4">${esc(e[0]).replace('___','<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>')}</div>`,e[1],e[2].split(','),`The best word is “${e[1]}”.`,'VOCABULARY · SENTENCE COMPLETION',t,e[0].replace('___','blank'));}
+function vTerm(t){const e=pick(TERMS.filter(x=>x.tier===t));
+  return mc(`Which term matches this meaning?<div class="mt-3 text-lg bg-slate-50 border border-slate-200 rounded-xl p-4">${esc(e.d)}</div>`,e.t,TERMS.filter(x=>x.t!==e.t).map(x=>x.t),`“${e.t}” – ${e.d}.`,'VOCABULARY · LANGUAGE TERMS',t,e.d);}
+function vAna(t){const e=pick(ANA[t]);
+  return mc(`Complete the analogy:<div class="mt-3 text-lg font-serif bg-slate-50 border border-slate-200 rounded-xl p-4">${esc(e[0]).replace('___','<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>')}</div>`,e[1],e[2].split(','),`The same relationship links both pairs, so the answer is “${e[1]}”.`,'VOCABULARY · ANALOGY',t,e[0].replace('___','blank'));}
+
+function proofItem(sentence,fix,expl,t,label){
+  const toks=sentence.split(' ').map(w=>({t:w.replace(/\*/g,''),e:w.indexOf('*')>=0}));
+  const ei=toks.findIndex(x=>x.e);
+  return{type:'PROOF',toks,correct:ei,solution:String(ei),fix,expl:expl||`Correct spelling: “${fix}”.`,categoryType:label||'PROOFREADING',tier:t,
+    prompt:'<b>Find the mistake.</b> Click the one word that is wrong (spelling, capital letter, apostrophe, or grammar).',speak:sentence.replace(/\*/g,'')};
+}
+function pFixed(t){const p=pick(PR[t]).split('|');return proofItem(p[0],p[1],p[2],t,'PROOFREADING · '+(p[2]?'GRAMMAR & PUNCTUATION':'SPELLING'));}
+function pContr(t){const c=pick(CONTR),s=pick(SUBJ)[0];
+  return proofItem(`${s} *${c[1]}* believe the legend of the buried treasure.`,c[0],`“${c[0]}” needs an apostrophe where letters are missing.`,t,'PROOFREADING · APOSTROPHES');}
+function pCap(t){
+  if(Math.random()<.5){const p=pick(PLACES);return proofItem(`${pick(SUBJ)[0]} dreamed of visiting *${p.toLowerCase()}* one day.`,p,`Names of places need a capital letter: “${p}”.`,t,'PROOFREADING · CAPITAL LETTERS');}
+  const d=pick(DAYS);return proofItem(`The tsunami warning was issued on *${d.toLowerCase()}* night.`,d,`Days of the week need a capital letter: “${d}”.`,t,'PROOFREADING · CAPITAL LETTERS');}
+function pAgr(t){const s=pick(t===2?TRAP:SUBJ),good=s[1]?'are':'is',bad=s[1]?'is':'are';
+  return proofItem(`${s[0]} *${bad}* still searching for the lost treasure.`,good,`The subject “${s[0].toLowerCase()}” is ${s[1]?'plural':'singular'}, so use “${good}”.`,t,'PROOFREADING · SUBJECT–VERB AGREEMENT');}
+const PGEN=[[pFixed,pFixed,pFixed,pContr,pCap],[pFixed,pFixed,pFixed,pContr,pAgr,pCap],[pFixed,pFixed,pFixed,pAgr]];
+
+function buildSuite(){
+  const out=[],seen=new Set();
+  const add=(fn)=>{let q,g=0;do{q=fn();}while(seen.has(q.prompt+(q.toks?q.toks.map(x=>x.t).join(' '):''))&&g++<60);
+    seen.add(q.prompt+(q.toks?q.toks.map(x=>x.t).join(' '):''));out.push(q);};
+  for(let t=0;t<3;t++){const used=new Set();
+    [()=>vSyn(t,used),()=>vAnt(t,used),()=>vClz(t),()=>Math.random()<.55?vTerm(t):vAna(t)].forEach(add);}
+  [0,1,1,2,2,2,1,0].sort((a,b)=>a-b).forEach(t=>add(()=>pick(PGEN[t])(t)));
+  // vocabulary block (12) then proofreading block (8); proofreading ordered easy → hard
+  suite=out;
+}
+
+/* ---------- interface ---------- */
+function render(){
+  const q=suite[idx];
+  $('idx-current').innerText=idx+1;$('idx-total').innerText=LIMITS.total;
+  $('txt-tier-badge').innerText=TIERS[q.tier];
+  $('txt-section-badge').innerText=q.type==='PROOF'?'Proofreading':'Vocabulary';
+  $('prompt-container').innerHTML=`<div style="font-size:1.15rem;line-height:1.6">${q.prompt} <button id="btn-listen" class="ml-2 text-xs px-2 py-1 border border-slate-300 rounded-lg hover:bg-slate-50 cursor-pointer align-middle">🔊 Listen</button></div>`;
+  $('btn-listen').onclick=()=>speak(q.speak);
+  const mcq=$('box-mcq'),pr=$('box-proof');mcq.innerHTML='';pr.innerHTML='';
+  if(q.type==='MCQ'){
+    mcq.classList.remove('hidden');pr.classList.add('hidden');
+    q.pool.forEach(c=>{const b=document.createElement('button');
+      b.className='opt-btn p-3 text-center flex justify-center items-center'+(answers[idx]===c?' active':'');b.style.minHeight='52px';b.textContent=c;
+      b.onclick=()=>{mcq.querySelectorAll('.opt-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');answers[idx]=c;SND.pick();shortcuts();};
+      mcq.appendChild(b);});
+  }else{
+    mcq.classList.add('hidden');pr.classList.remove('hidden');
+    pr.innerHTML='<div class="sent">'+q.toks.map((x,i)=>`<span class="w${answers[idx]===String(i)?' active':''}" data-i="${i}">${esc(x.t)}</span>`).join(' ')+'</div>';
+    pr.querySelectorAll('.w').forEach(el=>el.onclick=()=>{pr.querySelectorAll('.w').forEach(x=>x.classList.remove('active'));el.classList.add('active');answers[idx]=el.dataset.i;SND.pick();shortcuts();});
+  }
+  shortcuts();
+  $('action-back').disabled=idx===0;
+  $('action-forward').innerText=idx===LIMITS.total-1?'Finish Quiz':'Next →';
+}
+function shortcuts(){
+  const g=$('navigation-shortcut-grid');g.innerHTML='';
+  for(let i=0;i<LIMITS.total;i++){const b=document.createElement('button');b.innerText=i+1;
+    let c='bg-slate-100 text-slate-600 border border-slate-300';
+    if(i===idx)c='bg-sky-600 text-white font-bold ring-2 ring-sky-300';else if(answers[i]!==undefined)c='bg-emerald-100 text-emerald-700 border border-emerald-400 font-semibold';
+    b.className='p-2 text-xs text-center rounded-lg cursor-pointer min-w-[32px] '+(i===11?'mr-3 ':'')+c;
+    b.onclick=()=>{idx=i;SND.nav();render();};g.appendChild(b);}
+}
+
+/* ---------- timer ---------- */
+function startTimer(){
+  $('meter-container').classList.remove('hidden');
+  const bar=$('meter-progress');bar.style.backgroundColor='';
+  const pulse=()=>{const m=Math.floor(remaining/60),s=remaining%60,pc=remaining/LIMITS.seconds*100;
+    $('clock-countdown').innerText=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    bar.style.width=pc+'%';if(pc<25)bar.style.backgroundColor='var(--error)';else if(pc<50)bar.style.backgroundColor='#d97706';
+    if(remaining<=10&&remaining>0)SND.tick();};
+  pulse();clearInterval(timer);
+  timer=setInterval(()=>{remaining--;pulse();if(remaining<=0){clearInterval(timer);SND.time();finish(true);}},1000);
+}
+
+/* ---------- report ---------- */
+function sendGradesToTeacher(name,classroom,score,stamp){
+  const url="https://script.google.com/macros/s/AKfycbzpYkVVYTJ0VvPNVVCj9pIBrzXznUdB9XTPEMJPAQ8AF8qu-x_T-PhrYA7x_wCaZyWs/exec";
+  fetch(url,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({name,classroom,score,duration:stamp,quizTitle:"Grade 8 English Term 1 - Vocabulary & Proofreading",date:new Date().toLocaleString()})}).catch(()=>{});
+}
+function finish(timeout){
+  if(finished)return;finished=true;clearInterval(timer);if(window.speechSynthesis)speechSynthesis.cancel();
+  $('stage-engine').classList.add('hidden');$('meter-container').classList.add('hidden');$('stage-summary').classList.remove('hidden');
+  if(!timeout)SND.done();else alert("Time limit reached. Compiling final performance report now.");
+  let ok=0,html='';
+  suite.forEach((q,i)=>{
+    const r=answers[i],good=r!==undefined&&r===q.solution;if(good)ok++;
+    let body;
+    if(q.type==='PROOF'){
+      const sent=q.toks.map((x,k)=>k===q.correct?`<span class="good">${esc(x.t)}</span>`:(String(k)===r?`<span class="bad">${esc(x.t)}</span>`:esc(x.t))).join(' ');
+      body=`<div class="font-serif text-lg my-2">${sent}</div><p><strong>You clicked:</strong> <span style="color:${good?'var(--success)':'var(--error)'};font-weight:600">${r!==undefined?esc(q.toks[+r].t):'Unanswered'}</span></p><p><strong>Mistake was:</strong> ${esc(q.toks[q.correct].t)} → <b>${esc(q.fix)}</b></p>`;
+    }else body=`<div class="my-2">${q.prompt}</div><p><strong>Your answer:</strong> <span style="color:${good?'var(--success)':'var(--error)'};font-weight:600">${r!==undefined?esc(r):'Unanswered'}</span></p><p><strong>Correct answer:</strong> <b>${esc(q.solution)}</b></p>`;
+    html+=`<div class="report-item" style="background:#fff;padding:16px;margin-bottom:12px;border-radius:12px;border-left:5px solid ${good?'var(--success)':'var(--error)'};overflow:auto;page-break-inside:avoid">
+      <span style="float:right;font-weight:700;color:${good?'var(--success)':'var(--error)'};border:1px solid;border-radius:6px;padding:2px 8px;font-size:.85rem">Score: ${good?1:0} / 1</span>
+      <div style="font-size:.8rem;text-transform:uppercase;font-weight:700;color:var(--text-muted)">Question ${i+1} · <span style="color:var(--primary)">${q.categoryType}</span> · ${TIERS[q.tier]}</div>${body}
+      <p style="color:var(--text-muted);font-size:.9rem;margin-top:6px">💡 ${esc(q.expl)}</p></div>`;
+  });
+  $('m-correct').innerText=ok;$('m-incorrect').innerText=LIMITS.total-ok;$('m-percent').innerText=Math.round(ok/LIMITS.total*100)+'%';
+  const n=$('student-name').value.trim(),s=$('student-section').value.trim();
+  $('report-injection-zone').innerHTML=`<div style="background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:14px;margin-bottom:16px;font-size:.95rem">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px dashed #cbd5e1;padding-bottom:6px;margin-bottom:6px"><div><strong>Student Name:</strong> <span style="color:var(--primary);font-weight:600">${esc(n)}</span></div><div><strong>Class Section:</strong> <span style="color:var(--primary);font-weight:600">${esc(s)}</span></div></div>
+    <div><strong>Quiz:</strong> Grade 8 English · Term 1 · Vocabulary &amp; Proofreading</div><div><strong>Start:</strong> <span style="font-family:monospace">${startStamp}</span></div></div>`+html;
+  sendGradesToTeacher(n,s,ok+' / '+LIMITS.total,startStamp);
+}
+
+/* ---------- events ---------- */
+$('btn-sound').onclick=()=>{soundOn=!soundOn;$('btn-sound').innerText=soundOn?'🔊':'🔇';if(!soundOn&&window.speechSynthesis)speechSynthesis.cancel();else SND.pick();};
+$('action-start').onclick=()=>{
+  if(!$('student-name').value.trim()||!$('student-section').value.trim()){alert("Please enter your name and class section to start.");return;}
+  const d=new Date();startStamp=d.toLocaleDateString()+" @ "+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  idx=0;answers={};remaining=LIMITS.seconds;finished=false;
+  buildSuite();                       // brand-new questions on every start
+  $('stage-auth').classList.add('hidden');$('stage-engine').classList.remove('hidden');
+  SND.nav();startTimer();render();
+};
+$('action-forward').onclick=()=>{
+  if(idx<LIMITS.total-1){idx++;SND.nav();render();}
+  else{const left=LIMITS.total-Object.keys(answers).length;if(confirm(left?`You have ${left} unanswered question(s). Finish anyway?`:"Finalize and compile the report?"))finish(false);}
+};
+$('action-back').onclick=()=>{if(idx>0){idx--;SND.nav();render();}};
+$('action-retry').onclick=()=>{answers={};idx=0;remaining=LIMITS.seconds;finished=false;
+  $('stage-summary').classList.add('hidden');$('stage-auth').classList.remove('hidden');};
+</script>
+</body>
+</html>
